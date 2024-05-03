@@ -1,7 +1,9 @@
 'use client';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import Pen from '@/app/components/Pen';
-import Line from '@/app/components/line';
+import Pen from '@/models/Pen';
+import Line from '@/models/line';
+import ToolsCard from '@/components/ToolsCard';
+import { ToolColor, Tools, ToolSize, ToolVariant } from '@/enums/Tools';
 
 export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -9,6 +11,8 @@ export default function Home() {
 
   const [pens, setPens] = useState<Pen[]>([]);
   const [lines, setLines] = useState<Line[]>([]);
+
+  const [selectedTool, setSelectedTool] = useState<Tools>(Tools.Pen);
 
   const initCanvas = useCallback(() => {
     if (!canvasRef.current) return;
@@ -28,10 +32,11 @@ export default function Home() {
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+      ctx.lineCap = 'round';
       //draw pens
       pens.forEach((pen) => {
-        ctx.strokeStyle = 'black';
-        ctx.lineWidth = 5;
+        ctx.strokeStyle = pen.color;
+        ctx.lineWidth = pen.size === ToolSize.Small ? 2 : pen.size === ToolSize.Medium ? 5 : 10;
         ctx.beginPath();
         ctx.moveTo(pen.path[0].x, pen.path[0].y);
         pen.path.forEach((point) => {
@@ -42,8 +47,15 @@ export default function Home() {
 
       //draw lines
       lines.forEach((line) => {
-        ctx.strokeStyle = 'black';
-        ctx.lineWidth = 5;
+        ctx.strokeStyle = line.color;
+        ctx.lineWidth = line.size === ToolSize.Small ? 2 : line.size === ToolSize.Medium ? 5 : 10;
+        if (line.variant === ToolVariant.Dashed) {
+          ctx.setLineDash([5, 3]);
+        } else if (line.variant === ToolVariant.Dotted) {
+          ctx.setLineDash([2, 2]);
+        } else {
+          ctx.setLineDash([]);
+        }
         ctx.beginPath();
         ctx.moveTo(line.x1, line.y1);
         ctx.lineTo(line.x2, line.y2);
@@ -64,10 +76,17 @@ export default function Home() {
       const lastPen = pens[pens.length - 1];
       lastPen.path.push({ x: mouseRef.current.x, y: mouseRef.current.y });
     } else {
-      if (pens.length > 0 && pens[pens.length - 1].path.length === 0) {
+      if (pens.length > 0 && pens[pens.length - 1].path.length <= 1) {
         pens.pop();
       }
-      pens.push(new Pen([{ x: mouseRef.current.x, y: mouseRef.current.y }]));
+      pens.push(
+        new Pen(
+          [{ x: mouseRef.current.x, y: mouseRef.current.y }],
+          ToolColor.Black,
+          ToolSize.Medium,
+          ToolVariant.Solid
+        )
+      );
     }
 
     setPens([...pens]);
@@ -84,11 +103,26 @@ export default function Home() {
       lastLine.x2 = mouseRef.current.x;
       lastLine.y2 = mouseRef.current.y;
     } else {
+      if (
+        lines.length > 0 &&
+        lines[lines.length - 1].x1 === lines[lines.length - 1].x2 &&
+        lines[lines.length - 1].y1 === lines[lines.length - 1].y2
+      ) {
+        lines.pop();
+      }
+
       lines.push(
-        new Line(mouseRef.current.x, mouseRef.current.y, mouseRef.current.x, mouseRef.current.y)
+        new Line(
+          mouseRef.current.x,
+          mouseRef.current.y,
+          mouseRef.current.x,
+          mouseRef.current.y,
+          ToolColor.Black,
+          ToolSize.Medium,
+          ToolVariant.Solid
+        )
       );
     }
-
     setLines([...lines]);
   }, [lines]);
 
@@ -98,7 +132,11 @@ export default function Home() {
     let animateId: number;
 
     const animate = () => {
-      draw(drawPen);
+      if (selectedTool === Tools.Pen) {
+        draw(drawPen);
+      } else if (selectedTool === Tools.Line) {
+        draw(drawLine);
+      }
       animateId = requestAnimationFrame(animate);
     };
 
@@ -107,7 +145,7 @@ export default function Home() {
     return () => {
       window.cancelAnimationFrame(animateId);
     };
-  }, [draw, drawPen, initCanvas]);
+  }, [draw, drawLine, drawPen, initCanvas, selectedTool]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!canvasRef.current) return;
@@ -131,6 +169,7 @@ export default function Home() {
 
   return (
     <div className={'h-full bg-white'}>
+      <ToolsCard onToolSelect={setSelectedTool} selectedTool={selectedTool} />
       <canvas
         className={'h-full w-full'}
         ref={canvasRef}
