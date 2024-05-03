@@ -10,7 +10,7 @@ import Arrow from '@/models/Arrow';
 
 export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const mouseRef = useRef({ x: 0, y: 0, down: false, released: false });
+  const mouseRef = useRef({ x: 0, y: 0, clickedX: 0, clickedY: 0, down: false, released: false });
 
   const [pens, setPens] = useState<Pen[]>([]);
   const [lines, setLines] = useState<Line[]>([]);
@@ -79,13 +79,11 @@ export default function Home() {
         new Pen(
           [{ x: mouseRef.current.x, y: mouseRef.current.y }],
           ToolColor.Black,
-          5,
+          2,
           ToolVariant.Solid
         )
       );
     }
-
-    setPens([...pens]);
   }, [pens]);
 
   const drawLine = useCallback(() => {
@@ -113,7 +111,7 @@ export default function Home() {
           mouseRef.current.x,
           mouseRef.current.y,
           ToolColor.Black,
-          5,
+          2,
           ToolVariant.Solid
         )
       );
@@ -147,7 +145,7 @@ export default function Home() {
           0,
           0,
           ToolColor.Black,
-          5,
+          2,
           ToolVariant.Solid
         )
       );
@@ -180,7 +178,7 @@ export default function Home() {
           0,
           0,
           ToolColor.Black,
-          5,
+          2,
           ToolVariant.Solid
         )
       );
@@ -213,7 +211,7 @@ export default function Home() {
           0,
           0,
           ToolColor.Black,
-          5,
+          2,
           ToolVariant.Solid
         )
       );
@@ -246,7 +244,7 @@ export default function Home() {
           mouseRef.current.x,
           mouseRef.current.y,
           ToolColor.Black,
-          5,
+          2,
           ToolVariant.Solid
         )
       );
@@ -288,19 +286,9 @@ export default function Home() {
     return () => {
       window.cancelAnimationFrame(animateId);
     };
-  }, [
-    draw,
-    drawArrow,
-    drawCircle,
-    drawDiamond,
-    drawLine,
-    drawPen,
-    drawRectangle,
-    initCanvas,
-    selectedTool,
-  ]);
+  }, [draw, drawPen, initCanvas, selectedTool]);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!canvasRef.current) return;
 
     const canvas = canvasRef.current;
@@ -309,6 +297,8 @@ export default function Home() {
       x: e.clientX - rect.left,
       y: e.clientY - rect.top,
       down: mouseRef.current.down,
+      clickedX: mouseRef.current.down ? mouseRef.current.clickedX : mouseRef.current.x,
+      clickedY: mouseRef.current.down ? mouseRef.current.clickedY : mouseRef.current.y,
       released: mouseRef.current.released,
     };
   };
@@ -323,16 +313,15 @@ export default function Home() {
   };
 
   return (
-    <div className={'h-full bg-white'}>
+    <div
+      className={'h-full bg-white'}
+      onMouseMove={handleMouseMove}
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
+    >
       <ToolsCard onToolSelect={setSelectedTool} selectedTool={selectedTool} />
-      <canvas
-        className={'h-full w-full'}
-        ref={canvasRef}
-        onMouseMove={handleMouseMove}
-        onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
-      />
+      <canvas className={'h-full w-full'} ref={canvasRef} />
     </div>
   );
 }
