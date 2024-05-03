@@ -1,4 +1,4 @@
-import Point from '@/app/components/Point';
+import Point from '@/models/Point';
 
 class Pen {
   path: Point[] = [];
