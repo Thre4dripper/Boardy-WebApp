@@ -5,6 +5,7 @@ import Line from '@/models/line';
 import ToolsCard from '@/components/ToolsCard';
 import { ToolColor, Tools, ToolVariant } from '@/enums/Tools';
 import Ellipse from '@/models/Ellipse';
+import Rectangle from '@/models/Rectangle';
 
 export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -13,6 +14,7 @@ export default function Home() {
   const [pens, setPens] = useState<Pen[]>([]);
   const [lines, setLines] = useState<Line[]>([]);
   const [ellipses, setEllipses] = useState<Ellipse[]>([]);
+  const [rectangles, setRectangles] = useState<Rectangle[]>([]);
 
   const [selectedTool, setSelectedTool] = useState<Tools>(Tools.Pen);
 
@@ -43,9 +45,12 @@ export default function Home() {
 
       //draw ellipses
       Ellipse.drawEllipses(ellipses, ctx);
+
+      //draw rectangles
+      Rectangle.drawRectangles(rectangles, ctx);
       drawFn();
     },
-    [ellipses, lines, pens]
+    [ellipses, lines, pens, rectangles]
   );
 
   const drawPen = useCallback(() => {
@@ -141,6 +146,39 @@ export default function Home() {
     setEllipses([...ellipses]);
   }, [ellipses]);
 
+  const drawRectangle = useCallback(() => {
+    const canvas = canvasRef.current as HTMLCanvasElement;
+    const ctx = canvas.getContext('2d');
+
+    if (!ctx) return;
+
+    if (mouseRef.current.down) {
+      const lastRectangle = rectangles[rectangles.length - 1];
+      lastRectangle.x2 = mouseRef.current.x - lastRectangle.x1;
+      lastRectangle.y2 = mouseRef.current.y - lastRectangle.y1;
+    } else {
+      if (
+        rectangles.length > 0 &&
+        rectangles[rectangles.length - 1].x2 === 0 &&
+        rectangles[rectangles.length - 1].y2 === 0
+      ) {
+        rectangles.pop();
+      }
+      rectangles.push(
+        new Rectangle(
+          mouseRef.current.x,
+          mouseRef.current.y,
+          0,
+          0,
+          ToolColor.Black,
+          5,
+          ToolVariant.Solid
+        )
+      );
+    }
+    setRectangles([...rectangles]);
+  }, [rectangles]);
+
   useEffect(() => {
     initCanvas();
 
@@ -157,6 +195,9 @@ export default function Home() {
         case Tools.Circle:
           draw(drawCircle);
           break;
+        case Tools.Rectangle:
+          draw(drawRectangle);
+          break;
       }
       animateId = requestAnimationFrame(animate);
     };
@@ -166,7 +207,7 @@ export default function Home() {
     return () => {
       window.cancelAnimationFrame(animateId);
     };
-  }, [draw, drawCircle, drawLine, drawPen, initCanvas, selectedTool]);
+  }, [draw, drawCircle, drawLine, drawPen, drawRectangle, initCanvas, selectedTool]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!canvasRef.current) return;
