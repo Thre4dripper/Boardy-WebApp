@@ -3,7 +3,8 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Pen from '@/models/Pen';
 import Line from '@/models/line';
 import ToolsCard from '@/components/ToolsCard';
-import { ToolColor, Tools, ToolSize, ToolVariant } from '@/enums/Tools';
+import { ToolColor, Tools, ToolVariant } from '@/enums/Tools';
+import Ellipse from '@/models/Ellipse';
 
 export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -11,6 +12,7 @@ export default function Home() {
 
   const [pens, setPens] = useState<Pen[]>([]);
   const [lines, setLines] = useState<Line[]>([]);
+  const [ellipses, setEllipses] = useState<Ellipse[]>([]);
 
   const [selectedTool, setSelectedTool] = useState<Tools>(Tools.Pen);
 
@@ -34,36 +36,16 @@ export default function Home() {
 
       ctx.lineCap = 'round';
       //draw pens
-      pens.forEach((pen) => {
-        ctx.strokeStyle = pen.color;
-        ctx.lineWidth = pen.size === ToolSize.Small ? 2 : pen.size === ToolSize.Medium ? 5 : 10;
-        ctx.beginPath();
-        ctx.moveTo(pen.path[0].x, pen.path[0].y);
-        pen.path.forEach((point) => {
-          ctx.lineTo(point.x, point.y);
-        });
-        ctx.stroke();
-      });
+      Pen.drawPens(pens, ctx);
 
       //draw lines
-      lines.forEach((line) => {
-        ctx.strokeStyle = line.color;
-        ctx.lineWidth = line.size === ToolSize.Small ? 2 : line.size === ToolSize.Medium ? 5 : 10;
-        if (line.variant === ToolVariant.Dashed) {
-          ctx.setLineDash([5, 3]);
-        } else if (line.variant === ToolVariant.Dotted) {
-          ctx.setLineDash([2, 2]);
-        } else {
-          ctx.setLineDash([]);
-        }
-        ctx.beginPath();
-        ctx.moveTo(line.x1, line.y1);
-        ctx.lineTo(line.x2, line.y2);
-        ctx.stroke();
-      });
+      Line.drawLines(lines, ctx);
+
+      //draw ellipses
+      Ellipse.drawEllipses(ellipses, ctx);
       drawFn();
     },
-    [lines, pens]
+    [ellipses, lines, pens]
   );
 
   const drawPen = useCallback(() => {
@@ -83,7 +65,7 @@ export default function Home() {
         new Pen(
           [{ x: mouseRef.current.x, y: mouseRef.current.y }],
           ToolColor.Black,
-          ToolSize.Medium,
+          5,
           ToolVariant.Solid
         )
       );
@@ -110,7 +92,6 @@ export default function Home() {
       ) {
         lines.pop();
       }
-
       lines.push(
         new Line(
           mouseRef.current.x,
@@ -118,7 +99,7 @@ export default function Home() {
           mouseRef.current.x,
           mouseRef.current.y,
           ToolColor.Black,
-          ToolSize.Medium,
+          5,
           ToolVariant.Solid
         )
       );
@@ -126,16 +107,56 @@ export default function Home() {
     setLines([...lines]);
   }, [lines]);
 
+  const drawCircle = useCallback(() => {
+    const canvas = canvasRef.current as HTMLCanvasElement;
+    const ctx = canvas.getContext('2d');
+
+    if (!ctx) return;
+
+    if (mouseRef.current.down) {
+      const lastEllipse = ellipses[ellipses.length - 1];
+      lastEllipse.x2 = Math.abs(mouseRef.current.x - lastEllipse.x1);
+      lastEllipse.y2 = Math.abs(mouseRef.current.y - lastEllipse.y1);
+    } else {
+      if (
+        ellipses.length > 0 &&
+        ellipses[ellipses.length - 1].x2 === 0 &&
+        ellipses[ellipses.length - 1].y2 === 0
+      ) {
+        ellipses.pop();
+      }
+      ellipses.push(
+        new Ellipse(
+          mouseRef.current.x,
+          mouseRef.current.y,
+          0,
+          0,
+          0,
+          ToolColor.Black,
+          5,
+          ToolVariant.Solid
+        )
+      );
+    }
+    setEllipses([...ellipses]);
+  }, [ellipses]);
+
   useEffect(() => {
     initCanvas();
 
     let animateId: number;
 
     const animate = () => {
-      if (selectedTool === Tools.Pen) {
-        draw(drawPen);
-      } else if (selectedTool === Tools.Line) {
-        draw(drawLine);
+      switch (selectedTool) {
+        case Tools.Pen:
+          draw(drawPen);
+          break;
+        case Tools.Line:
+          draw(drawLine);
+          break;
+        case Tools.Circle:
+          draw(drawCircle);
+          break;
       }
       animateId = requestAnimationFrame(animate);
     };
@@ -145,7 +166,7 @@ export default function Home() {
     return () => {
       window.cancelAnimationFrame(animateId);
     };
-  }, [draw, drawLine, drawPen, initCanvas, selectedTool]);
+  }, [draw, drawCircle, drawLine, drawPen, initCanvas, selectedTool]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!canvasRef.current) return;

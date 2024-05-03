@@ -1,10 +1,11 @@
-import { ToolColor, ToolSize, ToolVariant } from '@/enums/Tools';
+import { ToolColor, ToolVariant } from '@/enums/Tools';
 
-class Line {
+class Ellipse {
   x1: number;
   y1: number;
   x2: number;
   y2: number;
+  radius: number;
   color: ToolColor;
   size: number;
   variant: ToolVariant;
@@ -14,6 +15,7 @@ class Line {
     y1: number,
     x2: number,
     y2: number,
+    radius: number,
     color: ToolColor,
     size: number,
     variant: ToolVariant
@@ -22,6 +24,7 @@ class Line {
     this.y1 = y1;
     this.x2 = x2;
     this.y2 = y2;
+    this.radius = radius;
     this.color = color;
     this.size = size;
     this.variant = variant;
@@ -39,23 +42,22 @@ class Line {
     this.variant = variant;
   }
 
-  static drawLines(lines: Line[], ctx: CanvasRenderingContext2D) {
-    lines.forEach((line) => {
-      ctx.strokeStyle = line.color;
-      ctx.lineWidth = line.size;
-      if (line.variant === ToolVariant.Dashed) {
+  static drawEllipses(ellipses: Ellipse[], ctx: CanvasRenderingContext2D) {
+    ellipses.forEach((ellipse) => {
+      ctx.strokeStyle = ellipse.color;
+      ctx.lineWidth = ellipse.size;
+      if (ellipse.variant === ToolVariant.Dashed) {
         ctx.setLineDash([5, 3]);
-      } else if (line.variant === ToolVariant.Dotted) {
+      } else if (ellipse.variant === ToolVariant.Dotted) {
         ctx.setLineDash([2, 2]);
       } else {
         ctx.setLineDash([]);
       }
       ctx.beginPath();
-      ctx.moveTo(line.x1, line.y1);
-      ctx.lineTo(line.x2, line.y2);
+      ctx.ellipse(ellipse.x1, ellipse.y1, ellipse.x2, ellipse.y2, 0, 0, 2 * Math.PI);
       ctx.stroke();
     });
   }
 }
 
-export default Line;
+export default Ellipse;
