@@ -15,6 +15,7 @@ export default function Home() {
   const [lines, setLines] = useState<Line[]>([]);
   const [ellipses, setEllipses] = useState<Ellipse[]>([]);
   const [rectangles, setRectangles] = useState<Rectangle[]>([]);
+  const [diamonds, setDiamonds] = useState<Rectangle[]>([]);
 
   const [selectedTool, setSelectedTool] = useState<Tools>(Tools.Pen);
 
@@ -48,9 +49,12 @@ export default function Home() {
 
       //draw rectangles
       Rectangle.drawRectangles(rectangles, ctx);
+
+      //draw diamonds
+      Rectangle.drawDiamonds(diamonds, ctx);
       drawFn();
     },
-    [ellipses, lines, pens, rectangles]
+    [diamonds, ellipses, lines, pens, rectangles]
   );
 
   const drawPen = useCallback(() => {
@@ -179,6 +183,39 @@ export default function Home() {
     setRectangles([...rectangles]);
   }, [rectangles]);
 
+  const drawDiamond = useCallback(() => {
+    const canvas = canvasRef.current as HTMLCanvasElement;
+    const ctx = canvas.getContext('2d');
+
+    if (!ctx) return;
+
+    if (mouseRef.current.down) {
+      const lastDiamond = diamonds[diamonds.length - 1];
+      lastDiamond.x2 = mouseRef.current.x - lastDiamond.x1;
+      lastDiamond.y2 = mouseRef.current.y - lastDiamond.y1;
+    } else {
+      if (
+        diamonds.length > 0 &&
+        diamonds[diamonds.length - 1].x2 === 0 &&
+        diamonds[diamonds.length - 1].y2 === 0
+      ) {
+        diamonds.pop();
+      }
+      diamonds.push(
+        new Rectangle(
+          mouseRef.current.x,
+          mouseRef.current.y,
+          0,
+          0,
+          ToolColor.Black,
+          5,
+          ToolVariant.Solid
+        )
+      );
+    }
+    setDiamonds([...diamonds]);
+  }, [diamonds]);
+
   useEffect(() => {
     initCanvas();
 
@@ -197,6 +234,9 @@ export default function Home() {
           break;
         case Tools.Rectangle:
           draw(drawRectangle);
+          break;
+        case Tools.Diamond:
+          draw(drawDiamond);
           break;
       }
       animateId = requestAnimationFrame(animate);

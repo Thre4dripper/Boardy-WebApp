@@ -56,6 +56,27 @@ class Rectangle {
       ctx.stroke();
     });
   }
+
+  static drawDiamonds(diamonds: Rectangle[], ctx: CanvasRenderingContext2D) {
+    diamonds.forEach((diamond) => {
+      ctx.strokeStyle = diamond.color;
+      ctx.lineWidth = diamond.size;
+      if (diamond.variant === ToolVariant.Dashed) {
+        ctx.setLineDash([5, 3]);
+      } else if (diamond.variant === ToolVariant.Dotted) {
+        ctx.setLineDash([2, 2]);
+      } else {
+        ctx.setLineDash([]);
+      }
+      ctx.beginPath();
+      ctx.moveTo(diamond.x1 + diamond.x2 / 2, diamond.y1);
+      ctx.lineTo(diamond.x1 + diamond.x2, diamond.y1 + diamond.y2 / 2);
+      ctx.lineTo(diamond.x1 + diamond.x2 / 2, diamond.y1 + diamond.y2);
+      ctx.lineTo(diamond.x1, diamond.y1 + diamond.y2 / 2);
+      ctx.closePath();
+      ctx.stroke();
+    });
+  }
 }
 
 export default Rectangle;
