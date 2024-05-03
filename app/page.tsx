@@ -6,16 +6,18 @@ import ToolsCard from '@/components/ToolsCard';
 import { ToolColor, Tools, ToolVariant } from '@/enums/Tools';
 import Ellipse from '@/models/Ellipse';
 import Rectangle from '@/models/Rectangle';
+import Arrow from '@/models/Arrow';
 
 export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const mouseRef = useRef({ x: 0, y: 0, down: false });
+  const mouseRef = useRef({ x: 0, y: 0, down: false, released: false });
 
   const [pens, setPens] = useState<Pen[]>([]);
   const [lines, setLines] = useState<Line[]>([]);
   const [ellipses, setEllipses] = useState<Ellipse[]>([]);
   const [rectangles, setRectangles] = useState<Rectangle[]>([]);
   const [diamonds, setDiamonds] = useState<Rectangle[]>([]);
+  const [arrows, setArrows] = useState<Arrow[]>([]);
 
   const [selectedTool, setSelectedTool] = useState<Tools>(Tools.Pen);
 
@@ -52,9 +54,12 @@ export default function Home() {
 
       //draw diamonds
       Rectangle.drawDiamonds(diamonds, ctx);
+
+      //draw arrows
+      Arrow.drawArrows(arrows, ctx);
       drawFn();
     },
-    [diamonds, ellipses, lines, pens, rectangles]
+    [arrows, diamonds, ellipses, lines, pens, rectangles]
   );
 
   const drawPen = useCallback(() => {
@@ -216,6 +221,39 @@ export default function Home() {
     setDiamonds([...diamonds]);
   }, [diamonds]);
 
+  const drawArrow = useCallback(() => {
+    const canvas = canvasRef.current as HTMLCanvasElement;
+    const ctx = canvas.getContext('2d');
+
+    if (!ctx) return;
+
+    if (mouseRef.current.down) {
+      const lastArrow = arrows[arrows.length - 1];
+      lastArrow.x2 = mouseRef.current.x;
+      lastArrow.y2 = mouseRef.current.y;
+    } else {
+      if (
+        arrows.length > 0 &&
+        arrows[arrows.length - 1].x1 === arrows[arrows.length - 1].x2 &&
+        arrows[arrows.length - 1].y1 === arrows[arrows.length - 1].y2
+      ) {
+        arrows.pop();
+      }
+      arrows.push(
+        new Arrow(
+          mouseRef.current.x,
+          mouseRef.current.y,
+          mouseRef.current.x,
+          mouseRef.current.y,
+          ToolColor.Black,
+          5,
+          ToolVariant.Solid
+        )
+      );
+    }
+    setArrows([...arrows]);
+  }, [arrows]);
+
   useEffect(() => {
     initCanvas();
 
@@ -238,6 +276,9 @@ export default function Home() {
         case Tools.Diamond:
           draw(drawDiamond);
           break;
+        case Tools.Arrow:
+          draw(drawArrow);
+          break;
       }
       animateId = requestAnimationFrame(animate);
     };
@@ -247,7 +288,17 @@ export default function Home() {
     return () => {
       window.cancelAnimationFrame(animateId);
     };
-  }, [draw, drawCircle, drawLine, drawPen, drawRectangle, initCanvas, selectedTool]);
+  }, [
+    draw,
+    drawArrow,
+    drawCircle,
+    drawDiamond,
+    drawLine,
+    drawPen,
+    drawRectangle,
+    initCanvas,
+    selectedTool,
+  ]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!canvasRef.current) return;
@@ -258,6 +309,7 @@ export default function Home() {
       x: e.clientX - rect.left,
       y: e.clientY - rect.top,
       down: mouseRef.current.down,
+      released: mouseRef.current.released,
     };
   };
 
@@ -267,6 +319,7 @@ export default function Home() {
 
   const handleMouseUp = () => {
     mouseRef.current.down = false;
+    mouseRef.current.released = true;
   };
 
   return (
