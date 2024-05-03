@@ -1,0 +1,9 @@
+/.idea
+/.next
+.gitignore
+/.git
+/node_modules
+/public
+.prettierrc
+README.md
+
