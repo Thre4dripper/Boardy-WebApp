@@ -7,7 +7,7 @@ import { ToolColor, Tools, ToolVariant } from '@/enums/Tools';
 import Ellipse from '@/models/Ellipse';
 import Arrow from '@/models/Arrow';
 import Polygon from '@/models/Polygon';
-import PropertiesCard from '@/components/PropertiesCard';
+import PropertiesCard from '@/components/properties-card';
 
 export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -263,7 +263,7 @@ export default function Home() {
     };
   }, [draw, drawArrow, drawCircle, drawLine, drawPen, drawPolygon, initCanvas, selectedTool]);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!canvasRef.current) return;
 
     const canvas = canvasRef.current;
@@ -284,13 +284,7 @@ export default function Home() {
   };
 
   return (
-    <div
-      className={'h-full bg-white'}
-      onMouseMove={handleMouseMove}
-      onMouseDown={handleMouseDown}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp}
-    >
+    <div className={'h-full bg-white'}>
       <PropertiesCard
         selectedTool={selectedTool}
         selectedStrokeColor={selectedStrokeColor}
@@ -306,7 +300,14 @@ export default function Home() {
       />
       <ToolsCard onToolSelect={setSelectedTool} selectedTool={selectedTool} />
 
-      <canvas className={'h-full w-full'} ref={canvasRef} />
+      <canvas
+        className={'h-full w-full'}
+        ref={canvasRef}
+        onMouseMove={handleMouseMove}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+      />
     </div>
   );
 }
