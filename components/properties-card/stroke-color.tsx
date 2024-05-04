@@ -32,8 +32,8 @@ export default function StrokeColor({
     setSelectedStrokeColor(selectedStrokeColor.replace(/[^,]+(?=\))/, opacity.toString()));
   };
   return (
-    <>
-      <div className={'text-xs font-semibold'}>Stroke Color</div>
+    <div className={'flex flex-col gap-2'}>
+      <div className={'text-xs'}>Stroke Color</div>
       <div className={'flex flex-row justify-center items-center'}>
         {Object.values(ToolColor)
           .slice(0, 5)
@@ -54,7 +54,10 @@ export default function StrokeColor({
               />
             </div>
           ))}
+        <div className={'flex-1'} />
         <Divider orientation={'vertical'} className={'h-8 mx-2'} />
+        <div className={'flex-1'} />
+
         <Popover placement="right-end" showArrow={true}>
           <PopoverTrigger>
             <div
@@ -112,6 +115,6 @@ export default function StrokeColor({
           </PopoverContent>
         </Popover>
       </div>
-    </>
+    </div>
   );
 }

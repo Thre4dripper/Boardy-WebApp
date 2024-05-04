@@ -1,5 +1,6 @@
 import { Card, CardBody } from '@nextui-org/card';
 import StrokeColor from '@/components/properties-card/stroke-color';
+import StrokeWidth from '@/components/properties-card/stroke-width';
 
 interface PropertiesCardProps {
   selectedTool: string;
@@ -20,16 +21,17 @@ export default function PropertiesCard({
   selectedStrokeVariant,
   setSelectedStrokeVariant,
 }: PropertiesCardProps) {
-
   return (
-    <Card className={'absolute left-4 transform -translate-y-1/2 top-1/2'}>
+    <Card className={'w-64 absolute left-4 transform -translate-y-1/2 top-1/2'}>
       <CardBody className={'px-4 flex flex-col gap-4'}>
-        <div className={'flex flex-col gap-2'}>
           <StrokeColor
             selectedStrokeColor={selectedStrokeColor}
             setSelectedStrokeColor={setSelectedStrokeColor}
           />
-        </div>
+          <StrokeWidth
+            selectedStrokeWidth={selectedStrokeWidth}
+            setSelectedStrokeWidth={setSelectedStrokeWidth}
+          />
       </CardBody>
     </Card>
   );
