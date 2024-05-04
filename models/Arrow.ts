@@ -1,51 +1,14 @@
-import { ToolColor, ToolVariant } from '@/enums/Tools';
+import { ToolVariant } from '@/enums/Tools';
+import Line from '@/models/line';
 
-class Arrow {
-  x1: number;
-  y1: number;
-  x2: number;
-  y2: number;
-  color: ToolColor;
-  size: number;
-  variant: ToolVariant;
-
-  constructor(
-    x1: number,
-    y1: number,
-    x2: number,
-    y2: number,
-    color: ToolColor,
-    size: number,
-    variant: ToolVariant
-  ) {
-    this.x1 = x1;
-    this.y1 = y1;
-    this.x2 = x2;
-    this.y2 = y2;
-    this.color = color;
-    this.size = size;
-    this.variant = variant;
-  }
-
-  setColor(color: ToolColor) {
-    this.color = color;
-  }
-
-  setSize(size: number) {
-    this.size = size;
-  }
-
-  setVariant(variant: ToolVariant) {
-    this.variant = variant;
-  }
-
+class Arrow extends Line {
   static drawArrows(arrows: Arrow[], ctx: CanvasRenderingContext2D) {
     arrows.forEach((arrow) => {
-      ctx.strokeStyle = arrow.color;
-      ctx.lineWidth = arrow.size;
-      if (arrow.variant === ToolVariant.Dashed) {
+      ctx.strokeStyle = arrow.strokeColor;
+      ctx.lineWidth = arrow.strokeWidth;
+      if (arrow.strokeStyle === ToolVariant.Dashed) {
         ctx.setLineDash([5, 3]);
-      } else if (arrow.variant === ToolVariant.Dotted) {
+      } else if (arrow.strokeStyle === ToolVariant.Dotted) {
         ctx.setLineDash([2, 2]);
       } else {
         ctx.setLineDash([]);

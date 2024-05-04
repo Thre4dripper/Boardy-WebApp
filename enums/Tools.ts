@@ -5,17 +5,15 @@ export enum Tools {
   Diamond = 'Diamond',
   Circle = 'Circle',
   Arrow = 'Arrow',
-  Text = 'Text'
+  Text = 'Text',
 }
 
 export enum ToolColor {
-  Red = 'red',
-  Green = 'green',
-  Blue = 'blue',
-  Yellow = 'yellow',
-  Purple = 'purple',
-  Cyan = 'cyan',
-  Black = 'black',
+  Red = 'rgb(255,81,81)',
+  Green = 'rgb(102,255,112)',
+  Blue = 'rgb(109,117,255)',
+  Purple = 'rgb(236,97,236)',
+  Black = 'rgb(45,51,59)',
 }
 
 export enum ToolSize {
