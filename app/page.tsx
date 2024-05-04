@@ -152,40 +152,43 @@ export default function Home() {
     setEllipses([...ellipses]);
   }, [ellipses]);
 
-  const drawRectangle = useCallback(() => {
-    const canvas = canvasRef.current as HTMLCanvasElement;
-    const ctx = canvas.getContext('2d');
+  const drawPolygon = useCallback(
+    (sides: number, rotation: number) => {
+      const canvas = canvasRef.current as HTMLCanvasElement;
+      const ctx = canvas.getContext('2d');
 
-    if (!ctx) return;
+      if (!ctx) return;
 
-    if (mouseRef.current.down) {
-      const lastRectangle = polygons[polygons.length - 1];
-      lastRectangle.x2 = mouseRef.current.x;
-      lastRectangle.y2 = mouseRef.current.y;
-    } else {
-      if (
-        polygons.length > 0 &&
-        polygons[polygons.length - 1].x2 === polygons[polygons.length - 1].x1 &&
-        polygons[polygons.length - 1].y2 === polygons[polygons.length - 1].y1
-      ) {
-        polygons.pop();
+      if (mouseRef.current.down) {
+        const lastRectangle = polygons[polygons.length - 1];
+        lastRectangle.x2 = mouseRef.current.x;
+        lastRectangle.y2 = mouseRef.current.y;
+      } else {
+        if (
+          polygons.length > 0 &&
+          polygons[polygons.length - 1].x2 === polygons[polygons.length - 1].x1 &&
+          polygons[polygons.length - 1].y2 === polygons[polygons.length - 1].y1
+        ) {
+          polygons.pop();
+        }
+        polygons.push(
+          new Polygon(
+            mouseRef.current.x,
+            mouseRef.current.y,
+            mouseRef.current.x,
+            mouseRef.current.y,
+            ToolColor.Black,
+            2,
+            ToolVariant.Solid,
+            sides,
+            rotation
+          )
+        );
       }
-      polygons.push(
-        new Polygon(
-          mouseRef.current.x,
-          mouseRef.current.y,
-          mouseRef.current.x,
-          mouseRef.current.y,
-          ToolColor.Black,
-          2,
-          ToolVariant.Solid,
-          4,
-          0
-        )
-      );
-    }
-    setPolygons([...polygons]);
-  }, [polygons]);
+      setPolygons([...polygons]);
+    },
+    [polygons]
+  );
 
   const drawArrow = useCallback(() => {
     const canvas = canvasRef.current as HTMLCanvasElement;
@@ -237,7 +240,10 @@ export default function Home() {
           draw(drawCircle);
           break;
         case Tools.Rectangle:
-          draw(drawRectangle);
+          draw(() => drawPolygon(4, 45));
+          break;
+        case Tools.Diamond:
+          draw(() => drawPolygon(4, 0));
           break;
         case Tools.Arrow:
           draw(drawArrow);
@@ -251,7 +257,7 @@ export default function Home() {
     return () => {
       window.cancelAnimationFrame(animateId);
     };
-  }, [draw, drawArrow, drawCircle, drawLine, drawPen, drawRectangle, initCanvas, selectedTool]);
+  }, [draw, drawArrow, drawCircle, drawLine, drawPen, drawPolygon, initCanvas, selectedTool]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!canvasRef.current) return;
