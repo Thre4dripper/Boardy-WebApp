@@ -1,42 +1,18 @@
 import Point from '@/models/Point';
 import { ToolColor, ToolVariant } from '@/enums/Tools';
+import BaseShape from '@/models/BaseShape';
 
-class Pen {
+class Pen extends BaseShape {
   path: Point[] = [];
-  color: ToolColor;
-  size: number;
-  variant: ToolVariant;
 
   constructor(path: Point[], color: ToolColor, size: number, variant: ToolVariant) {
+    super(0, 0, 0, 0, color, size, variant);
     this.path = path;
-    this.color = color;
-    this.size = size;
-    this.variant = variant;
-  }
-
-  setColor(color: ToolColor) {
-    this.color = color;
-  }
-
-  setSize(size: number) {
-    this.size = size;
-  }
-
-  setVariant(variant: ToolVariant) {
-    this.variant = variant;
   }
 
   static drawPens(pens: Pen[], ctx: CanvasRenderingContext2D) {
     pens.forEach((pen) => {
-      ctx.strokeStyle = pen.color;
-      ctx.lineWidth = pen.size;
-      if (pen.variant === ToolVariant.Dashed) {
-        ctx.setLineDash([5, 3]);
-      } else if (pen.variant === ToolVariant.Dotted) {
-        ctx.setLineDash([2, 2]);
-      } else {
-        ctx.setLineDash([]);
-      }
+      BaseShape.draw(pen, ctx);
       ctx.beginPath();
       ctx.moveTo(pen.path[0].x, pen.path[0].y);
       pen.path.forEach((point) => {

@@ -1,18 +1,9 @@
-import { ToolVariant } from '@/enums/Tools';
-import Line from '@/models/line';
+import BaseShape from '@/models/BaseShape';
 
-class Ellipse extends Line {
+class Ellipse extends BaseShape {
   static drawEllipses(ellipses: Ellipse[], ctx: CanvasRenderingContext2D) {
     ellipses.forEach((ellipse) => {
-      ctx.strokeStyle = ellipse.strokeColor;
-      ctx.lineWidth = ellipse.strokeWidth;
-      if (ellipse.strokeStyle === ToolVariant.Dashed) {
-        ctx.setLineDash([5, 3]);
-      } else if (ellipse.strokeStyle === ToolVariant.Dotted) {
-        ctx.setLineDash([2, 2]);
-      } else {
-        ctx.setLineDash([]);
-      }
+      BaseShape.draw(ellipse, ctx);
       ctx.beginPath();
       const x = (ellipse.x1 + ellipse.x2) / 2;
       const y = (ellipse.y1 + ellipse.y2) / 2;

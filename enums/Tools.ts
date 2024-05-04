@@ -29,13 +29,6 @@ export enum ToolColor {
 }
 
 
-
-export enum ToolSize {
-  Small = 'sm',
-  Medium = 'md',
-  Large = 'lg',
-}
-
 export enum ToolVariant {
   Solid = 'solid',
   Dashed = 'dash',

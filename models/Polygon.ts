@@ -1,7 +1,7 @@
-import Line from '@/models/line';
 import { ToolColor, ToolVariant } from '@/enums/Tools';
+import BaseShape from '@/models/BaseShape';
 
-class Polygon extends Line {
+class Polygon extends BaseShape {
   sides: number;
   rotation: number;
 
@@ -23,15 +23,7 @@ class Polygon extends Line {
 
   static drawPolygon(polygons: Polygon[], ctx: CanvasRenderingContext2D) {
     polygons.forEach((polygon) => {
-      ctx.strokeStyle = polygon.strokeColor;
-      ctx.lineWidth = polygon.strokeWidth;
-      if (polygon.strokeStyle === ToolVariant.Dashed) {
-        ctx.setLineDash([5, 3]);
-      } else if (polygon.strokeStyle === ToolVariant.Dotted) {
-        ctx.setLineDash([2, 2]);
-      } else {
-        ctx.setLineDash([]);
-      }
+      BaseShape.draw(polygon, ctx);
       ctx.beginPath();
       const x = (polygon.x1 + polygon.x2) / 2;
       const y = (polygon.y1 + polygon.y2) / 2;

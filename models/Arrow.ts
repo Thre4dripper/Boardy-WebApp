@@ -1,18 +1,9 @@
-import { ToolVariant } from '@/enums/Tools';
-import Line from '@/models/line';
+import BaseShape from '@/models/BaseShape';
 
-class Arrow extends Line {
+class Arrow extends BaseShape {
   static drawArrows(arrows: Arrow[], ctx: CanvasRenderingContext2D) {
     arrows.forEach((arrow) => {
-      ctx.strokeStyle = arrow.strokeColor;
-      ctx.lineWidth = arrow.strokeWidth;
-      if (arrow.strokeStyle === ToolVariant.Dashed) {
-        ctx.setLineDash([5, 3]);
-      } else if (arrow.strokeStyle === ToolVariant.Dotted) {
-        ctx.setLineDash([2, 2]);
-      } else {
-        ctx.setLineDash([]);
-      }
+      BaseShape.draw(arrow, ctx);
       ctx.beginPath();
       ctx.moveTo(arrow.x1, arrow.y1);
       ctx.lineTo(arrow.x2, arrow.y2);
@@ -22,8 +13,8 @@ class Arrow extends Line {
       const angle = Math.atan2(arrow.y2 - arrow.y1, arrow.x2 - arrow.x1);
 
       // Calculate the positions of the arrowhead points
-      const arrowheadLength = 10;
-      const arrowheadWidth = 5;
+      const arrowheadLength = arrow.strokeWidth * 5;
+      const arrowheadWidth = arrowheadLength * 0.5;
       const x3 = arrow.x2 - arrowheadLength * Math.cos(angle);
       const y3 = arrow.y2 - arrowheadLength * Math.sin(angle);
       const x4 = x3 + arrowheadWidth * Math.cos(angle + Math.PI / 2);
