@@ -7,6 +7,7 @@ import { ToolColor, Tools, ToolVariant } from '@/enums/Tools';
 import Ellipse from '@/models/Ellipse';
 import Arrow from '@/models/Arrow';
 import Polygon from '@/models/Polygon';
+import PropertiesCard from '@/components/PropertiesCard';
 
 export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -19,6 +20,11 @@ export default function Home() {
   const [arrows, setArrows] = useState<Arrow[]>([]);
 
   const [selectedTool, setSelectedTool] = useState<Tools>(Tools.Pen);
+  const [selectedStrokeColor, setSelectedStrokeColor] = useState<ToolColor>(ToolColor.Black);
+  const [selectedStrokeWidth, setSelectedStrokeWidth] = useState<number>(2);
+  const [selectedStrokeVariant, setSelectedStrokeVariant] = useState<ToolVariant>(
+    ToolVariant.Solid
+  );
 
   const initCanvas = useCallback(() => {
     if (!canvasRef.current) return;
@@ -51,8 +57,6 @@ export default function Home() {
       //draw polygons
       Polygon.drawPolygon(polygons, ctx);
 
-      //draw diamonds
-
       //draw arrows
       Arrow.drawArrows(arrows, ctx);
       drawFn();
@@ -76,15 +80,15 @@ export default function Home() {
       pens.push(
         new Pen(
           [{ x: mouseRef.current.x, y: mouseRef.current.y }],
-          ToolColor.Black,
-          2,
-          ToolVariant.Solid
+          selectedStrokeColor,
+          selectedStrokeWidth,
+          selectedStrokeVariant
         )
       );
     }
 
     setPens([...pens]);
-  }, [pens]);
+  }, [pens, selectedStrokeColor, selectedStrokeVariant, selectedStrokeWidth]);
 
   const drawLine = useCallback(() => {
     const canvas = canvasRef.current as HTMLCanvasElement;
@@ -110,14 +114,14 @@ export default function Home() {
           mouseRef.current.y,
           mouseRef.current.x,
           mouseRef.current.y,
-          ToolColor.Black,
-          2,
-          ToolVariant.Solid
+          selectedStrokeColor,
+          selectedStrokeWidth,
+          selectedStrokeVariant
         )
       );
     }
     setLines([...lines]);
-  }, [lines]);
+  }, [lines, selectedStrokeColor, selectedStrokeVariant, selectedStrokeWidth]);
 
   const drawCircle = useCallback(() => {
     const canvas = canvasRef.current as HTMLCanvasElement;
@@ -143,14 +147,14 @@ export default function Home() {
           mouseRef.current.y,
           mouseRef.current.x,
           mouseRef.current.y,
-          ToolColor.Black,
-          2,
-          ToolVariant.Solid
+          selectedStrokeColor,
+          selectedStrokeWidth,
+          selectedStrokeVariant
         )
       );
     }
     setEllipses([...ellipses]);
-  }, [ellipses]);
+  }, [ellipses, selectedStrokeColor, selectedStrokeVariant, selectedStrokeWidth]);
 
   const drawPolygon = useCallback(
     (sides: number, rotation: number) => {
@@ -177,9 +181,9 @@ export default function Home() {
             mouseRef.current.y,
             mouseRef.current.x,
             mouseRef.current.y,
-            ToolColor.Black,
-            2,
-            ToolVariant.Solid,
+            selectedStrokeColor,
+            selectedStrokeWidth,
+            selectedStrokeVariant,
             sides,
             rotation
           )
@@ -187,7 +191,7 @@ export default function Home() {
       }
       setPolygons([...polygons]);
     },
-    [polygons]
+    [polygons, selectedStrokeColor, selectedStrokeVariant, selectedStrokeWidth]
   );
 
   const drawArrow = useCallback(() => {
@@ -214,14 +218,14 @@ export default function Home() {
           mouseRef.current.y,
           mouseRef.current.x,
           mouseRef.current.y,
-          ToolColor.Black,
-          2,
-          ToolVariant.Solid
+          selectedStrokeColor,
+          selectedStrokeWidth,
+          selectedStrokeVariant
         )
       );
     }
     setArrows([...arrows]);
-  }, [arrows]);
+  }, [arrows, selectedStrokeColor, selectedStrokeVariant, selectedStrokeWidth]);
 
   useEffect(() => {
     initCanvas();
@@ -287,7 +291,21 @@ export default function Home() {
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
     >
+      <PropertiesCard
+        selectedTool={selectedTool}
+        selectedStrokeColor={selectedStrokeColor}
+        setSelectedStrokeColor={(color) => {
+          setSelectedStrokeColor(color as ToolColor);
+        }}
+        selectedStrokeWidth={selectedStrokeWidth}
+        setSelectedStrokeWidth={setSelectedStrokeWidth}
+        selectedStrokeVariant={selectedStrokeVariant}
+        setSelectedStrokeVariant={(variant) => {
+          setSelectedStrokeVariant(variant as ToolVariant);
+        }}
+      />
       <ToolsCard onToolSelect={setSelectedTool} selectedTool={selectedTool} />
+
       <canvas className={'h-full w-full'} ref={canvasRef} />
     </div>
   );

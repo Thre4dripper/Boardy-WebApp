@@ -14,6 +14,23 @@
   dependencies:
     regenerator-runtime "^0.14.0"
 
+"@clack/core@^0.3.3":
+  version "0.3.4"
+  resolved "https://registry.yarnpkg.com/@clack/core/-/core-0.3.4.tgz#375e82fc8fe46650b37cab2f2ea8752c6b7f0450"
+  integrity sha512-H4hxZDXgHtWTwV3RAVenqcC4VbJZNegbBjlPvzOzCouXtS2y3sDvlO3IsbrPNWuLWPPlYVYPghQdSF64683Ldw==
+  dependencies:
+    picocolors "^1.0.0"
+    sisteransi "^1.0.5"
+
+"@clack/prompts@0.7.0":
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/@clack/prompts/-/prompts-0.7.0.tgz#6aaef48ea803d91cce12bc80811cfcb8de2e75ea"
+  integrity sha512-0MhX9/B4iL6Re04jPrttDm+BsP8y6mS7byuv0BvXgdXhbV5PdlsHt55dvNsuBCPZ7xq1oTAOOuotR9NFbQyMSA==
+  dependencies:
+    "@clack/core" "^0.3.3"
+    picocolors "^1.0.0"
+    sisteransi "^1.0.5"
+
 "@eslint-community/eslint-utils@^4.2.0":
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/@eslint-community/eslint-utils/-/eslint-utils-4.4.0.tgz#a23514e8fb9af1269d5f7788aa556798d61c6b59"
@@ -286,6 +303,16 @@
     "@react-aria/focus" "^3.16.2"
     "@react-aria/interactions" "^3.21.1"
     "@react-aria/utils" "^3.23.2"
+    "@react-types/shared" "^3.22.1"
+
+"@nextui-org/divider@^2.0.27":
+  version "2.0.27"
+  resolved "https://registry.yarnpkg.com/@nextui-org/divider/-/divider-2.0.27.tgz#3961a8f978599d66094e08e62306315163c2b3ad"
+  integrity sha512-530oEHonzaxKxspoaKnBFJ4InGqXv2FgOYzEPAMWoMmLb4/zp7e5lRipFKqRsN+zdwIkRNH6c0VJmHfyWI+bUg==
+  dependencies:
+    "@nextui-org/react-rsc-utils" "2.0.12"
+    "@nextui-org/shared-utils" "2.0.5"
+    "@nextui-org/system-rsc" "2.1.1"
     "@react-types/shared" "^3.22.1"
 
 "@nextui-org/framer-utils@2.0.18":
@@ -2489,11 +2516,12 @@ next@14.2.3:
     "@next/swc-win32-ia32-msvc" "14.2.3"
     "@next/swc-win32-x64-msvc" "14.2.3"
 
-nextui-cli@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/nextui-cli/-/nextui-cli-0.2.0.tgz#2e5c2e739cfd8d41ec35df578d8a2da67438ecc5"
-  integrity sha512-tHiz4wf9xn6furNcF37Cu20zm2Z13bCUOiZiPKNhF3xr3dfCI8UEEXAmORsJWZH7UkEJ1G9AOxboutDlg5OkGA==
+nextui-cli@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/nextui-cli/-/nextui-cli-0.2.1.tgz#8cce0394c29c8ea6c43e34e7e231f5e09afd5764"
+  integrity sha512-u50apAkjjytkRXA9so9s+Xan0OA4Q9eCZWXuAznYGtgdYS5GnIkeGVXb1JEKvEkJsivARxi+IWTe6MSFEuETpg==
   dependencies:
+    "@clack/prompts" "0.7.0"
     async-retry "1.3.3"
     chalk "5.3.0"
     commander "11.0.0"

@@ -23,11 +23,11 @@ class Polygon extends Line {
 
   static drawPolygon(polygons: Polygon[], ctx: CanvasRenderingContext2D) {
     polygons.forEach((polygon) => {
-      ctx.strokeStyle = polygon.color;
-      ctx.lineWidth = polygon.size;
-      if (polygon.variant === ToolVariant.Dashed) {
+      ctx.strokeStyle = polygon.strokeColor;
+      ctx.lineWidth = polygon.strokeWidth;
+      if (polygon.strokeStyle === ToolVariant.Dashed) {
         ctx.setLineDash([5, 3]);
-      } else if (polygon.variant === ToolVariant.Dotted) {
+      } else if (polygon.strokeStyle === ToolVariant.Dotted) {
         ctx.setLineDash([2, 2]);
       } else {
         ctx.setLineDash([]);
