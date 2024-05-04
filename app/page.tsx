@@ -5,18 +5,17 @@ import Line from '@/models/line';
 import ToolsCard from '@/components/ToolsCard';
 import { ToolColor, Tools, ToolVariant } from '@/enums/Tools';
 import Ellipse from '@/models/Ellipse';
-import Rectangle from '@/models/Rectangle';
 import Arrow from '@/models/Arrow';
+import Polygon from '@/models/Polygon';
 
 export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const mouseRef = useRef({ x: 0, y: 0, clickedX: 0, clickedY: 0, down: false, released: false });
+  const mouseRef = useRef({ x: 0, y: 0, down: false });
 
   const [pens, setPens] = useState<Pen[]>([]);
   const [lines, setLines] = useState<Line[]>([]);
   const [ellipses, setEllipses] = useState<Ellipse[]>([]);
-  const [rectangles, setRectangles] = useState<Rectangle[]>([]);
-  const [diamonds, setDiamonds] = useState<Rectangle[]>([]);
+  const [polygons, setPolygons] = useState<Polygon[]>([]);
   const [arrows, setArrows] = useState<Arrow[]>([]);
 
   const [selectedTool, setSelectedTool] = useState<Tools>(Tools.Pen);
@@ -49,17 +48,16 @@ export default function Home() {
       //draw ellipses
       Ellipse.drawEllipses(ellipses, ctx);
 
-      //draw rectangles
-      Rectangle.drawRectangles(rectangles, ctx);
+      //draw polygons
+      Polygon.drawPolygon(polygons, ctx);
 
       //draw diamonds
-      Rectangle.drawDiamonds(diamonds, ctx);
 
       //draw arrows
       Arrow.drawArrows(arrows, ctx);
       drawFn();
     },
-    [arrows, diamonds, ellipses, lines, pens, rectangles]
+    [arrows, ellipses, lines, pens, polygons]
   );
 
   const drawPen = useCallback(() => {
@@ -84,6 +82,8 @@ export default function Home() {
         )
       );
     }
+
+    setPens([...pens]);
   }, [pens]);
 
   const drawLine = useCallback(() => {
@@ -127,13 +127,13 @@ export default function Home() {
 
     if (mouseRef.current.down) {
       const lastEllipse = ellipses[ellipses.length - 1];
-      lastEllipse.x2 = Math.abs(mouseRef.current.x - lastEllipse.x1);
-      lastEllipse.y2 = Math.abs(mouseRef.current.y - lastEllipse.y1);
+      lastEllipse.x2 = mouseRef.current.x;
+      lastEllipse.y2 = mouseRef.current.y;
     } else {
       if (
         ellipses.length > 0 &&
-        ellipses[ellipses.length - 1].x2 === 0 &&
-        ellipses[ellipses.length - 1].y2 === 0
+        ellipses[ellipses.length - 1].x2 === ellipses[ellipses.length - 1].x1 &&
+        ellipses[ellipses.length - 1].y2 === ellipses[ellipses.length - 1].y1
       ) {
         ellipses.pop();
       }
@@ -141,9 +141,8 @@ export default function Home() {
         new Ellipse(
           mouseRef.current.x,
           mouseRef.current.y,
-          0,
-          0,
-          0,
+          mouseRef.current.x,
+          mouseRef.current.y,
           ToolColor.Black,
           2,
           ToolVariant.Solid
@@ -160,64 +159,33 @@ export default function Home() {
     if (!ctx) return;
 
     if (mouseRef.current.down) {
-      const lastRectangle = rectangles[rectangles.length - 1];
-      lastRectangle.x2 = mouseRef.current.x - lastRectangle.x1;
-      lastRectangle.y2 = mouseRef.current.y - lastRectangle.y1;
+      const lastRectangle = polygons[polygons.length - 1];
+      lastRectangle.x2 = mouseRef.current.x;
+      lastRectangle.y2 = mouseRef.current.y;
     } else {
       if (
-        rectangles.length > 0 &&
-        rectangles[rectangles.length - 1].x2 === 0 &&
-        rectangles[rectangles.length - 1].y2 === 0
+        polygons.length > 0 &&
+        polygons[polygons.length - 1].x2 === polygons[polygons.length - 1].x1 &&
+        polygons[polygons.length - 1].y2 === polygons[polygons.length - 1].y1
       ) {
-        rectangles.pop();
+        polygons.pop();
       }
-      rectangles.push(
-        new Rectangle(
+      polygons.push(
+        new Polygon(
           mouseRef.current.x,
           mouseRef.current.y,
-          0,
-          0,
+          mouseRef.current.x,
+          mouseRef.current.y,
           ToolColor.Black,
           2,
-          ToolVariant.Solid
+          ToolVariant.Solid,
+          4,
+          0
         )
       );
     }
-    setRectangles([...rectangles]);
-  }, [rectangles]);
-
-  const drawDiamond = useCallback(() => {
-    const canvas = canvasRef.current as HTMLCanvasElement;
-    const ctx = canvas.getContext('2d');
-
-    if (!ctx) return;
-
-    if (mouseRef.current.down) {
-      const lastDiamond = diamonds[diamonds.length - 1];
-      lastDiamond.x2 = mouseRef.current.x - lastDiamond.x1;
-      lastDiamond.y2 = mouseRef.current.y - lastDiamond.y1;
-    } else {
-      if (
-        diamonds.length > 0 &&
-        diamonds[diamonds.length - 1].x2 === 0 &&
-        diamonds[diamonds.length - 1].y2 === 0
-      ) {
-        diamonds.pop();
-      }
-      diamonds.push(
-        new Rectangle(
-          mouseRef.current.x,
-          mouseRef.current.y,
-          0,
-          0,
-          ToolColor.Black,
-          2,
-          ToolVariant.Solid
-        )
-      );
-    }
-    setDiamonds([...diamonds]);
-  }, [diamonds]);
+    setPolygons([...polygons]);
+  }, [polygons]);
 
   const drawArrow = useCallback(() => {
     const canvas = canvasRef.current as HTMLCanvasElement;
@@ -271,9 +239,6 @@ export default function Home() {
         case Tools.Rectangle:
           draw(drawRectangle);
           break;
-        case Tools.Diamond:
-          draw(drawDiamond);
-          break;
         case Tools.Arrow:
           draw(drawArrow);
           break;
@@ -286,7 +251,7 @@ export default function Home() {
     return () => {
       window.cancelAnimationFrame(animateId);
     };
-  }, [draw, drawPen, initCanvas, selectedTool]);
+  }, [draw, drawArrow, drawCircle, drawLine, drawPen, drawRectangle, initCanvas, selectedTool]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!canvasRef.current) return;
@@ -297,9 +262,6 @@ export default function Home() {
       x: e.clientX - rect.left,
       y: e.clientY - rect.top,
       down: mouseRef.current.down,
-      clickedX: mouseRef.current.down ? mouseRef.current.clickedX : mouseRef.current.x,
-      clickedY: mouseRef.current.down ? mouseRef.current.clickedY : mouseRef.current.y,
-      released: mouseRef.current.released,
     };
   };
 
@@ -309,7 +271,6 @@ export default function Home() {
 
   const handleMouseUp = () => {
     mouseRef.current.down = false;
-    mouseRef.current.released = true;
   };
 
   return (
