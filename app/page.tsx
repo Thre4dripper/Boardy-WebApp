@@ -10,7 +10,7 @@ import Polygon from '@/models/Polygon';
 import Text from '@/models/Text';
 import PropertiesCard from '@/components/properties-card';
 import { StrokeVariant } from '@/enums/StrokeVariant';
-import { StrokeColor } from '@/enums/Colors';
+import { FillColor, StrokeColor } from '@/enums/Colors';
 
 export type Mouse = {
   x: number;
@@ -23,11 +23,15 @@ export default function Home() {
   const mouseRef = useRef<Mouse>({ x: 0, y: 0, down: false });
 
   const [selectedTool, setSelectedTool] = useState<Tools>(Tools.Pen);
+
   const [selectedStrokeColor, setSelectedStrokeColor] = useState<StrokeColor>(StrokeColor.Black);
   const [selectedStrokeWidth, setSelectedStrokeWidth] = useState<number>(5);
   const [selectedStrokeVariant, setSelectedStrokeVariant] = useState<StrokeVariant>(
     StrokeVariant.Solid
   );
+
+  //shape controls
+  const [selectedFillColor, setSelectedFillColor] = useState<FillColor>(FillColor.Transparent);
 
   const initCanvas = useCallback(() => {
     if (!canvasRef.current) return;
@@ -134,7 +138,8 @@ export default function Home() {
               selectedStrokeWidth,
               selectedStrokeVariant,
               4,
-              0
+              0,
+              selectedFillColor
             )
           );
           break;
@@ -188,6 +193,7 @@ export default function Home() {
     selectedStrokeVariant,
     selectedStrokeWidth,
     selectedTool,
+    selectedFillColor,
   ]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement> | MouseEvent) => {
@@ -223,6 +229,10 @@ export default function Home() {
         selectedStrokeVariant={selectedStrokeVariant}
         setSelectedStrokeVariant={(variant) => {
           setSelectedStrokeVariant(variant as StrokeVariant);
+        }}
+        selectedFillColor={selectedFillColor}
+        setSelectedFillColor={(color) => {
+          setSelectedFillColor(color as FillColor);
         }}
       />
       <ToolsCard onToolSelect={setSelectedTool} selectedTool={selectedTool} />

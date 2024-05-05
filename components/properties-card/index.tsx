@@ -1,8 +1,9 @@
 import { Card, CardBody } from '@nextui-org/card';
-import StrokeColorControl from '@/components/properties-card/stroke-color-control';
-import StrokeWidthControl from '@/components/properties-card/stroke-width-control';
-import StrokeVariantControl from '@/components/properties-card/stroke-variant-control';
+import ColorControls from '@/components/properties-card/color-controls';
+import StrokeWidthControls from '@/components/properties-card/stroke-width-controls';
+import StrokeVariantControls from '@/components/properties-card/stroke-variant-controls';
 import { StrokeVariant } from '@/enums/StrokeVariant';
+import { Tools } from '@/enums/Tools';
 
 interface PropertiesCardProps {
   selectedTool: string;
@@ -12,6 +13,8 @@ interface PropertiesCardProps {
   setSelectedStrokeWidth: (width: number) => void;
   selectedStrokeVariant: StrokeVariant;
   setSelectedStrokeVariant: (variant: StrokeVariant) => void;
+  selectedFillColor: string;
+  setSelectedFillColor: (color: string) => void;
 }
 
 export default function PropertiesCard({
@@ -22,19 +25,29 @@ export default function PropertiesCard({
   setSelectedStrokeWidth,
   selectedStrokeVariant,
   setSelectedStrokeVariant,
+  selectedFillColor,
+  setSelectedFillColor,
 }: PropertiesCardProps) {
   return (
     <Card className={'w-64 absolute left-4 transform -translate-y-1/2 top-1/2'}>
       <CardBody className={'px-4 flex flex-col gap-4'}>
-        <StrokeColorControl
-          selectedStrokeColor={selectedStrokeColor}
-          setSelectedStrokeColor={setSelectedStrokeColor}
+        <ColorControls
+          header={'Stroke Color'}
+          selectedColor={selectedStrokeColor}
+          setSelectedColor={setSelectedStrokeColor}
         />
-        <StrokeWidthControl
+        {selectedTool === Tools.Polygon && (
+          <ColorControls
+            header={'Fill Color'}
+            selectedColor={selectedFillColor}
+            setSelectedColor={setSelectedFillColor}
+          />
+        )}
+        <StrokeWidthControls
           selectedStrokeWidth={selectedStrokeWidth}
           setSelectedStrokeWidth={setSelectedStrokeWidth}
         />
-        <StrokeVariantControl
+        <StrokeVariantControls
           selectedStrokeVariant={selectedStrokeVariant}
           setSelectedStrokeVariant={setSelectedStrokeVariant}
         />
