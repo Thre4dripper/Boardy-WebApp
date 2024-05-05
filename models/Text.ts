@@ -1,6 +1,7 @@
 import React from 'react';
 import { Mouse } from '@/app/page';
 import { StrokeColor } from '@/enums/Colors';
+import { Fonts } from '@/enums/Fonts';
 
 class Text {
   id: number;
@@ -17,7 +18,8 @@ class Text {
     y: number,
     text: string,
     fontSize: number,
-    fontColor: StrokeColor
+    fontColor: StrokeColor,
+    fontFamily: string
   ) {
     this.id = id;
     this.x = x;
@@ -25,7 +27,7 @@ class Text {
     this.text = text;
     this.fontSize = fontSize;
     this.fontColor = fontColor;
-    this.fontFamily = 'Arial';
+    this.fontFamily = fontFamily;
   }
 
   static TEXT_DIV_TAG = 'text-input';
@@ -60,13 +62,45 @@ class Text {
     Text.texts.forEach((text) => {
       ctx.font = `${text.fontSize}px ${text.fontFamily}`;
       ctx.fillStyle = text.fontColor;
+
+      let verticalOffset = 0;
+
+      switch (text.fontFamily.replace(/['"]+/g, '')) {
+        case Fonts.Arial:
+          verticalOffset = text.fontSize * 0.41;
+          break;
+        case Fonts.Verdana:
+          verticalOffset = text.fontSize * 0.36;
+          break;
+        case Fonts.Tahoma:
+          verticalOffset = text.fontSize * 0.36;
+          break;
+        case Fonts.TrebuchetMS:
+          verticalOffset = text.fontSize * 0.40;
+          break;
+        case Fonts.TimesNewRoman:
+          verticalOffset = text.fontSize * 0.41;
+          break;
+        case Fonts.Georgia:
+          verticalOffset = text.fontSize * 0.41;
+          break;
+        case Fonts.Garamond:
+          verticalOffset = text.fontSize * 0.45;
+          break;
+        case Fonts.CourierNew:
+          verticalOffset = text.fontSize * 0.48;
+          break;
+        case Fonts.BrushScriptMT:
+          verticalOffset = text.fontSize * 0.48;
+          break;
+        case Fonts.ComicSansMS:
+          verticalOffset = text.fontSize * 0.35;
+          break;
+      }
+
       const lines = text.text.split('\n');
       lines.forEach((line, index) => {
-        ctx.fillText(
-          line,
-          text.x,
-          text.y + text.fontSize * (index + 1) * 1.5 - text.fontSize * 0.45
-        );
+        ctx.fillText(line, text.x, text.y + text.fontSize * (index + 1) * 1.5 - verticalOffset);
       });
     });
   }
@@ -131,7 +165,8 @@ class Text {
         parseInt(input.style.top),
         input.innerText,
         parseInt(input.style.fontSize),
-        input.style.color as StrokeColor
+        input.style.color as StrokeColor,
+        input.style.fontFamily
       );
       Text.texts.push(text);
       parentDiv.removeChild(inputElement);
