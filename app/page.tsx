@@ -7,9 +7,11 @@ import { ToolColor, Tools, ToolVariant } from '@/enums/Tools';
 import Ellipse from '@/models/Ellipse';
 import Arrow from '@/models/Arrow';
 import Polygon from '@/models/Polygon';
+import Text from '@/models/Text';
 import PropertiesCard from '@/components/properties-card';
 
 export default function Home() {
+  const parentRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mouseRef = useRef({ x: 0, y: 0, down: false });
 
@@ -59,6 +61,9 @@ export default function Home() {
 
       //draw arrows
       Arrow.drawArrows(arrows, ctx);
+
+      //draw texts
+      Text.drawTexts(Text.texts, ctx);
       drawFn();
     },
     [arrows, ellipses, lines, pens, polygons]
@@ -227,6 +232,27 @@ export default function Home() {
     setArrows([...arrows]);
   }, [arrows, selectedStrokeColor, selectedStrokeVariant, selectedStrokeWidth]);
 
+  const drawText = useCallback(() => {
+    const canvas = canvasRef.current as HTMLCanvasElement;
+    const ctx = canvas.getContext('2d');
+
+    if (!ctx) return;
+
+    if (mouseRef.current.down) {
+      const inputElement = Text.createInput(
+        mouseRef.current.x,
+        mouseRef.current.y,
+        50,
+        selectedStrokeColor
+      );
+
+      parentRef.current?.appendChild(inputElement);
+      inputElement.focus();
+
+      mouseRef.current.down = false;
+    }
+  }, [selectedStrokeColor]);
+
   useEffect(() => {
     initCanvas();
 
@@ -252,18 +278,36 @@ export default function Home() {
         case Tools.Arrow:
           draw(drawArrow);
           break;
+        case Tools.Text:
+          draw(drawText);
+          break;
       }
       animateId = requestAnimationFrame(animate);
     };
 
     animate();
 
+    if (selectedTool === Tools.Text) {
+      Text.moveToFront(parentRef.current as HTMLElement);
+    } else {
+      Text.moveBehind(parentRef.current as HTMLElement);
+    }
     return () => {
       window.cancelAnimationFrame(animateId);
     };
-  }, [draw, drawArrow, drawCircle, drawLine, drawPen, drawPolygon, initCanvas, selectedTool]);
+  }, [
+    draw,
+    drawArrow,
+    drawCircle,
+    drawLine,
+    drawPen,
+    drawPolygon,
+    drawText,
+    initCanvas,
+    selectedTool,
+  ]);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement> | MouseEvent) => {
     if (!canvasRef.current) return;
 
     const canvas = canvasRef.current;
@@ -284,7 +328,7 @@ export default function Home() {
   };
 
   return (
-    <div className={'h-full bg-white'}>
+    <div className={'h-full bg-white relative'} ref={parentRef}>
       <PropertiesCard
         selectedTool={selectedTool}
         selectedStrokeColor={selectedStrokeColor}

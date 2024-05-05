@@ -14,17 +14,17 @@ class BaseShape {
     y1: number,
     x2: number,
     y2: number,
-    color: ToolColor,
-    size: number,
-    variant: ToolVariant
+    strokeColor: ToolColor,
+    strokeWidth: number,
+    strokeVariant: ToolVariant
   ) {
     this.x1 = x1;
     this.y1 = y1;
     this.x2 = x2;
     this.y2 = y2;
-    this.strokeColor = color;
-    this.strokeWidth = size;
-    this.strokeVariant = variant;
+    this.strokeColor = strokeColor;
+    this.strokeWidth = strokeWidth;
+    this.strokeVariant = strokeVariant;
   }
 
   static draw(shape: BaseShape, ctx: CanvasRenderingContext2D) {
