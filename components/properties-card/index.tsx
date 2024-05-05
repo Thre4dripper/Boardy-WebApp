@@ -6,6 +6,7 @@ import { Tools } from '@/enums/Tools';
 import ShapeControls from '@/components/properties-card/shape-controls';
 import ArrowHeadControls from '@/components/properties-card/arrow-head-controls';
 import StrokeVariantControls from '@/components/properties-card/stroke-variant-controls';
+import { FontFamilyControls } from '@/components/properties-card/font-family-controls';
 
 interface PropertiesCardProps {
   selectedTool: string;
@@ -110,6 +111,12 @@ export default function PropertiesCard({
             showSteps={true}
             selectedSize={selectedStrokeWidth}
             setSelectedSize={setSelectedStrokeWidth}
+          />
+        )}
+        {selectedTool === Tools.Text && (
+          <FontFamilyControls
+            selectedFontFamily={selectedFontFamily}
+            setSelectedFontFamily={setSelectedFontFamily}
           />
         )}
         {selectedTool !== Tools.Text && (
