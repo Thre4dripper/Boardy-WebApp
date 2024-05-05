@@ -1,17 +1,34 @@
 import BaseShape from '@/models/BaseShape';
 import { Mouse } from '@/app/page';
 import React from 'react';
-import { StrokeColor } from '@/enums/Colors';
+import { FillColor, StrokeColor } from '@/enums/Colors';
 import { StrokeVariant } from '@/enums/StrokeVariant';
 
 class Ellipse extends BaseShape {
+  fillColor: FillColor;
+
+  constructor(
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+    color: StrokeColor,
+    size: number,
+    variant: StrokeVariant,
+    fillColor: FillColor
+  ) {
+    super(x1, y1, x2, y2, color, size, variant);
+    this.fillColor = fillColor;
+  }
+
   private static ellipses: Ellipse[] = [];
 
   static drawCurrentEllipse(
     mouseRef: React.MutableRefObject<Mouse>,
     selectedStrokeColor: StrokeColor,
     selectedStrokeWidth: number,
-    selectedStrokeVariant: StrokeVariant
+    selectedStrokeVariant: StrokeVariant,
+    selectedFillColor: FillColor
   ) {
     const ellipses = Ellipse.ellipses;
     if (mouseRef.current.down) {
@@ -34,7 +51,8 @@ class Ellipse extends BaseShape {
           mouseRef.current.y,
           selectedStrokeColor,
           selectedStrokeWidth,
-          selectedStrokeVariant
+          selectedStrokeVariant,
+          selectedFillColor
         )
       );
     }
@@ -52,6 +70,9 @@ class Ellipse extends BaseShape {
       const radiusX = Math.abs(ellipse.x1 - ellipse.x2) / 2;
       const radiusY = Math.abs(ellipse.y1 - ellipse.y2) / 2;
       ctx.ellipse(x, y, radiusX, radiusY, 0, 0, 2 * Math.PI);
+
+      ctx.fillStyle = ellipse.fillColor;
+      ctx.fill();
       ctx.stroke();
     });
   }

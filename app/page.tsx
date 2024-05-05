@@ -125,7 +125,8 @@ export default function Home() {
               mouseRef,
               selectedStrokeColor,
               selectedStrokeWidth,
-              selectedStrokeVariant
+              selectedStrokeVariant,
+              selectedFillColor
             )
           );
           break;

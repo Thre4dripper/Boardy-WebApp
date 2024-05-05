@@ -7,7 +7,7 @@ import { StrokeVariant } from '@/enums/StrokeVariant';
 class Polygon extends BaseShape {
   sides: number;
   rotation: number;
-  fillColor: string;
+  fillColor: FillColor;
 
   constructor(
     x1: number,

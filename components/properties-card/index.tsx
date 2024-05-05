@@ -45,20 +45,22 @@ export default function PropertiesCard({
           selectedColor={selectedStrokeColor}
           setSelectedColor={setSelectedStrokeColor}
         />
-        {selectedTool === Tools.Polygon && (
+        {(selectedTool === Tools.Polygon || selectedTool === Tools.Ellipse) && (
           <>
             <ColorControls
               header={'Fill Color'}
               selectedColor={selectedFillColor}
               setSelectedColor={setSelectedFillColor}
             />
-            <ShapeControls
-              selectedShapeSides={selectedShapeSides}
-              setSelectedShapeSides={setSelectedShapeSides}
-              selectedShapeRotation={selectedShapeRotation}
-              setSelectedShapeRotation={setSelectedShapeRotation}
-            />
           </>
+        )}
+        {selectedTool === Tools.Polygon && (
+          <ShapeControls
+            selectedShapeSides={selectedShapeSides}
+            setSelectedShapeSides={setSelectedShapeSides}
+            selectedShapeRotation={selectedShapeRotation}
+            setSelectedShapeRotation={setSelectedShapeRotation}
+          />
         )}
         <StrokeWidthControls
           selectedStrokeWidth={selectedStrokeWidth}
