@@ -3,15 +3,18 @@ import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/popover';
 import { useState } from 'react';
 import { FillColor, StrokeColor } from '@/enums/Colors';
 import { Ban } from 'lucide-react';
+import { ColorControl } from '@/components/properties-card/index';
 
 interface StrokeColorProps {
   header: string;
+  type: ColorControl;
   selectedColor: string;
   setSelectedColor: (color: string) => void;
 }
 
 export default function ColorControls({
   header,
+  type,
   selectedColor,
   setSelectedColor,
 }: StrokeColorProps) {
@@ -29,10 +32,11 @@ export default function ColorControls({
     allFillColors.findIndex((color) => color === selectedColor)
   );
 
-  const selectedIndex = header === 'Stroke Color' ? baseStrokeColorIndex : baseFillColorIndex - 1;
+  const selectedIndex =
+    type === 'stroke' || type === 'text' ? baseStrokeColorIndex : baseFillColorIndex - 1;
 
   const handleColorChange = (color: string) => {
-    if (header === 'Stroke Color') {
+    if (type === 'stroke' || type === 'text') {
       const opacity = (selectedStrokeShade + 1) * 0.25;
       setSelectedColor(color.replace(/[^,]+(?=\))/, opacity.toString()));
 
@@ -48,7 +52,7 @@ export default function ColorControls({
   };
 
   const handleShadeChange = (shade: number) => {
-    if (header === 'Stroke Color') {
+    if (type === 'stroke' || type === 'text') {
       setSelectedStrokeShade(shade);
       const opacity = (shade + 1) * 0.25;
 
@@ -66,7 +70,7 @@ export default function ColorControls({
       <div className={'text-xs'}>{header}</div>
       <div className={'flex flex-row justify-center items-center'}>
         {/*Only for Fill Color, Transparent*/}
-        {header === 'Fill Color' && (
+        {type === 'fill' && (
           <div
             className={'w-8 h-8 rounded-lg cursor-pointer flex justify-center items-center'}
             style={{
@@ -79,7 +83,7 @@ export default function ColorControls({
         )}
         {/*For Both*/}
         {Object.values(StrokeColor)
-          .slice(0, header === 'Stroke Color' ? 6 : 5)
+          .slice(0, type === 'stroke' || type === 'text' ? 6 : 5)
           .map((color, index) => (
             <div
               key={index}
@@ -95,7 +99,7 @@ export default function ColorControls({
                   backgroundColor: color,
                   opacity:
                     // separate logic for stroke and fill color
-                    header === 'Stroke Color'
+                    type === 'stroke' || type === 'text'
                       ? (selectedStrokeShade + 1) * 0.25
                       : (selectedFillShade + 1) * 0.25,
                 }}
@@ -118,11 +122,11 @@ export default function ColorControls({
                   style={{
                     backgroundColor:
                       // separate logic for stroke and fill color
-                      header === 'Stroke Color'
+                      type === 'stroke' || type === 'text'
                         ? allStrokeColors[baseStrokeColorIndex]
                         : allFillColors[baseFillColorIndex],
                     opacity:
-                      header === 'Stroke Color'
+                      type === 'stroke' || type === 'text'
                         ? (selectedStrokeShade + 1) * 0.25
                         : (selectedFillShade + 1) * 0.25,
                   }}
@@ -153,7 +157,7 @@ export default function ColorControls({
                           backgroundColor: color,
                           opacity:
                             // separate logic for stroke and fill color
-                            header === 'Stroke Color'
+                            type === 'stroke' || type === 'text'
                               ? (selectedStrokeShade + 1) * 0.25
                               : (selectedFillShade + 1) * 0.25,
                         }}
@@ -171,7 +175,7 @@ export default function ColorControls({
                     style={{
                       border:
                         // separate logic for stroke and fill color
-                        header === 'Stroke Color'
+                        type === 'stroke' || type === 'text'
                           ? index === selectedStrokeShade
                             ? `1.5px solid #272e3f`
                             : 'none'
@@ -186,7 +190,7 @@ export default function ColorControls({
                       style={{
                         backgroundColor:
                           // separate logic for stroke and fill color
-                          header === 'Stroke Color'
+                          type === 'stroke' || type === 'text'
                             ? allStrokeColors[baseStrokeColorIndex]
                             : allFillColors[baseFillColorIndex],
                         opacity: (index + 1) * 0.25,

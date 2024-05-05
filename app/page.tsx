@@ -12,6 +12,7 @@ import PropertiesCard from '@/components/properties-card';
 import { StrokeVariant } from '@/enums/StrokeVariant';
 import { FillColor, StrokeColor } from '@/enums/Colors';
 import { ArrowHeads } from '@/enums/ArrowHeads';
+import { Fonts } from '@/enums/Fonts';
 
 export type Mouse = {
   x: number;
@@ -23,7 +24,7 @@ export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mouseRef = useRef<Mouse>({ x: 0, y: 0, down: false });
 
-  const [selectedTool, setSelectedTool] = useState<Tools>(Tools.Arrow);
+  const [selectedTool, setSelectedTool] = useState<Tools>(Tools.Text);
 
   const [selectedStrokeColor, setSelectedStrokeColor] = useState<StrokeColor>(StrokeColor.Black);
   const [selectedStrokeWidth, setSelectedStrokeWidth] = useState<number>(5);
@@ -41,6 +42,10 @@ export default function Home() {
   const [selectedRightArrowHead, setSelectedRightArrowHead] = useState<ArrowHeads>(
     ArrowHeads.Arrow
   );
+
+  //text controls
+  const [selectedFontSize, setSelectedFontSize] = useState<number>(20);
+  const [selectedFontFamily, setSelectedFontFamily] = useState<string>(Fonts.Arial);
 
   const initCanvas = useCallback(() => {
     if (!canvasRef.current) return;
@@ -172,7 +177,14 @@ export default function Home() {
           draw(
             canvas,
             ctx,
-            Text.drawCurrentText.bind(null, mouseRef, parentRef, 20, selectedStrokeColor, 'Arial')
+            Text.drawCurrentText.bind(
+              null,
+              mouseRef,
+              parentRef,
+              selectedFontSize,
+              selectedStrokeColor,
+              selectedFontFamily
+            )
           );
           break;
       }
@@ -210,6 +222,8 @@ export default function Home() {
     selectedShapeRotation,
     selectedLeftArrowHead,
     selectedRightArrowHead,
+    selectedFontSize,
+    selectedFontFamily,
   ]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement> | MouseEvent) => {
@@ -262,6 +276,10 @@ export default function Home() {
         setSelectedRightArrowHead={(arrowHead) => {
           setSelectedRightArrowHead(arrowHead as ArrowHeads);
         }}
+        selectedFontSize={selectedFontSize}
+        setSelectedFontSize={setSelectedFontSize}
+        selectedFontFamily={selectedFontFamily}
+        setSelectedFontFamily={setSelectedFontFamily}
       />
       <ToolsCard onToolSelect={setSelectedTool} selectedTool={selectedTool} />
 
