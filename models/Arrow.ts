@@ -41,6 +41,9 @@ class Arrow extends BaseShape {
 
   static renderAllArrows(ctx: CanvasRenderingContext2D) {
     Arrow.arrows.forEach((arrow) => {
+      if (arrow.x1 === arrow.x2 && arrow.y1 === arrow.y2) {
+        return;
+      }
       BaseShape.draw(arrow, ctx);
       ctx.beginPath();
       ctx.moveTo(arrow.x1, arrow.y1);

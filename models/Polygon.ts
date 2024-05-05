@@ -64,6 +64,9 @@ class Polygon extends BaseShape {
 
   static renderAllPolygons(ctx: CanvasRenderingContext2D) {
     Polygon.polygons.forEach((polygon) => {
+      if (polygon.x1 === polygon.x2 && polygon.y1 === polygon.y2) {
+        return;
+      }
       BaseShape.draw(polygon, ctx);
       ctx.beginPath();
       const x = (polygon.x1 + polygon.x2) / 2;

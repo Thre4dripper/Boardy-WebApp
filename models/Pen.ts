@@ -40,36 +40,25 @@ class Pen extends BaseShape {
   }
 
   static renderAllPens(ctx: CanvasRenderingContext2D) {
-
-    //pen smoothing, by using Bézier curves and catmull-rom splines
     Pen.pens.forEach((pen) => {
       BaseShape.draw(pen, ctx);
       ctx.beginPath();
       if (pen.path.length > 3) {
         ctx.moveTo(pen.path[0].x, pen.path[0].y);
-        for (let i = 0; i < pen.path.length - 1; i++) {
-          const p0 = pen.path[i === 0 ? i : i - 1];
-          const p1 = pen.path[i];
-          const p2 = pen.path[i + 1];
-          const p3 = pen.path[i + 2 === pen.path.length ? i + 1 : i + 2];
-          for (let t = 0; t <= 1; t += 0.01) {
-            const t2 = t * t;
-            const t3 = t2 * t;
-            const x =
-              0.5 *
-              (2 * p1.x +
-                (-p0.x + p2.x) * t +
-                (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * t2 +
-                (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * t3);
-            const y =
-              0.5 *
-              (2 * p1.y +
-                (-p0.y + p2.y) * t +
-                (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y) * t2 +
-                (-p0.y + 3 * p1.y - 3 * p2.y + p3.y) * t3);
-            ctx.lineTo(x, y);
-          }
+        for (let i = 1; i < pen.path.length - 2; i++) {
+          const cp1x = (pen.path[i].x + pen.path[i + 1].x) / 2;
+          const cp1y = (pen.path[i].y + pen.path[i + 1].y) / 2;
+          const cp2x = (pen.path[i + 1].x + pen.path[i + 2].x) / 2;
+          const cp2y = (pen.path[i + 1].y + pen.path[i + 2].y) / 2;
+          ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, pen.path[i + 1].x, pen.path[i + 1].y);
         }
+        // curve through the last two points
+        ctx.quadraticCurveTo(
+          pen.path[pen.path.length - 2].x,
+          pen.path[pen.path.length - 2].y,
+          pen.path[pen.path.length - 1].x,
+          pen.path[pen.path.length - 1].y
+        );
       } else if (pen.path.length === 3) {
         ctx.moveTo(pen.path[0].x, pen.path[0].y);
         ctx.quadraticCurveTo(pen.path[1].x, pen.path[1].y, pen.path[2].x, pen.path[2].y);

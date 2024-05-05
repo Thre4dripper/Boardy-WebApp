@@ -41,6 +41,9 @@ class Ellipse extends BaseShape {
 
   static renderAllEllipses(ctx: CanvasRenderingContext2D) {
     Ellipse.ellipses.forEach((ellipse) => {
+      if (ellipse.x1 === ellipse.x2 && ellipse.y1 === ellipse.y2) {
+        return;
+      }
       BaseShape.draw(ellipse, ctx);
       ctx.beginPath();
       const x = (ellipse.x1 + ellipse.x2) / 2;
