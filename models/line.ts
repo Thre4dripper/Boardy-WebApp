@@ -1,16 +1,17 @@
 import BaseShape from '@/models/BaseShape';
-import { ToolColor, ToolVariant } from '@/enums/Tools';
 import { Mouse } from '@/app/page';
 import React from 'react';
+import { StrokeColor } from '@/enums/Colors';
+import { StrokeVariant } from '@/enums/StrokeVariant';
 
 class Line extends BaseShape {
   private static lines: Line[] = [];
 
   static drawCurrentLine(
     mouseRef: React.MutableRefObject<Mouse>,
-    selectedStrokeColor: ToolColor,
+    selectedStrokeColor: StrokeColor,
     selectedStrokeWidth: number,
-    selectedStrokeVariant: ToolVariant
+    selectedStrokeVariant: StrokeVariant
   ) {
     const lines = Line.lines;
     if (mouseRef.current.down) {

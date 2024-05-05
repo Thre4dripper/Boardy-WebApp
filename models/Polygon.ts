@@ -1,7 +1,8 @@
-import { ToolColor, ToolVariant } from '@/enums/Tools';
 import BaseShape from '@/models/BaseShape';
 import { Mouse } from '@/app/page';
 import React from 'react';
+import { StrokeColor } from '@/enums/Colors';
+import { StrokeVariant } from '@/enums/StrokeVariant';
 
 class Polygon extends BaseShape {
   sides: number;
@@ -12,9 +13,9 @@ class Polygon extends BaseShape {
     y1: number,
     x2: number,
     y2: number,
-    color: ToolColor,
+    color: StrokeColor,
     size: number,
-    variant: ToolVariant,
+    variant: StrokeVariant,
     sides: number,
     rotation: number
   ) {
@@ -27,9 +28,9 @@ class Polygon extends BaseShape {
 
   static drawCurrentPolygon(
     mouseRef: React.MutableRefObject<Mouse>,
-    selectedStrokeColor: ToolColor,
+    selectedStrokeColor: StrokeColor,
     selectedStrokeWidth: number,
-    selectedStrokeVariant: ToolVariant,
+    selectedStrokeVariant: StrokeVariant,
     sides: number,
     rotation: number
   ) {

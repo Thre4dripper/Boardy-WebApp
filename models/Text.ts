@@ -1,6 +1,6 @@
-import { ToolColor } from '@/enums/Tools';
 import React from 'react';
 import { Mouse } from '@/app/page';
+import { StrokeColor } from '@/enums/Colors';
 
 class Text {
   id: number;
@@ -8,7 +8,7 @@ class Text {
   y: number;
   text: string;
   fontSize: number;
-  fontColor: ToolColor;
+  fontColor: StrokeColor;
   fontFamily: string;
 
   constructor(
@@ -17,7 +17,7 @@ class Text {
     y: number,
     text: string,
     fontSize: number,
-    fontColor: ToolColor
+    fontColor: StrokeColor
   ) {
     this.id = id;
     this.x = x;
@@ -35,8 +35,8 @@ class Text {
     mouseRef: React.MutableRefObject<Mouse>,
     parentRef: React.MutableRefObject<HTMLElement | null>,
     selectedFontSize: number,
-    selectedFontColor: ToolColor,
-    selectedFontFamily: string,
+    selectedFontColor: StrokeColor,
+    selectedFontFamily: string
   ) {
     if (mouseRef.current.down) {
       const inputElement = Text.createInput(
@@ -65,7 +65,7 @@ class Text {
         ctx.fillText(
           line,
           text.x,
-          text.y + text.fontSize * (index + 1) * 1.5 - text.fontSize * 0.45,
+          text.y + text.fontSize * (index + 1) * 1.5 - text.fontSize * 0.45
         );
       });
     });
@@ -75,7 +75,7 @@ class Text {
     x: number,
     y: number,
     fontSize: number,
-    fontColor: ToolColor,
+    fontColor: StrokeColor,
     fontFamily: string,
     screenWidth: number,
     screenHeight: number
@@ -131,7 +131,7 @@ class Text {
         parseInt(input.style.top),
         input.innerText,
         parseInt(input.style.fontSize),
-        input.style.color as ToolColor
+        input.style.color as StrokeColor
       );
       Text.texts.push(text);
       parentDiv.removeChild(inputElement);
@@ -148,7 +148,7 @@ class Text {
         text.fontColor,
         text.fontFamily,
         parentDiv.clientWidth,
-        parentDiv.clientHeight,
+        parentDiv.clientHeight
       );
       input.id = text.id.toString();
       input.innerText = text.text;

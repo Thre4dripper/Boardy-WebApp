@@ -1,27 +1,27 @@
-import { ToolVariant } from '@/enums/Tools';
 import { Button } from '@nextui-org/button';
 import { BoxSelect, Maximize, Square } from 'lucide-react';
+import { StrokeVariant } from '@/enums/StrokeVariant';
 
 interface StrokeStyleProps {
-  selectedStrokeVariant: ToolVariant;
-  setSelectedStrokeVariant: (variant: ToolVariant) => void;
+  selectedStrokeVariant: StrokeVariant;
+  setSelectedStrokeVariant: (variant: StrokeVariant) => void;
 }
 
 const variants = [
   {
-    name: ToolVariant.Solid,
+    name: StrokeVariant.Solid,
     icon: <Square />,
   },
   {
-    name: ToolVariant.Dashed,
+    name: StrokeVariant.Dashed,
     icon: <Maximize />,
   },
   {
-    name: ToolVariant.Dotted,
+    name: StrokeVariant.Dotted,
     icon: <BoxSelect />,
   },
 ];
-export default function StrokeStyle({
+export default function StrokeVariantControl({
   selectedStrokeVariant,
   setSelectedStrokeVariant,
 }: StrokeStyleProps) {
@@ -36,7 +36,7 @@ export default function StrokeStyle({
             isIconOnly
             variant={selectedStrokeVariant === variant.name ? 'solid' : 'light'}
             color={selectedStrokeVariant === variant.name ? 'secondary' : 'default'}
-            onClick={setSelectedStrokeVariant.bind(null, variant.name as ToolVariant)}
+            onClick={setSelectedStrokeVariant.bind(null, variant.name as StrokeVariant)}
           >
             {variant.icon}
           </Button>

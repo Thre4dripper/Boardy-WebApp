@@ -1,16 +1,17 @@
 import BaseShape from '@/models/BaseShape';
-import { ToolColor, ToolVariant } from '@/enums/Tools';
 import { Mouse } from '@/app/page';
 import React from 'react';
+import { StrokeColor } from '@/enums/Colors';
+import { StrokeVariant } from '@/enums/StrokeVariant';
 
 class Ellipse extends BaseShape {
   private static ellipses: Ellipse[] = [];
 
   static drawCurrentEllipse(
     mouseRef: React.MutableRefObject<Mouse>,
-    selectedStrokeColor: ToolColor,
+    selectedStrokeColor: StrokeColor,
     selectedStrokeWidth: number,
-    selectedStrokeVariant: ToolVariant
+    selectedStrokeVariant: StrokeVariant
   ) {
     const ellipses = Ellipse.ellipses;
     if (mouseRef.current.down) {

@@ -3,12 +3,14 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Pen from '@/models/Pen';
 import Line from '@/models/line';
 import ToolsCard from '@/components/ToolsCard';
-import { ToolColor, Tools, ToolVariant } from '@/enums/Tools';
+import { Tools } from '@/enums/Tools';
 import Ellipse from '@/models/Ellipse';
 import Arrow from '@/models/Arrow';
 import Polygon from '@/models/Polygon';
 import Text from '@/models/Text';
 import PropertiesCard from '@/components/properties-card';
+import { StrokeVariant } from '@/enums/StrokeVariant';
+import { StrokeColor } from '@/enums/Colors';
 
 export type Mouse = {
   x: number;
@@ -21,10 +23,10 @@ export default function Home() {
   const mouseRef = useRef<Mouse>({ x: 0, y: 0, down: false });
 
   const [selectedTool, setSelectedTool] = useState<Tools>(Tools.Pen);
-  const [selectedStrokeColor, setSelectedStrokeColor] = useState<ToolColor>(ToolColor.Black);
+  const [selectedStrokeColor, setSelectedStrokeColor] = useState<StrokeColor>(StrokeColor.Black);
   const [selectedStrokeWidth, setSelectedStrokeWidth] = useState<number>(5);
-  const [selectedStrokeVariant, setSelectedStrokeVariant] = useState<ToolVariant>(
-    ToolVariant.Solid
+  const [selectedStrokeVariant, setSelectedStrokeVariant] = useState<StrokeVariant>(
+    StrokeVariant.Solid
   );
 
   const initCanvas = useCallback(() => {
@@ -214,13 +216,13 @@ export default function Home() {
         selectedTool={selectedTool}
         selectedStrokeColor={selectedStrokeColor}
         setSelectedStrokeColor={(color) => {
-          setSelectedStrokeColor(color as ToolColor);
+          setSelectedStrokeColor(color as StrokeColor);
         }}
         selectedStrokeWidth={selectedStrokeWidth}
         setSelectedStrokeWidth={setSelectedStrokeWidth}
         selectedStrokeVariant={selectedStrokeVariant}
         setSelectedStrokeVariant={(variant) => {
-          setSelectedStrokeVariant(variant as ToolVariant);
+          setSelectedStrokeVariant(variant as StrokeVariant);
         }}
       />
       <ToolsCard onToolSelect={setSelectedTool} selectedTool={selectedTool} />

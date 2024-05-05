@@ -1,18 +1,18 @@
 import { Divider } from '@nextui-org/divider';
 import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/popover';
 import { useState } from 'react';
-import { ToolColor } from '@/enums/Tools';
+import { StrokeColor } from '@/enums/Colors';
 
 interface StrokeColorProps {
   selectedStrokeColor: string;
   setSelectedStrokeColor: (color: string) => void;
 }
 
-export default function StrokeColor({
+export default function StrokeColorControl({
   selectedStrokeColor,
   setSelectedStrokeColor,
 }: StrokeColorProps) {
-  const allColors = Object.values(ToolColor);
+  const allColors = Object.values(StrokeColor);
   const [selectedShade, setSelectedShade] = useState<number>(0);
   const [baseColorIndex, setBaseColorIndex] = useState<number>(
     allColors.findIndex((color) => color === selectedStrokeColor)
@@ -35,7 +35,7 @@ export default function StrokeColor({
     <div className={'flex flex-col gap-2'}>
       <div className={'text-xs'}>Stroke Color</div>
       <div className={'flex flex-row justify-center items-center'}>
-        {Object.values(ToolColor)
+        {Object.values(StrokeColor)
           .slice(0, 5)
           .map((color, index) => (
             <div
@@ -69,7 +69,7 @@ export default function StrokeColor({
             <div className={'flex flex-col gap-2 p-2'}>
               <div className={'text-slate-700 text-xs font-semibold '}>Colors</div>
               <div className={'grid grid-cols-4 gap-2'}>
-                {Object.values(ToolColor)
+                {Object.values(StrokeColor)
                   .slice(5)
                   .map((color, index) => (
                     <div

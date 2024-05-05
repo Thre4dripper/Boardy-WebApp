@@ -1,13 +1,14 @@
 import Point from '@/models/Point';
-import { ToolColor, ToolVariant } from '@/enums/Tools';
 import BaseShape from '@/models/BaseShape';
 import React from 'react';
 import { Mouse } from '@/app/page';
+import { StrokeColor } from '@/enums/Colors';
+import { StrokeVariant } from '@/enums/StrokeVariant';
 
 class Pen extends BaseShape {
   path: Point[] = [];
 
-  constructor(path: Point[], color: ToolColor, size: number, variant: ToolVariant) {
+  constructor(path: Point[], color: StrokeColor, size: number, variant: StrokeVariant) {
     super(0, 0, 0, 0, color, size, variant);
     this.path = path;
   }
@@ -16,9 +17,9 @@ class Pen extends BaseShape {
 
   static drawCurrentPen(
     mouseRef: React.MutableRefObject<Mouse>,
-    selectedStrokeColor: ToolColor,
+    selectedStrokeColor: StrokeColor,
     selectedStrokeWidth: number,
-    selectedStrokeVariant: ToolVariant
+    selectedStrokeVariant: StrokeVariant
   ) {
     const allPens = Pen.pens;
     if (mouseRef.current.down) {
