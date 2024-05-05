@@ -30,9 +30,14 @@ export default function Home() {
 
   const initCanvas = useCallback(() => {
     if (!canvasRef.current) return;
+    const ratio = Math.ceil(window.devicePixelRatio);
     const canvas = canvasRef.current;
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth * ratio;
+    canvas.height = window.innerHeight * ratio;
+    canvas.style.width = `${window.innerWidth}px`;
+    canvas.style.height = `${window.innerHeight}px`;
+    canvas.getContext('2d')?.scale(ratio, ratio);
+    canvas.getContext('2d')?.setTransform(ratio, 0, 0, ratio, 0, 0);
   }, []);
 
   const draw = useCallback(
@@ -242,8 +247,10 @@ export default function Home() {
       const inputElement = Text.createInput(
         mouseRef.current.x,
         mouseRef.current.y,
-        50,
-        selectedStrokeColor
+        20,
+        selectedStrokeColor,
+        parentRef.current?.clientWidth as number,
+        parentRef.current?.clientHeight as number
       );
 
       parentRef.current?.appendChild(inputElement);
@@ -288,9 +295,9 @@ export default function Home() {
     animate();
 
     if (selectedTool === Tools.Text) {
-      Text.moveToFront(parentRef.current as HTMLElement);
+      Text.convertToHtml(parentRef.current as HTMLElement);
     } else {
-      Text.moveBehind(parentRef.current as HTMLElement);
+      Text.convertToCanvas(parentRef.current as HTMLElement);
     }
     return () => {
       window.cancelAnimationFrame(animateId);
@@ -328,7 +335,7 @@ export default function Home() {
   };
 
   return (
-    <div className={'h-full bg-white relative'} ref={parentRef}>
+    <div className={'h-full bg-white relative overflow-hidden'} ref={parentRef}>
       <PropertiesCard
         selectedTool={selectedTool}
         selectedStrokeColor={selectedStrokeColor}

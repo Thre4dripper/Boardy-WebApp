@@ -30,13 +30,52 @@ class Text extends BaseShape {
         ctx.fillText(
           line,
           text.x,
-          text.y + text.fontSize * (index + 1) * 1.5 - text.fontSize / 2.5
+          text.y + text.fontSize * (index + 1) * 1.5 - text.fontSize * 0.45
         );
       });
     });
   }
 
-  static moveBehind(parentDiv: HTMLElement) {
+  static createInput(
+    x: number,
+    y: number,
+    fontSize: number,
+    color: ToolColor,
+    screenWidth: number,
+    screenHeight: number
+  ) {
+    const inputElement = document.createElement('div');
+    inputElement.className = Text.TEXT_DIV_TAG;
+    inputElement.contentEditable = 'true';
+    inputElement.style.position = 'absolute';
+    inputElement.style.top = `${y}px`;
+    inputElement.style.left = `${x}px`;
+    inputElement.style.border = 'none';
+    inputElement.style.outline = 'none';
+    inputElement.style.resize = 'auto';
+    inputElement.style.color = color;
+    inputElement.style.fontSize = `${fontSize}px`;
+    inputElement.style.fontFamily = 'Arial';
+    inputElement.style.backgroundColor = 'transparent';
+
+    inputElement.oninput = () => {
+      //   move the input element to the left if it exceeds the screen width
+      const inputWidth = inputElement.clientWidth;
+      if (x + inputWidth > screenWidth) {
+        inputElement.style.left = `${screenWidth - inputWidth}px`;
+      }
+
+      //   move the input element to the top if it exceeds the screen height
+      const inputHeight = inputElement.clientHeight;
+      if (y + inputHeight > screenHeight) {
+        inputElement.style.top = `${screenHeight - inputHeight}px`;
+      }
+    };
+
+    return inputElement;
+  }
+
+  static convertToCanvas(parentDiv: HTMLElement) {
     const allChildren = Array.from(parentDiv.children);
 
     const inputElements = allChildren.filter((child) => {
@@ -63,28 +102,17 @@ class Text extends BaseShape {
     });
   }
 
-  static createInput(x: number, y: number, fontSize: number, color: ToolColor) {
-    const inputElement = document.createElement('div');
-    inputElement.className = Text.TEXT_DIV_TAG;
-    inputElement.contentEditable = 'true';
-    inputElement.style.position = 'absolute';
-    inputElement.style.top = `${y}px`;
-    inputElement.style.left = `${x}px`;
-    inputElement.style.border = 'none';
-    inputElement.style.outline = 'none';
-    inputElement.style.resize = 'auto';
-    inputElement.style.color = color;
-    inputElement.style.fontSize = `${fontSize}px`;
-    inputElement.style.fontFamily = 'Arial';
-    inputElement.style.backgroundColor = 'transparent';
-
-    return inputElement;
-  }
-
-  static moveToFront(parentDiv: HTMLElement) {
+  static convertToHtml(parentDiv: HTMLElement) {
     //convert canvas elements to input elements
     Text.texts.forEach((text) => {
-      const input = Text.createInput(text.x, text.y, text.fontSize, text.strokeColor);
+      const input = Text.createInput(
+        text.x,
+        text.y,
+        text.fontSize,
+        text.strokeColor,
+        parentDiv.clientWidth,
+        parentDiv.clientHeight
+      );
       input.id = text.id.toString();
       input.innerText = text.text;
       parentDiv.appendChild(input);
