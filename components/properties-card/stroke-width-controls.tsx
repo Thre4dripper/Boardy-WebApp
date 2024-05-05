@@ -5,7 +5,7 @@ interface StrokeWidthProps {
   setSelectedStrokeWidth: (width: number) => void;
 }
 
-export default function StrokeWidthControl({
+export default function StrokeWidthControls({
   selectedStrokeWidth,
   setSelectedStrokeWidth,
 }: StrokeWidthProps) {

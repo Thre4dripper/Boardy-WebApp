@@ -21,7 +21,7 @@ const variants = [
     icon: <BoxSelect />,
   },
 ];
-export default function StrokeVariantControl({
+export default function StrokeVariantControls({
   selectedStrokeVariant,
   setSelectedStrokeVariant,
 }: StrokeStyleProps) {

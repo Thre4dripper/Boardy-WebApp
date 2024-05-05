@@ -17,3 +17,24 @@ export enum StrokeColor {
   Maroon = 'rgba(128,0,0,1)',
   Olive = 'rgba(128,128,0,1)',
 }
+
+export enum FillColor {
+  Transparent = 'rgba(0,0,0,0)',
+  Red = StrokeColor.Red,
+  Green = StrokeColor.Green,
+  Blue = StrokeColor.Blue,
+  Purple = StrokeColor.Purple,
+  Black = StrokeColor.Black,
+  Orange = StrokeColor.Orange,
+  Yellow = StrokeColor.Yellow,
+  Teal = StrokeColor.Teal,
+  Pink = StrokeColor.Pink,
+  Navy = StrokeColor.Navy,
+  Gold = StrokeColor.Gold,
+  Turquoise = StrokeColor.Turquoise,
+  Indigo = StrokeColor.Indigo,
+  Cyan = StrokeColor.Cyan,
+  Lime = StrokeColor.Lime,
+  Maroon = StrokeColor.Maroon,
+  Olive = StrokeColor.Olive,
+}
