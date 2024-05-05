@@ -11,6 +11,7 @@ import Text from '@/models/Text';
 import PropertiesCard from '@/components/properties-card';
 import { StrokeVariant } from '@/enums/StrokeVariant';
 import { FillColor, StrokeColor } from '@/enums/Colors';
+import { ArrowHeads } from '@/enums/ArrowHeads';
 
 export type Mouse = {
   x: number;
@@ -22,7 +23,7 @@ export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mouseRef = useRef<Mouse>({ x: 0, y: 0, down: false });
 
-  const [selectedTool, setSelectedTool] = useState<Tools>(Tools.Pen);
+  const [selectedTool, setSelectedTool] = useState<Tools>(Tools.Arrow);
 
   const [selectedStrokeColor, setSelectedStrokeColor] = useState<StrokeColor>(StrokeColor.Black);
   const [selectedStrokeWidth, setSelectedStrokeWidth] = useState<number>(5);
@@ -34,6 +35,12 @@ export default function Home() {
   const [selectedFillColor, setSelectedFillColor] = useState<FillColor>(FillColor.Transparent);
   const [selectedShapeSides, setSelectedShapeSides] = useState<number>(4);
   const [selectedShapeRotation, setSelectedShapeRotation] = useState<number>(45);
+
+  //arrow head controls
+  const [selectedLeftArrowHead, setSelectedLeftArrowHead] = useState<ArrowHeads>(ArrowHeads.Line);
+  const [selectedRightArrowHead, setSelectedRightArrowHead] = useState<ArrowHeads>(
+    ArrowHeads.Arrow
+  );
 
   const initCanvas = useCallback(() => {
     if (!canvasRef.current) return;
@@ -243,6 +250,14 @@ export default function Home() {
         setSelectedShapeSides={setSelectedShapeSides}
         selectedShapeRotation={selectedShapeRotation}
         setSelectedShapeRotation={setSelectedShapeRotation}
+        selectedLeftArrowHead={selectedLeftArrowHead}
+        setSelectedLeftArrowHead={(arrowHead) => {
+          setSelectedLeftArrowHead(arrowHead as ArrowHeads);
+        }}
+        selectedRightArrowHead={selectedRightArrowHead}
+        setSelectedRightArrowHead={(arrowHead) => {
+          setSelectedRightArrowHead(arrowHead as ArrowHeads);
+        }}
       />
       <ToolsCard onToolSelect={setSelectedTool} selectedTool={selectedTool} />
 

@@ -5,6 +5,7 @@ import StrokeVariantControls from '@/components/properties-card/stroke-variant-c
 import { StrokeVariant } from '@/enums/StrokeVariant';
 import { Tools } from '@/enums/Tools';
 import ShapeControls from '@/components/properties-card/shape-controls';
+import ArrowHeadControls from '@/components/properties-card/arrow-head-controls';
 
 interface PropertiesCardProps {
   selectedTool: string;
@@ -20,6 +21,10 @@ interface PropertiesCardProps {
   setSelectedShapeSides: (sides: number) => void;
   selectedShapeRotation: number;
   setSelectedShapeRotation: (rotation: number) => void;
+  selectedLeftArrowHead: string;
+  setSelectedLeftArrowHead: (arrowHead: string) => void;
+  selectedRightArrowHead: string;
+  setSelectedRightArrowHead: (arrowHead: string) => void;
 }
 
 export default function PropertiesCard({
@@ -36,9 +41,13 @@ export default function PropertiesCard({
   setSelectedShapeSides,
   selectedShapeRotation,
   setSelectedShapeRotation,
+  selectedLeftArrowHead,
+  setSelectedLeftArrowHead,
+  selectedRightArrowHead,
+  setSelectedRightArrowHead,
 }: PropertiesCardProps) {
   return (
-    <Card className={'w-64 absolute left-4 transform -translate-y-1/2 top-1/2'}>
+    <Card className={'w-72 absolute left-4 transform -translate-y-1/2 top-1/2'}>
       <CardBody className={'px-4 flex flex-col gap-4'}>
         <ColorControls
           header={'Stroke Color'}
@@ -70,6 +79,14 @@ export default function PropertiesCard({
           selectedStrokeVariant={selectedStrokeVariant}
           setSelectedStrokeVariant={setSelectedStrokeVariant}
         />
+        {selectedTool === Tools.Arrow && (
+          <ArrowHeadControls
+            selectedLeftArrowHead={selectedLeftArrowHead}
+            setSelectedLeftArrowHead={setSelectedLeftArrowHead}
+            selectedRightArrowHead={selectedRightArrowHead}
+            setSelectedRightArrowHead={setSelectedRightArrowHead}
+          />
+        )}
       </CardBody>
     </Card>
   );

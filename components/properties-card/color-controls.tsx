@@ -79,7 +79,7 @@ export default function ColorControls({
         )}
         {/*For Both*/}
         {Object.values(StrokeColor)
-          .slice(0, header === 'Stroke Color' ? 5 : 4)
+          .slice(0, header === 'Stroke Color' ? 6 : 5)
           .map((color, index) => (
             <div
               key={index}
