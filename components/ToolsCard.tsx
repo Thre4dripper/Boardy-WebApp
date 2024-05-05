@@ -1,5 +1,5 @@
 import { Card, CardBody } from '@nextui-org/card';
-import { Baseline, Circle, Diamond, Minus, MoveRight, PenTool, Square } from 'lucide-react';
+import { Baseline, Circle, Minus, MoveRight, PenTool, Shapes } from 'lucide-react';
 import { Button } from '@nextui-org/button';
 import { Tools } from '@/enums/Tools';
 import { Badge } from '@nextui-org/badge';
@@ -15,14 +15,10 @@ const ToolsArray = [
   },
   {
     name: Tools.Rectangle,
-    icon: <Square />,
+    icon: <Shapes />,
   },
   {
-    name: Tools.Diamond,
-    icon: <Diamond />,
-  },
-  {
-    name: Tools.Circle,
+    name: Tools.Ellipse,
     icon: <Circle />,
   },
   {

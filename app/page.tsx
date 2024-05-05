@@ -10,16 +10,15 @@ import Polygon from '@/models/Polygon';
 import Text from '@/models/Text';
 import PropertiesCard from '@/components/properties-card';
 
+export type Mouse = {
+  x: number;
+  y: number;
+  down: boolean;
+};
 export default function Home() {
   const parentRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const mouseRef = useRef({ x: 0, y: 0, down: false });
-
-  const [pens, setPens] = useState<Pen[]>([]);
-  const [lines, setLines] = useState<Line[]>([]);
-  const [ellipses, setEllipses] = useState<Ellipse[]>([]);
-  const [polygons, setPolygons] = useState<Polygon[]>([]);
-  const [arrows, setArrows] = useState<Arrow[]>([]);
+  const mouseRef = useRef<Mouse>({ x: 0, y: 0, down: false });
 
   const [selectedTool, setSelectedTool] = useState<Tools>(Tools.Pen);
   const [selectedStrokeColor, setSelectedStrokeColor] = useState<ToolColor>(ToolColor.Black);
@@ -41,252 +40,116 @@ export default function Home() {
   }, []);
 
   const draw = useCallback(
-    (drawFn: () => void) => {
-      const canvas = canvasRef.current as HTMLCanvasElement;
-
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-
-      if (!ctx) return;
-
+    (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, drawFn: () => void) => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
       ctx.lineCap = 'round';
+
       //draw pens
-      Pen.drawPens(pens, ctx);
+      Pen.renderAllPens(ctx);
 
       //draw lines
-      Line.drawLines(lines, ctx);
+      Line.renderAllLines(ctx);
 
       //draw ellipses
-      Ellipse.drawEllipses(ellipses, ctx);
-
-      //draw polygons
-      Polygon.drawPolygon(polygons, ctx);
+      Ellipse.renderAllEllipses(ctx);
 
       //draw arrows
-      Arrow.drawArrows(arrows, ctx);
+      Arrow.renderAllArrows(ctx);
+
+      //draw polygons
+      Polygon.renderAllPolygons(ctx);
 
       //draw texts
-      Text.drawTexts(Text.texts, ctx);
+      Text.renderAllTexts(ctx);
       drawFn();
     },
-    [arrows, ellipses, lines, pens, polygons]
+    []
   );
-
-  const drawPen = useCallback(() => {
-    const canvas = canvasRef.current as HTMLCanvasElement;
-    const ctx = canvas.getContext('2d');
-
-    if (!ctx) return;
-
-    if (mouseRef.current.down) {
-      const lastPen = pens[pens.length - 1];
-      lastPen.path.push({ x: mouseRef.current.x, y: mouseRef.current.y });
-    } else {
-      if (pens.length > 0 && pens[pens.length - 1].path.length <= 1) {
-        pens.pop();
-      }
-      pens.push(
-        new Pen(
-          [{ x: mouseRef.current.x, y: mouseRef.current.y }],
-          selectedStrokeColor,
-          selectedStrokeWidth,
-          selectedStrokeVariant
-        )
-      );
-    }
-
-    setPens([...pens]);
-  }, [pens, selectedStrokeColor, selectedStrokeVariant, selectedStrokeWidth]);
-
-  const drawLine = useCallback(() => {
-    const canvas = canvasRef.current as HTMLCanvasElement;
-    const ctx = canvas.getContext('2d');
-
-    if (!ctx) return;
-
-    if (mouseRef.current.down) {
-      const lastLine = lines[lines.length - 1];
-      lastLine.x2 = mouseRef.current.x;
-      lastLine.y2 = mouseRef.current.y;
-    } else {
-      if (
-        lines.length > 0 &&
-        lines[lines.length - 1].x1 === lines[lines.length - 1].x2 &&
-        lines[lines.length - 1].y1 === lines[lines.length - 1].y2
-      ) {
-        lines.pop();
-      }
-      lines.push(
-        new Line(
-          mouseRef.current.x,
-          mouseRef.current.y,
-          mouseRef.current.x,
-          mouseRef.current.y,
-          selectedStrokeColor,
-          selectedStrokeWidth,
-          selectedStrokeVariant
-        )
-      );
-    }
-    setLines([...lines]);
-  }, [lines, selectedStrokeColor, selectedStrokeVariant, selectedStrokeWidth]);
-
-  const drawCircle = useCallback(() => {
-    const canvas = canvasRef.current as HTMLCanvasElement;
-    const ctx = canvas.getContext('2d');
-
-    if (!ctx) return;
-
-    if (mouseRef.current.down) {
-      const lastEllipse = ellipses[ellipses.length - 1];
-      lastEllipse.x2 = mouseRef.current.x;
-      lastEllipse.y2 = mouseRef.current.y;
-    } else {
-      if (
-        ellipses.length > 0 &&
-        ellipses[ellipses.length - 1].x2 === ellipses[ellipses.length - 1].x1 &&
-        ellipses[ellipses.length - 1].y2 === ellipses[ellipses.length - 1].y1
-      ) {
-        ellipses.pop();
-      }
-      ellipses.push(
-        new Ellipse(
-          mouseRef.current.x,
-          mouseRef.current.y,
-          mouseRef.current.x,
-          mouseRef.current.y,
-          selectedStrokeColor,
-          selectedStrokeWidth,
-          selectedStrokeVariant
-        )
-      );
-    }
-    setEllipses([...ellipses]);
-  }, [ellipses, selectedStrokeColor, selectedStrokeVariant, selectedStrokeWidth]);
-
-  const drawPolygon = useCallback(
-    (sides: number, rotation: number) => {
-      const canvas = canvasRef.current as HTMLCanvasElement;
-      const ctx = canvas.getContext('2d');
-
-      if (!ctx) return;
-
-      if (mouseRef.current.down) {
-        const lastRectangle = polygons[polygons.length - 1];
-        lastRectangle.x2 = mouseRef.current.x;
-        lastRectangle.y2 = mouseRef.current.y;
-      } else {
-        if (
-          polygons.length > 0 &&
-          polygons[polygons.length - 1].x2 === polygons[polygons.length - 1].x1 &&
-          polygons[polygons.length - 1].y2 === polygons[polygons.length - 1].y1
-        ) {
-          polygons.pop();
-        }
-        polygons.push(
-          new Polygon(
-            mouseRef.current.x,
-            mouseRef.current.y,
-            mouseRef.current.x,
-            mouseRef.current.y,
-            selectedStrokeColor,
-            selectedStrokeWidth,
-            selectedStrokeVariant,
-            sides,
-            rotation
-          )
-        );
-      }
-      setPolygons([...polygons]);
-    },
-    [polygons, selectedStrokeColor, selectedStrokeVariant, selectedStrokeWidth]
-  );
-
-  const drawArrow = useCallback(() => {
-    const canvas = canvasRef.current as HTMLCanvasElement;
-    const ctx = canvas.getContext('2d');
-
-    if (!ctx) return;
-
-    if (mouseRef.current.down) {
-      const lastArrow = arrows[arrows.length - 1];
-      lastArrow.x2 = mouseRef.current.x;
-      lastArrow.y2 = mouseRef.current.y;
-    } else {
-      if (
-        arrows.length > 0 &&
-        arrows[arrows.length - 1].x1 === arrows[arrows.length - 1].x2 &&
-        arrows[arrows.length - 1].y1 === arrows[arrows.length - 1].y2
-      ) {
-        arrows.pop();
-      }
-      arrows.push(
-        new Arrow(
-          mouseRef.current.x,
-          mouseRef.current.y,
-          mouseRef.current.x,
-          mouseRef.current.y,
-          selectedStrokeColor,
-          selectedStrokeWidth,
-          selectedStrokeVariant
-        )
-      );
-    }
-    setArrows([...arrows]);
-  }, [arrows, selectedStrokeColor, selectedStrokeVariant, selectedStrokeWidth]);
-
-  const drawText = useCallback(() => {
-    const canvas = canvasRef.current as HTMLCanvasElement;
-    const ctx = canvas.getContext('2d');
-
-    if (!ctx) return;
-
-    if (mouseRef.current.down) {
-      const inputElement = Text.createInput(
-        mouseRef.current.x,
-        mouseRef.current.y,
-        20,
-        selectedStrokeColor,
-        parentRef.current?.clientWidth as number,
-        parentRef.current?.clientHeight as number
-      );
-
-      parentRef.current?.appendChild(inputElement);
-      inputElement.focus();
-
-      mouseRef.current.down = false;
-    }
-  }, [selectedStrokeColor]);
 
   useEffect(() => {
     initCanvas();
 
     let animateId: number;
 
+    const canvas = canvasRef.current as HTMLCanvasElement;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
     const animate = () => {
       switch (selectedTool) {
         case Tools.Pen:
-          draw(drawPen);
+          draw(
+            canvas,
+            ctx,
+            Pen.drawCurrentPen.bind(
+              null,
+              mouseRef,
+              selectedStrokeColor,
+              selectedStrokeWidth,
+              selectedStrokeVariant
+            )
+          );
           break;
         case Tools.Line:
-          draw(drawLine);
+          draw(
+            canvas,
+            ctx,
+            Line.drawCurrentLine.bind(
+              null,
+              mouseRef,
+              selectedStrokeColor,
+              selectedStrokeWidth,
+              selectedStrokeVariant
+            )
+          );
           break;
-        case Tools.Circle:
-          draw(drawCircle);
+        case Tools.Ellipse:
+          draw(
+            canvas,
+            ctx,
+            Ellipse.drawCurrentEllipse.bind(
+              null,
+              mouseRef,
+              selectedStrokeColor,
+              selectedStrokeWidth,
+              selectedStrokeVariant
+            )
+          );
           break;
         case Tools.Rectangle:
-          draw(() => drawPolygon(4, 45));
-          break;
-        case Tools.Diamond:
-          draw(() => drawPolygon(4, 0));
+          draw(
+            canvas,
+            ctx,
+            Polygon.drawCurrentPolygon.bind(
+              null,
+              mouseRef,
+              selectedStrokeColor,
+              selectedStrokeWidth,
+              selectedStrokeVariant,
+              4,
+              0
+            )
+          );
           break;
         case Tools.Arrow:
-          draw(drawArrow);
+          draw(
+            canvas,
+            ctx,
+            Arrow.drawCurrentArrow.bind(
+              null,
+              mouseRef,
+              selectedStrokeColor,
+              selectedStrokeWidth,
+              selectedStrokeVariant
+            )
+          );
           break;
         case Tools.Text:
-          draw(drawText);
+          draw(
+            canvas,
+            ctx,
+            Text.drawCurrentText.bind(null, mouseRef, parentRef, 20, selectedStrokeColor, 'Arial')
+          );
           break;
       }
       animateId = requestAnimationFrame(animate);
@@ -304,13 +167,10 @@ export default function Home() {
     };
   }, [
     draw,
-    drawArrow,
-    drawCircle,
-    drawLine,
-    drawPen,
-    drawPolygon,
-    drawText,
     initCanvas,
+    selectedStrokeColor,
+    selectedStrokeVariant,
+    selectedStrokeWidth,
     selectedTool,
   ]);
 

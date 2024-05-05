@@ -1,36 +1,71 @@
-import BaseShape from '@/models/BaseShape';
-import { ToolColor, ToolVariant } from '@/enums/Tools';
+import { ToolColor } from '@/enums/Tools';
+import React from 'react';
+import { Mouse } from '@/app/page';
 
-class Text extends BaseShape {
+class Text {
   id: number;
   x: number;
   y: number;
   text: string;
   fontSize: number;
-  static TEXT_DIV_TAG = 'text-input';
+  fontColor: ToolColor;
+  fontFamily: string;
 
-  static texts: Text[] = [];
-
-  constructor(id: number, x: number, y: number, text: string, fontSize: number, color: ToolColor) {
-    super(0, 0, 0, 0, color, 0, ToolVariant.Solid);
+  constructor(
+    id: number,
+    x: number,
+    y: number,
+    text: string,
+    fontSize: number,
+    fontColor: ToolColor
+  ) {
     this.id = id;
     this.x = x;
     this.y = y;
     this.text = text;
     this.fontSize = fontSize;
+    this.fontColor = fontColor;
+    this.fontFamily = 'Arial';
   }
 
-  static drawTexts(texts: Text[], ctx: CanvasRenderingContext2D) {
-    texts.forEach((text) => {
-      BaseShape.draw(text, ctx);
-      ctx.font = `${text.fontSize}px Arial`;
-      ctx.fillStyle = text.strokeColor;
+  static TEXT_DIV_TAG = 'text-input';
+  private static texts: Text[] = [];
+
+  static drawCurrentText(
+    mouseRef: React.MutableRefObject<Mouse>,
+    parentRef: React.MutableRefObject<HTMLElement | null>,
+    selectedFontSize: number,
+    selectedFontColor: ToolColor,
+    selectedFontFamily: string,
+  ) {
+    if (mouseRef.current.down) {
+      const inputElement = Text.createInput(
+        mouseRef.current.x,
+        mouseRef.current.y,
+        selectedFontSize,
+        selectedFontColor,
+        selectedFontFamily,
+        parentRef.current?.clientWidth as number,
+        parentRef.current?.clientHeight as number
+      );
+
+      parentRef.current?.appendChild(inputElement);
+      inputElement.focus();
+
+      mouseRef.current.down = false;
+    }
+  }
+
+  static renderAllTexts(ctx: CanvasRenderingContext2D) {
+    Text.texts.forEach((text) => {
+      ctx.font = `${text.fontSize}px ${text.fontFamily}`;
+      ctx.fillStyle = text.fontColor;
       const lines = text.text.split('\n');
       lines.forEach((line, index) => {
         ctx.fillText(
           line,
           text.x,
-          text.y + text.fontSize * (index + 1) * 1.5 - text.fontSize * 0.45
+          text.y + text.fontSize * (index + 1) * 1.5 - text.fontSize * 0.45,
         );
       });
     });
@@ -40,7 +75,8 @@ class Text extends BaseShape {
     x: number,
     y: number,
     fontSize: number,
-    color: ToolColor,
+    fontColor: ToolColor,
+    fontFamily: string,
     screenWidth: number,
     screenHeight: number
   ) {
@@ -53,9 +89,9 @@ class Text extends BaseShape {
     inputElement.style.border = 'none';
     inputElement.style.outline = 'none';
     inputElement.style.resize = 'auto';
-    inputElement.style.color = color;
+    inputElement.style.color = fontColor;
     inputElement.style.fontSize = `${fontSize}px`;
-    inputElement.style.fontFamily = 'Arial';
+    inputElement.style.fontFamily = fontFamily;
     inputElement.style.backgroundColor = 'transparent';
 
     inputElement.oninput = () => {
@@ -109,9 +145,10 @@ class Text extends BaseShape {
         text.x,
         text.y,
         text.fontSize,
-        text.strokeColor,
+        text.fontColor,
+        text.fontFamily,
         parentDiv.clientWidth,
-        parentDiv.clientHeight
+        parentDiv.clientHeight,
       );
       input.id = text.id.toString();
       input.innerText = text.text;

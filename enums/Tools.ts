@@ -3,7 +3,7 @@ export enum Tools {
   Line = 'Line',
   Rectangle = 'Rectangle',
   Diamond = 'Diamond',
-  Circle = 'Circle',
+  Ellipse = 'Ellipse',
   Arrow = 'Arrow',
   Text = 'Text',
 }

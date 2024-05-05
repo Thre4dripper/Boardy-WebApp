@@ -1,8 +1,46 @@
 import BaseShape from '@/models/BaseShape';
+import { ToolColor, ToolVariant } from '@/enums/Tools';
+import { Mouse } from '@/app/page';
+import React from 'react';
 
 class Arrow extends BaseShape {
-  static drawArrows(arrows: Arrow[], ctx: CanvasRenderingContext2D) {
-    arrows.forEach((arrow) => {
+  private static arrows: Arrow[] = [];
+
+  static drawCurrentArrow(
+    mouseRef: React.MutableRefObject<Mouse>,
+    selectedStrokeColor: ToolColor,
+    selectedStrokeWidth: number,
+    selectedStrokeVariant: ToolVariant
+  ) {
+    const arrows = Arrow.arrows;
+    if (mouseRef.current.down) {
+      const lastArrow = arrows[arrows.length - 1];
+      lastArrow.x2 = mouseRef.current.x;
+      lastArrow.y2 = mouseRef.current.y;
+    } else {
+      if (
+        arrows.length > 0 &&
+        arrows[arrows.length - 1].x1 === arrows[arrows.length - 1].x2 &&
+        arrows[arrows.length - 1].y1 === arrows[arrows.length - 1].y2
+      ) {
+        arrows.pop();
+      }
+      arrows.push(
+        new Arrow(
+          mouseRef.current.x,
+          mouseRef.current.y,
+          mouseRef.current.x,
+          mouseRef.current.y,
+          selectedStrokeColor,
+          selectedStrokeWidth,
+          selectedStrokeVariant
+        )
+      );
+    }
+  }
+
+  static renderAllArrows(ctx: CanvasRenderingContext2D) {
+    Arrow.arrows.forEach((arrow) => {
       BaseShape.draw(arrow, ctx);
       ctx.beginPath();
       ctx.moveTo(arrow.x1, arrow.y1);

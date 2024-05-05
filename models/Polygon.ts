@@ -1,5 +1,7 @@
 import { ToolColor, ToolVariant } from '@/enums/Tools';
 import BaseShape from '@/models/BaseShape';
+import { Mouse } from '@/app/page';
+import React from 'react';
 
 class Polygon extends BaseShape {
   sides: number;
@@ -21,8 +23,47 @@ class Polygon extends BaseShape {
     this.rotation = rotation;
   }
 
-  static drawPolygon(polygons: Polygon[], ctx: CanvasRenderingContext2D) {
-    polygons.forEach((polygon) => {
+  private static polygons: Polygon[] = [];
+
+  static drawCurrentPolygon(
+    mouseRef: React.MutableRefObject<Mouse>,
+    selectedStrokeColor: ToolColor,
+    selectedStrokeWidth: number,
+    selectedStrokeVariant: ToolVariant,
+    sides: number,
+    rotation: number
+  ) {
+    const polygons = Polygon.polygons;
+    if (mouseRef.current.down) {
+      const lastPolygon = polygons[polygons.length - 1];
+      lastPolygon.x2 = mouseRef.current.x;
+      lastPolygon.y2 = mouseRef.current.y;
+    } else {
+      if (
+        polygons.length > 0 &&
+        polygons[polygons.length - 1].x1 === polygons[polygons.length - 1].x2 &&
+        polygons[polygons.length - 1].y1 === polygons[polygons.length - 1].y2
+      ) {
+        polygons.pop();
+      }
+      polygons.push(
+        new Polygon(
+          mouseRef.current.x,
+          mouseRef.current.y,
+          mouseRef.current.x,
+          mouseRef.current.y,
+          selectedStrokeColor,
+          selectedStrokeWidth,
+          selectedStrokeVariant,
+          sides,
+          rotation
+        )
+      );
+    }
+  }
+
+  static renderAllPolygons(ctx: CanvasRenderingContext2D) {
+    Polygon.polygons.forEach((polygon) => {
       BaseShape.draw(polygon, ctx);
       ctx.beginPath();
       const x = (polygon.x1 + polygon.x2) / 2;
