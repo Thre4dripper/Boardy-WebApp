@@ -22,7 +22,7 @@ export default function Home() {
 
   const [selectedTool, setSelectedTool] = useState<Tools>(Tools.Pen);
   const [selectedStrokeColor, setSelectedStrokeColor] = useState<ToolColor>(ToolColor.Black);
-  const [selectedStrokeWidth, setSelectedStrokeWidth] = useState<number>(2);
+  const [selectedStrokeWidth, setSelectedStrokeWidth] = useState<number>(5);
   const [selectedStrokeVariant, setSelectedStrokeVariant] = useState<ToolVariant>(
     ToolVariant.Solid
   );
@@ -35,14 +35,19 @@ export default function Home() {
     canvas.height = window.innerHeight * ratio;
     canvas.style.width = `${window.innerWidth}px`;
     canvas.style.height = `${window.innerHeight}px`;
-    canvas.getContext('2d')?.scale(ratio, ratio);
-    canvas.getContext('2d')?.setTransform(ratio, 0, 0, ratio, 0, 0);
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    ctx.scale(ratio, ratio);
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
   }, []);
 
   const draw = useCallback(
     (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, drawFn: () => void) => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
 
       //draw pens
       Pen.renderAllPens(ctx);
