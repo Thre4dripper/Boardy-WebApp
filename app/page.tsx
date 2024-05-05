@@ -162,7 +162,9 @@ export default function Home() {
               mouseRef,
               selectedStrokeColor,
               selectedStrokeWidth,
-              selectedStrokeVariant
+              selectedStrokeVariant,
+              selectedLeftArrowHead,
+              selectedRightArrowHead
             )
           );
           break;
@@ -206,6 +208,8 @@ export default function Home() {
     selectedFillColor,
     selectedShapeSides,
     selectedShapeRotation,
+    selectedLeftArrowHead,
+    selectedRightArrowHead,
   ]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement> | MouseEvent) => {
