@@ -1,7 +1,7 @@
 export enum Tools {
   Pen = 'Pen',
   Line = 'Line',
-  Rectangle = 'Rectangle',
+  Polygon = 'Polygon',
   Diamond = 'Diamond',
   Ellipse = 'Ellipse',
   Arrow = 'Arrow',

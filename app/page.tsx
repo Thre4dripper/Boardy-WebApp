@@ -121,7 +121,7 @@ export default function Home() {
             )
           );
           break;
-        case Tools.Rectangle:
+        case Tools.Polygon:
           draw(
             canvas,
             ctx,
@@ -167,6 +167,15 @@ export default function Home() {
     } else {
       Text.convertToCanvas(parentRef.current as HTMLElement);
     }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === '1') setSelectedTool(Tools.Pen);
+      if (e.key === '2') setSelectedTool(Tools.Line);
+      if (e.key === '3') setSelectedTool(Tools.Polygon);
+      if (e.key === '4') setSelectedTool(Tools.Ellipse);
+      if (e.key === '5') setSelectedTool(Tools.Arrow);
+      if (e.key === '6') setSelectedTool(Tools.Text);
+    });
     return () => {
       window.cancelAnimationFrame(animateId);
     };

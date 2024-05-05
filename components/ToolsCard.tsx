@@ -14,7 +14,7 @@ const ToolsArray = [
     icon: <Minus />,
   },
   {
-    name: Tools.Rectangle,
+    name: Tools.Polygon,
     icon: <Shapes />,
   },
   {
@@ -44,7 +44,7 @@ export default function ToolsCard({ onToolSelect, selectedTool }: ToolsProps) {
           <Badge
             key={index}
             color="secondary"
-            content={index}
+            content={index + 1}
             size={'sm'}
             isOneChar
             placement={'bottom-right'}
