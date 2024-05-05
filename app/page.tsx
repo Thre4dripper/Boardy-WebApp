@@ -32,6 +32,8 @@ export default function Home() {
 
   //shape controls
   const [selectedFillColor, setSelectedFillColor] = useState<FillColor>(FillColor.Transparent);
+  const [selectedShapeSides, setSelectedShapeSides] = useState<number>(4);
+  const [selectedShapeRotation, setSelectedShapeRotation] = useState<number>(45);
 
   const initCanvas = useCallback(() => {
     if (!canvasRef.current) return;
@@ -137,8 +139,8 @@ export default function Home() {
               selectedStrokeColor,
               selectedStrokeWidth,
               selectedStrokeVariant,
-              4,
-              0,
+              selectedShapeSides,
+              selectedShapeRotation,
               selectedFillColor
             )
           );
@@ -194,6 +196,8 @@ export default function Home() {
     selectedStrokeWidth,
     selectedTool,
     selectedFillColor,
+    selectedShapeSides,
+    selectedShapeRotation,
   ]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement> | MouseEvent) => {
@@ -234,6 +238,10 @@ export default function Home() {
         setSelectedFillColor={(color) => {
           setSelectedFillColor(color as FillColor);
         }}
+        selectedShapeSides={selectedShapeSides}
+        setSelectedShapeSides={setSelectedShapeSides}
+        selectedShapeRotation={selectedShapeRotation}
+        setSelectedShapeRotation={setSelectedShapeRotation}
       />
       <ToolsCard onToolSelect={setSelectedTool} selectedTool={selectedTool} />
 

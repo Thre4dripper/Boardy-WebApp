@@ -4,6 +4,7 @@ import StrokeWidthControls from '@/components/properties-card/stroke-width-contr
 import StrokeVariantControls from '@/components/properties-card/stroke-variant-controls';
 import { StrokeVariant } from '@/enums/StrokeVariant';
 import { Tools } from '@/enums/Tools';
+import ShapeControls from '@/components/properties-card/shape-controls';
 
 interface PropertiesCardProps {
   selectedTool: string;
@@ -15,6 +16,10 @@ interface PropertiesCardProps {
   setSelectedStrokeVariant: (variant: StrokeVariant) => void;
   selectedFillColor: string;
   setSelectedFillColor: (color: string) => void;
+  selectedShapeSides: number;
+  setSelectedShapeSides: (sides: number) => void;
+  selectedShapeRotation: number;
+  setSelectedShapeRotation: (rotation: number) => void;
 }
 
 export default function PropertiesCard({
@@ -27,6 +32,10 @@ export default function PropertiesCard({
   setSelectedStrokeVariant,
   selectedFillColor,
   setSelectedFillColor,
+  selectedShapeSides,
+  setSelectedShapeSides,
+  selectedShapeRotation,
+  setSelectedShapeRotation,
 }: PropertiesCardProps) {
   return (
     <Card className={'w-64 absolute left-4 transform -translate-y-1/2 top-1/2'}>
@@ -37,11 +46,19 @@ export default function PropertiesCard({
           setSelectedColor={setSelectedStrokeColor}
         />
         {selectedTool === Tools.Polygon && (
-          <ColorControls
-            header={'Fill Color'}
-            selectedColor={selectedFillColor}
-            setSelectedColor={setSelectedFillColor}
-          />
+          <>
+            <ColorControls
+              header={'Fill Color'}
+              selectedColor={selectedFillColor}
+              setSelectedColor={setSelectedFillColor}
+            />
+            <ShapeControls
+              selectedShapeSides={selectedShapeSides}
+              setSelectedShapeSides={setSelectedShapeSides}
+              selectedShapeRotation={selectedShapeRotation}
+              setSelectedShapeRotation={setSelectedShapeRotation}
+            />
+          </>
         )}
         <StrokeWidthControls
           selectedStrokeWidth={selectedStrokeWidth}
