@@ -4,41 +4,49 @@ import { StrokeColor } from '@/enums/Colors';
 import { Fonts } from '@/enums/Fonts';
 
 class Text {
-  id: number;
   x: number;
   y: number;
   text: string;
   fontSize: number;
   fontColor: StrokeColor;
   fontFamily: string;
+  timeStamp: number;
+  isSelected: boolean = false;
+
+  setIsSelected(isSelected: boolean) {
+    this.isSelected = isSelected;
+  }
 
   constructor(
-    id: number,
     x: number,
     y: number,
     text: string,
     fontSize: number,
     fontColor: StrokeColor,
-    fontFamily: string
+    fontFamily: string,
+    timeStamp: number
   ) {
-    this.id = id;
     this.x = x;
     this.y = y;
     this.text = text;
     this.fontSize = fontSize;
     this.fontColor = fontColor;
     this.fontFamily = fontFamily;
+    this.timeStamp = timeStamp;
   }
 
   static TEXT_DIV_TAG = 'text-input';
   private static texts: Text[] = [];
+
+  static getAllTexts = () => Text.texts;
 
   static drawCurrentText(
     mouseRef: React.MutableRefObject<Mouse>,
     parentRef: React.MutableRefObject<HTMLElement | null>,
     selectedFontSize: number,
     selectedFontColor: StrokeColor,
-    selectedFontFamily: string
+    selectedFontFamily: string,
+    timeStamp: number
   ) {
     if (mouseRef.current.down) {
       const inputElement = Text.createInput(
@@ -48,7 +56,8 @@ class Text {
         selectedFontColor,
         selectedFontFamily,
         parentRef.current?.clientWidth as number,
-        parentRef.current?.clientHeight as number
+        parentRef.current?.clientHeight as number,
+        timeStamp
       );
 
       parentRef.current?.appendChild(inputElement);
@@ -76,7 +85,7 @@ class Text {
           verticalOffset = text.fontSize * 0.36;
           break;
         case Fonts.TrebuchetMS:
-          verticalOffset = text.fontSize * 0.40;
+          verticalOffset = text.fontSize * 0.4;
           break;
         case Fonts.TimesNewRoman:
           verticalOffset = text.fontSize * 0.41;
@@ -112,7 +121,8 @@ class Text {
     fontColor: StrokeColor,
     fontFamily: string,
     screenWidth: number,
-    screenHeight: number
+    screenHeight: number,
+    timeStamp: number
   ) {
     const inputElement = document.createElement('div');
     inputElement.className = Text.TEXT_DIV_TAG;
@@ -127,6 +137,7 @@ class Text {
     inputElement.style.fontSize = `${fontSize}px`;
     inputElement.style.fontFamily = fontFamily;
     inputElement.style.backgroundColor = 'transparent';
+    inputElement.dataset.timeStamp = timeStamp.toString();
 
     inputElement.oninput = () => {
       //   move the input element to the left if it exceeds the screen width
@@ -160,13 +171,13 @@ class Text {
         return;
       }
       const text = new Text(
-        parseInt(input.id),
         parseInt(input.style.left),
         parseInt(input.style.top),
         input.innerText,
         parseInt(input.style.fontSize),
         input.style.color as StrokeColor,
-        input.style.fontFamily
+        input.style.fontFamily,
+        parseInt(input.dataset.timeStamp!)
       );
       Text.texts.push(text);
       parentDiv.removeChild(inputElement);
@@ -183,9 +194,9 @@ class Text {
         text.fontColor,
         text.fontFamily,
         parentDiv.clientWidth,
-        parentDiv.clientHeight
+        parentDiv.clientHeight,
+        text.timeStamp
       );
-      input.id = text.id.toString();
       input.innerText = text.text;
       parentDiv.appendChild(input);
     });

@@ -23,6 +23,8 @@ class Ellipse extends BaseShape {
 
   private static ellipses: Ellipse[] = [];
 
+  static getAllEllipses = () => Ellipse.ellipses;
+
   static drawCurrentEllipse(
     mouseRef: React.MutableRefObject<Mouse>,
     selectedStrokeColor: StrokeColor,

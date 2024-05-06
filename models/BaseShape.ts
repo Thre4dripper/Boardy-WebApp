@@ -9,6 +9,7 @@ class BaseShape {
   strokeColor: StrokeColor;
   strokeWidth: number;
   strokeVariant: StrokeVariant;
+  timeStamp: number;
 
   constructor(
     x1: number,
@@ -26,6 +27,7 @@ class BaseShape {
     this.strokeColor = strokeColor;
     this.strokeWidth = strokeWidth;
     this.strokeVariant = strokeVariant;
+    this.timeStamp = Date.now();
   }
 
   static draw(shape: BaseShape, ctx: CanvasRenderingContext2D) {

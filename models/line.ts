@@ -7,6 +7,8 @@ import { StrokeVariant } from '@/enums/StrokeVariant';
 class Line extends BaseShape {
   private static lines: Line[] = [];
 
+  static getAllLines = () => Line.lines;
+
   static drawCurrentLine(
     mouseRef: React.MutableRefObject<Mouse>,
     selectedStrokeColor: StrokeColor,

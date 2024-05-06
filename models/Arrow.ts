@@ -27,6 +27,8 @@ class Arrow extends BaseShape {
 
   private static arrows: Arrow[] = [];
 
+  static getAllArrows = () => Arrow.arrows;
+
   static drawCurrentArrow(
     mouseRef: React.MutableRefObject<Mouse>,
     selectedStrokeColor: StrokeColor,

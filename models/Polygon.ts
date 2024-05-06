@@ -29,6 +29,8 @@ class Polygon extends BaseShape {
 
   private static polygons: Polygon[] = [];
 
+  static getAllPolygons = () => Polygon.polygons;
+
   static drawCurrentPolygon(
     mouseRef: React.MutableRefObject<Mouse>,
     selectedStrokeColor: StrokeColor,
@@ -88,9 +90,6 @@ class Polygon extends BaseShape {
           const a = ((d + polygon.rotation) * Math.PI) / 180;
           const x1 = x + radiusX * Math.cos(a);
           const y1 = y + radiusY * Math.sin(a);
-          const a2 = ((d + polygon.rotation + 360 / polygon.sides) * Math.PI) / 180;
-          const x2 = x + radiusX * Math.cos(a2);
-          const y2 = y + radiusY * Math.sin(a2);
           if (d === 0) {
             path.moveTo(x1, y1);
           } else {

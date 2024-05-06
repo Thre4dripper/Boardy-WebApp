@@ -15,6 +15,8 @@ class Pen extends BaseShape {
 
   private static pens: Pen[] = [];
 
+  static getAllPens = () => Pen.pens;
+
   static drawCurrentPen(
     mouseRef: React.MutableRefObject<Mouse>,
     selectedStrokeColor: StrokeColor,
