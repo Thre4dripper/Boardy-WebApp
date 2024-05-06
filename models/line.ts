@@ -43,9 +43,7 @@ class Line extends BaseShape {
     }
   }
 
-  static renderAllLines(
-    ctx: CanvasRenderingContext2D
-  ) {
+  static renderAllLines(ctx: CanvasRenderingContext2D) {
     Line.lines.forEach((line) => {
       if (line.x1 === line.x2 && line.y1 === line.y2) {
         return;
@@ -73,7 +71,7 @@ class Line extends BaseShape {
       Math.sqrt(Math.pow(y2 - y1, 2) + Math.pow(x2 - x1, 2));
 
     return (
-      dist < 10 &&
+      dist < line.strokeWidth + 2 &&
       x >= Math.min(x1, x2) &&
       x <= Math.max(x1, x2) &&
       y >= Math.min(y1, y2) &&

@@ -4,6 +4,7 @@ import React from 'react';
 import { StrokeColor } from '@/enums/Colors';
 import { StrokeVariant } from '@/enums/StrokeVariant';
 import { ArrowHeads } from '@/enums/ArrowHeads';
+import Selection from '@/models/Selection';
 
 class Arrow extends BaseShape {
   leftArrowHead: ArrowHeads;
@@ -177,7 +178,26 @@ class Arrow extends BaseShape {
         ctx.fill(path);
         ctx.stroke(path);
       }
+
+      if (arrow.isSelected) {
+        Selection.drawLineSelectionBox(ctx, arrow);
+      }
     });
+  }
+
+  static isArrowHovered(arrow: Arrow, mouseRef: React.MutableRefObject<Mouse>) {
+    const { x1, y1, x2, y2 } = arrow;
+    const { x, y } = mouseRef.current;
+    const dist =
+      Math.abs((y2 - y1) * x - (x2 - x1) * y + x2 * y1 - y2 * x1) /
+      Math.sqrt(Math.pow(y2 - y1, 2) + Math.pow(x2 - x1, 2));
+    return (
+      dist < arrow.strokeWidth + 2 &&
+      x >= Math.min(x1, x2) &&
+      x <= Math.max(x1, x2) &&
+      y >= Math.min(y1, y2) &&
+      y <= Math.max(y1, y2)
+    );
   }
 }
 

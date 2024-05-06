@@ -80,7 +80,7 @@ class Pen extends BaseShape {
 
   static isPenHovered(pen: Pen, mouseRef: React.MutableRefObject<Mouse>) {
     const path = pen.path;
-    const threshold = 5; // distance threshold
+    const threshold = pen.strokeWidth + 2; // distance threshold
 
     for (let i = 0; i < path.length - 1; i++) {
       const { x: x1, y: y1 } = path[i];

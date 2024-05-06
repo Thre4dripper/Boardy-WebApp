@@ -3,6 +3,7 @@ import React from 'react';
 import { Mouse } from '@/app/page';
 import Store from '@/store/Store';
 import Pen from '@/models/Pen';
+import Arrow from '@/models/Arrow';
 
 class Selection {
   static drawLineSelectionBox(ctx: CanvasRenderingContext2D, line: Line) {
@@ -64,6 +65,17 @@ class Selection {
             //remove all selections
             Selection.clearAllSelections();
             (shape as Line).setIsSelected(true);
+          }
+          break;
+        case Arrow:
+          if (Arrow.isArrowHovered(shape as Arrow, mouseRef)) {
+            Selection.drawLineSelectionBox(ctx, shape as Arrow);
+          }
+
+          if (mouseRef.current.down && Arrow.isArrowHovered(shape as Arrow, mouseRef)) {
+            //remove all selections
+            Selection.clearAllSelections();
+            (shape as Arrow).setIsSelected(true);
           }
           break;
         default:
