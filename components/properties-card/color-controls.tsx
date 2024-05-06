@@ -43,6 +43,11 @@ export default function ColorControls({
       const index = allStrokeColors.findIndex((c) => c === color);
       setBaseStrokeColorIndex(index);
     } else {
+      //in case of transparent color, just set the color, as there is no shade
+      if (color === FillColor.Transparent) {
+        setSelectedColor(color);
+        return;
+      }
       const opacity = (selectedFillShade + 1) * 0.25;
       setSelectedColor(color.replace(/[^,]+(?=\))/, opacity.toString()));
 
