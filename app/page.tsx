@@ -13,6 +13,7 @@ import { StrokeVariant } from '@/enums/StrokeVariant';
 import { FillColor, StrokeColor } from '@/enums/Colors';
 import { ArrowHeads } from '@/enums/ArrowHeads';
 import { Fonts } from '@/enums/Fonts';
+import Selection from '@/models/Selection';
 
 export type Mouse = {
   x: number;
@@ -102,6 +103,10 @@ export default function Home() {
 
     const animate = () => {
       switch (selectedTool) {
+        case Tools.Select:
+          canvas.style.cursor = 'default';
+          draw(canvas, ctx, Selection.drawSelectionBoxes.bind(null, ctx, mouseRef));
+          break;
         case Tools.Pen:
           draw(
             canvas,
@@ -204,6 +209,10 @@ export default function Home() {
       Text.convertToHtml(parentRef.current as HTMLElement);
     } else {
       Text.convertToCanvas(parentRef.current as HTMLElement);
+    }
+
+    if(selectedTool !== Tools.Select) {
+      Selection.clearAllSelections();
     }
 
     document.addEventListener('keydown', (e) => {

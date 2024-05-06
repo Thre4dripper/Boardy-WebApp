@@ -10,6 +10,11 @@ class BaseShape {
   strokeWidth: number;
   strokeVariant: StrokeVariant;
   timeStamp: number;
+  isSelected: boolean = false;
+
+  setIsSelected(isSelected: boolean) {
+    this.isSelected = isSelected;
+  }
 
   constructor(
     x1: number,

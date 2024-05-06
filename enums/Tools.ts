@@ -1,4 +1,5 @@
 export enum Tools {
+  Select = 'Select',
   Pen = 'Pen',
   Line = 'Line',
   Polygon = 'Polygon',

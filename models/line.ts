@@ -3,6 +3,7 @@ import { Mouse } from '@/app/page';
 import React from 'react';
 import { StrokeColor } from '@/enums/Colors';
 import { StrokeVariant } from '@/enums/StrokeVariant';
+import Selection from '@/models/Selection';
 
 class Line extends BaseShape {
   private static lines: Line[] = [];
@@ -42,7 +43,9 @@ class Line extends BaseShape {
     }
   }
 
-  static renderAllLines(ctx: CanvasRenderingContext2D) {
+  static renderAllLines(
+    ctx: CanvasRenderingContext2D
+  ) {
     Line.lines.forEach((line) => {
       if (line.x1 === line.x2 && line.y1 === line.y2) {
         return;
@@ -52,6 +55,10 @@ class Line extends BaseShape {
       ctx.moveTo(line.x1, line.y1);
       ctx.lineTo(line.x2, line.y2);
       ctx.stroke();
+
+      if (line.isSelected) {
+        Selection.drawLineSelectionBox(ctx, line);
+      }
     });
   }
 }

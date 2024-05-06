@@ -1,10 +1,14 @@
 import { Card, CardBody } from '@nextui-org/card';
-import { Baseline, Circle, Minus, MoveRight, PenTool, Shapes } from 'lucide-react';
+import { Baseline, Circle, Minus, MousePointer, MoveRight, PenTool, Shapes } from 'lucide-react';
 import { Button } from '@nextui-org/button';
 import { Tools } from '@/enums/Tools';
 import { Badge } from '@nextui-org/badge';
 
 const ToolsArray = [
+  {
+    name: Tools.Select,
+    icon: <MousePointer />,
+  },
   {
     name: Tools.Pen,
     icon: <PenTool />,
