@@ -24,7 +24,7 @@ export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mouseRef = useRef<Mouse>({ x: 0, y: 0, down: false });
 
-  const [selectedTool, setSelectedTool] = useState<Tools>(Tools.Text);
+  const [selectedTool, setSelectedTool] = useState<Tools>(Tools.Pen);
 
   const [selectedStrokeColor, setSelectedStrokeColor] = useState<StrokeColor>(StrokeColor.Black);
   const [selectedStrokeWidth, setSelectedStrokeWidth] = useState<number>(5);
@@ -44,7 +44,7 @@ export default function Home() {
   );
 
   //text controls
-  const [selectedFontSize, setSelectedFontSize] = useState<number>(20);
+  const [selectedFontSize, setSelectedFontSize] = useState<number>(30);
   const [selectedFontFamily, setSelectedFontFamily] = useState<string>(Fonts.Arial);
 
   const initCanvas = useCallback(() => {
@@ -114,6 +114,7 @@ export default function Home() {
               selectedStrokeVariant
             )
           );
+          canvas.style.cursor = 'crosshair';
           break;
         case Tools.Line:
           draw(
@@ -127,6 +128,7 @@ export default function Home() {
               selectedStrokeVariant
             )
           );
+          canvas.style.cursor = 'crosshair';
           break;
         case Tools.Ellipse:
           draw(
@@ -141,6 +143,7 @@ export default function Home() {
               selectedFillColor
             )
           );
+          canvas.style.cursor = 'crosshair';
           break;
         case Tools.Polygon:
           draw(
@@ -157,6 +160,7 @@ export default function Home() {
               selectedFillColor
             )
           );
+          canvas.style.cursor = 'crosshair';
           break;
         case Tools.Arrow:
           draw(
@@ -172,6 +176,7 @@ export default function Home() {
               selectedRightArrowHead
             )
           );
+          canvas.style.cursor = 'crosshair';
           break;
         case Tools.Text:
           draw(
@@ -183,9 +188,11 @@ export default function Home() {
               parentRef,
               selectedFontSize,
               selectedStrokeColor,
-              selectedFontFamily
+              selectedFontFamily,
+              Date.now()
             )
           );
+          canvas.style.cursor = 'text';
           break;
       }
       animateId = requestAnimationFrame(animate);
@@ -248,39 +255,41 @@ export default function Home() {
 
   return (
     <div className={'h-full bg-white relative overflow-hidden'} ref={parentRef}>
-      <PropertiesCard
-        selectedTool={selectedTool}
-        selectedStrokeColor={selectedStrokeColor}
-        setSelectedStrokeColor={(color) => {
-          setSelectedStrokeColor(color as StrokeColor);
-        }}
-        selectedStrokeWidth={selectedStrokeWidth}
-        setSelectedStrokeWidth={setSelectedStrokeWidth}
-        selectedStrokeVariant={selectedStrokeVariant}
-        setSelectedStrokeVariant={(variant) => {
-          setSelectedStrokeVariant(variant as StrokeVariant);
-        }}
-        selectedFillColor={selectedFillColor}
-        setSelectedFillColor={(color) => {
-          setSelectedFillColor(color as FillColor);
-        }}
-        selectedShapeSides={selectedShapeSides}
-        setSelectedShapeSides={setSelectedShapeSides}
-        selectedShapeRotation={selectedShapeRotation}
-        setSelectedShapeRotation={setSelectedShapeRotation}
-        selectedLeftArrowHead={selectedLeftArrowHead}
-        setSelectedLeftArrowHead={(arrowHead) => {
-          setSelectedLeftArrowHead(arrowHead as ArrowHeads);
-        }}
-        selectedRightArrowHead={selectedRightArrowHead}
-        setSelectedRightArrowHead={(arrowHead) => {
-          setSelectedRightArrowHead(arrowHead as ArrowHeads);
-        }}
-        selectedFontSize={selectedFontSize}
-        setSelectedFontSize={setSelectedFontSize}
-        selectedFontFamily={selectedFontFamily}
-        setSelectedFontFamily={setSelectedFontFamily}
-      />
+      {selectedTool !== Tools.Select && (
+        <PropertiesCard
+          selectedTool={selectedTool}
+          selectedStrokeColor={selectedStrokeColor}
+          setSelectedStrokeColor={(color) => {
+            setSelectedStrokeColor(color as StrokeColor);
+          }}
+          selectedStrokeWidth={selectedStrokeWidth}
+          setSelectedStrokeWidth={setSelectedStrokeWidth}
+          selectedStrokeVariant={selectedStrokeVariant}
+          setSelectedStrokeVariant={(variant) => {
+            setSelectedStrokeVariant(variant as StrokeVariant);
+          }}
+          selectedFillColor={selectedFillColor}
+          setSelectedFillColor={(color) => {
+            setSelectedFillColor(color as FillColor);
+          }}
+          selectedShapeSides={selectedShapeSides}
+          setSelectedShapeSides={setSelectedShapeSides}
+          selectedShapeRotation={selectedShapeRotation}
+          setSelectedShapeRotation={setSelectedShapeRotation}
+          selectedLeftArrowHead={selectedLeftArrowHead}
+          setSelectedLeftArrowHead={(arrowHead) => {
+            setSelectedLeftArrowHead(arrowHead as ArrowHeads);
+          }}
+          selectedRightArrowHead={selectedRightArrowHead}
+          setSelectedRightArrowHead={(arrowHead) => {
+            setSelectedRightArrowHead(arrowHead as ArrowHeads);
+          }}
+          selectedFontSize={selectedFontSize}
+          setSelectedFontSize={setSelectedFontSize}
+          selectedFontFamily={selectedFontFamily}
+          setSelectedFontFamily={setSelectedFontFamily}
+        />
+      )}
       <ToolsCard onToolSelect={setSelectedTool} selectedTool={selectedTool} />
 
       <canvas
