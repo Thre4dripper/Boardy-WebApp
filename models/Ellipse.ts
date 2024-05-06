@@ -3,6 +3,7 @@ import { Mouse } from '@/app/page';
 import React from 'react';
 import { FillColor, StrokeColor } from '@/enums/Colors';
 import { StrokeVariant } from '@/enums/StrokeVariant';
+import Selection from '@/models/Selection';
 
 class Ellipse extends BaseShape {
   fillColor: FillColor;
@@ -76,7 +77,29 @@ class Ellipse extends BaseShape {
       ctx.fillStyle = ellipse.fillColor;
       ctx.fill();
       ctx.stroke();
+
+      if (ellipse.isSelected) {
+        Selection.drawEllipseSelectionBox(ctx, ellipse);
+      }
     });
+  }
+
+  static isEllipseHovered(ellipse: Ellipse, mouseRef: React.MutableRefObject<Mouse>) {
+    const xCenter = (ellipse.x1 + ellipse.x2) / 2;
+    const yCenter = (ellipse.y1 + ellipse.y2) / 2;
+    const radiusX = Math.abs(ellipse.x1 - ellipse.x2) / 2;
+    const radiusY = Math.abs(ellipse.y1 - ellipse.y2) / 2;
+
+    const dx = mouseRef.current.x - xCenter;
+    const dy = mouseRef.current.y - yCenter;
+
+    const distance = Math.pow(dx / radiusX, 2) + Math.pow(dy / radiusY, 2);
+
+    if (ellipse.fillColor !== FillColor.Transparent) {
+      return distance <= 1;
+    } else {
+      return distance <= 1 && distance >= 0.9;
+    }
   }
 }
 

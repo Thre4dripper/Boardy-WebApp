@@ -4,8 +4,22 @@ import { Mouse } from '@/app/page';
 import Store from '@/store/Store';
 import Pen from '@/models/Pen';
 import Arrow from '@/models/Arrow';
+import Ellipse from '@/models/Ellipse';
 
 class Selection {
+  static drawPenSelectionBox(ctx: CanvasRenderingContext2D, pen: Pen) {
+    const path = pen.path;
+    const minX = Math.min(...path.map((point) => point.x));
+    const minY = Math.min(...path.map((point) => point.y));
+    const maxX = Math.max(...path.map((point) => point.x));
+    const maxY = Math.max(...path.map((point) => point.y));
+
+    ctx.strokeStyle = 'gray';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 5]);
+    ctx.strokeRect(minX - 5, minY - 5, maxX - minX + 10, maxY - minY + 10);
+  }
+
   static drawLineSelectionBox(ctx: CanvasRenderingContext2D, line: Line) {
     ctx.strokeStyle = 'gray';
     ctx.lineWidth = 2;
@@ -18,17 +32,21 @@ class Selection {
     );
   }
 
-  static drawPenSelectionBox(ctx: CanvasRenderingContext2D, pen: Pen) {
-    const path = pen.path;
-    const minX = Math.min(...path.map((point) => point.x));
-    const minY = Math.min(...path.map((point) => point.y));
-    const maxX = Math.max(...path.map((point) => point.x));
-    const maxY = Math.max(...path.map((point) => point.y));
+  static drawEllipseSelectionBox(ctx: CanvasRenderingContext2D, ellipse: Ellipse) {
+    const xCenter = (ellipse.x1 + ellipse.x2) / 2;
+    const yCenter = (ellipse.y1 + ellipse.y2) / 2;
+    const radiusX = Math.abs(ellipse.x1 - ellipse.x2) / 2;
+    const radiusY = Math.abs(ellipse.y1 - ellipse.y2) / 2;
 
     ctx.strokeStyle = 'gray';
     ctx.lineWidth = 2;
     ctx.setLineDash([5, 5]);
-    ctx.strokeRect(minX - 5, minY - 5, maxX - minX + 10, maxY - minY + 10);
+    ctx.strokeRect(
+      xCenter - radiusX - 5,
+      yCenter - radiusY - 5,
+      radiusX * 2 + 10,
+      radiusY * 2 + 10
+    );
   }
 
   static clearAllSelections() {
@@ -65,6 +83,17 @@ class Selection {
             //remove all selections
             Selection.clearAllSelections();
             (shape as Line).setIsSelected(true);
+          }
+          break;
+        case Ellipse:
+          if (Ellipse.isEllipseHovered(shape as Ellipse, mouseRef)) {
+            Selection.drawEllipseSelectionBox(ctx, shape as Ellipse);
+          }
+
+          if (mouseRef.current.down && Ellipse.isEllipseHovered(shape as Ellipse, mouseRef)) {
+            //remove all selections
+            Selection.clearAllSelections();
+            (shape as Ellipse).setIsSelected(true);
           }
           break;
         case Arrow:
