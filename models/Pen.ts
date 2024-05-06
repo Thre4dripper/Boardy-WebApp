@@ -4,6 +4,7 @@ import React from 'react';
 import { Mouse } from '@/app/page';
 import { StrokeColor } from '@/enums/Colors';
 import { StrokeVariant } from '@/enums/StrokeVariant';
+import Selection from '@/models/Selection';
 
 class Pen extends BaseShape {
   path: Point[] = [];
@@ -70,7 +71,37 @@ class Pen extends BaseShape {
         ctx.lineTo(pen.path[1].x, pen.path[1].y);
       }
       ctx.stroke();
+
+      if (pen.isSelected) {
+        Selection.drawPenSelectionBox(ctx, pen);
+      }
     });
+  }
+
+  static isPenHovered(pen: Pen, mouseRef: React.MutableRefObject<Mouse>) {
+    const path = pen.path;
+    const threshold = 5; // distance threshold
+
+    for (let i = 0; i < path.length - 1; i++) {
+      const { x: x1, y: y1 } = path[i];
+      const { x: x2, y: y2 } = path[i + 1];
+      const { x: px, y: py } = mouseRef.current;
+
+      // Calculate the shortest distance from the point to the line segment
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      const t = ((px - x1) * dx + (py - y1) * dy) / (dx * dx + dy * dy);
+      const tt = Math.max(0, Math.min(1, t));
+      const lx = x1 + tt * dx;
+      const ly = y1 + tt * dy;
+      const dist = Math.sqrt((px - lx) * (px - lx) + (py - ly) * (py - ly));
+
+      if (dist < threshold) {
+        return true;
+      }
+    }
+
+    return false;
   }
 }
 

@@ -2,27 +2,9 @@ import Line from '@/models/line';
 import React from 'react';
 import { Mouse } from '@/app/page';
 import Store from '@/store/Store';
+import Pen from '@/models/Pen';
 
 class Selection {
-  static isLineHovered(line: Line, mouseRef: React.MutableRefObject<Mouse>) {
-    const { x1, y1, x2, y2 } = line;
-    const { x, y } = mouseRef.current;
-
-    // using the distance formula to calculate the distance between the mouse and the line
-
-    const dist =
-      Math.abs((y2 - y1) * x - (x2 - x1) * y + x2 * y1 - y2 * x1) /
-      Math.sqrt(Math.pow(y2 - y1, 2) + Math.pow(x2 - x1, 2));
-
-    return (
-      dist < 10 &&
-      x >= Math.min(x1, x2) &&
-      x <= Math.max(x1, x2) &&
-      y >= Math.min(y1, y2) &&
-      y <= Math.max(y1, y2)
-    );
-  }
-
   static drawLineSelectionBox(ctx: CanvasRenderingContext2D, line: Line) {
     ctx.strokeStyle = 'gray';
     ctx.lineWidth = 2;
@@ -33,6 +15,19 @@ class Selection {
       Math.abs(line.x1 - line.x2) + 10,
       Math.abs(line.y1 - line.y2) + 10
     );
+  }
+
+  static drawPenSelectionBox(ctx: CanvasRenderingContext2D, pen: Pen) {
+    const path = pen.path;
+    const minX = Math.min(...path.map((point) => point.x));
+    const minY = Math.min(...path.map((point) => point.y));
+    const maxX = Math.max(...path.map((point) => point.x));
+    const maxY = Math.max(...path.map((point) => point.y));
+
+    ctx.strokeStyle = 'gray';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 5]);
+    ctx.strokeRect(minX - 5, minY - 5, maxX - minX + 10, maxY - minY + 10);
   }
 
   static clearAllSelections() {
@@ -49,12 +44,23 @@ class Selection {
     const allData = Store.getCombinedData();
     allData.forEach((shape) => {
       switch (shape.constructor) {
+        case Pen:
+          if (Pen.isPenHovered(shape as Pen, mouseRef)) {
+            Selection.drawPenSelectionBox(ctx, shape as Pen);
+          }
+
+          if (mouseRef.current.down && Pen.isPenHovered(shape as Pen, mouseRef)) {
+            //remove all selections
+            Selection.clearAllSelections();
+            (shape as Pen).setIsSelected(true);
+          }
+          break;
         case Line:
-          if (Selection.isLineHovered(shape as Line, mouseRef)) {
+          if (Line.isLineHovered(shape as Line, mouseRef)) {
             Selection.drawLineSelectionBox(ctx, shape as Line);
           }
 
-          if (mouseRef.current.down && Selection.isLineHovered(shape as Line, mouseRef)) {
+          if (mouseRef.current.down && Line.isLineHovered(shape as Line, mouseRef)) {
             //remove all selections
             Selection.clearAllSelections();
             (shape as Line).setIsSelected(true);
