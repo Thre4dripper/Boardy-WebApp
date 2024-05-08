@@ -19,12 +19,14 @@ import Store from '@/store/Store';
 export type Mouse = {
   x: number;
   y: number;
+  prevX: number;
+  prevY: number;
   down: boolean;
 };
 export default function Home() {
   const parentRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const mouseRef = useRef<Mouse>({ x: 0, y: 0, down: false });
+  const mouseRef = useRef<Mouse>({ x: 0, y: 0, prevX: 0, prevY: 0, down: false });
 
   const [selectedTool, setSelectedTool] = useState<Tools>(Tools.Pen);
 
@@ -73,6 +75,7 @@ export default function Home() {
 
       //draw all shapes
       Store.drawAllShapes(ctx);
+
       drawFn();
     },
     []
@@ -92,6 +95,7 @@ export default function Home() {
         case Tools.Select:
           canvas.style.cursor = 'default';
           draw(canvas, ctx, Selection.drawSelectionBoxes.bind(null, ctx, mouseRef));
+          Selection.moveSelectedShape(mouseRef);
           break;
         case Tools.Pen:
           draw(
@@ -197,7 +201,7 @@ export default function Home() {
       Text.convertToCanvas(parentRef.current as HTMLElement);
     }
 
-    if(selectedTool !== Tools.Select) {
+    if (selectedTool !== Tools.Select) {
       Selection.clearAllSelections();
     }
 
@@ -236,6 +240,8 @@ export default function Home() {
     mouseRef.current = {
       x: e.clientX - rect.left,
       y: e.clientY - rect.top,
+      prevX: mouseRef.current.x,
+      prevY: mouseRef.current.y,
       down: mouseRef.current.down,
     };
   };

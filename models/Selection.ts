@@ -211,6 +211,73 @@ class Selection {
       }
     });
   }
+
+  static moveSelectedShape(mouseRef: React.MutableRefObject<Mouse>) {
+    const allData = Store.getCombinedData();
+    const selectedShape = allData.find((shape) => shape.isSelected);
+    if (!selectedShape || !mouseRef.current.down) {
+      return;
+    }
+
+    if (!mouseRef.current.prevX || !mouseRef.current.prevY) {
+      mouseRef.current.prevX = mouseRef.current.x;
+      mouseRef.current.prevY = mouseRef.current.y;
+      return; // Skip moving the shape if it's the first mouse movement
+    }
+
+    const dx = mouseRef.current.x - mouseRef.current.prevX;
+    const dy = mouseRef.current.y - mouseRef.current.prevY;
+
+    switch (selectedShape.constructor) {
+      case Pen:
+        const pen = selectedShape as Pen;
+        pen.path.forEach((point) => {
+          point.x += dx;
+          point.y += dy;
+        });
+        break;
+      case Line:
+        const line = selectedShape as Line;
+        line.x1 += dx;
+        line.y1 += dy;
+        line.x2 += dx;
+        line.y2 += dy;
+        break;
+      case Polygon:
+        const polygon = selectedShape as Polygon;
+        polygon.x1 += dx;
+        polygon.y1 += dy;
+        polygon.x2 += dx;
+        polygon.y2 += dy;
+        break;
+      case Ellipse:
+        const ellipse = selectedShape as Ellipse;
+        ellipse.x1 += dx;
+        ellipse.y1 += dy;
+        ellipse.x2 += dx;
+        ellipse.y2 += dy;
+        break;
+      case Arrow:
+        const arrow = selectedShape as Arrow;
+        arrow.x1 += dx;
+        arrow.y1 += dy;
+        arrow.x2 += dx;
+        arrow.y2 += dy;
+        break;
+      case Text:
+        const text = selectedShape as Text;
+        text.x += dx;
+        text.y += dy;
+        break;
+      default:
+        break;
+    }
+
+    // Update the previous mouse position
+    mouseRef.current.prevX = mouseRef.current.x;
+    mouseRef.current.prevY = mouseRef.current.y;
+  }
+
 }
 
 export default Selection;
