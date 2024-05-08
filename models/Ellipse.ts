@@ -96,7 +96,7 @@ class Ellipse extends BaseShape {
     if (ellipse.fillColor !== FillColor.Transparent) {
       return distance <= 1;
     } else {
-      return distance <= 1 && distance >= 0.9;
+      return distance <= 1.2 && distance >= 0.8;
     }
   }
 }
