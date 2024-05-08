@@ -9,6 +9,20 @@ import Polygon from '@/models/Polygon';
 import Text from '@/models/Text';
 
 class Selection {
+  static SELECTION_COLOR = 'rgb(93,121,157)';
+  static DOTS_COLOR = 'rgb(171,207,255)';
+
+  static drawDots(ctx: CanvasRenderingContext2D, x: number, y: number) {
+    ctx.setLineDash([]);
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = this.SELECTION_COLOR;
+    ctx.fillStyle = this.DOTS_COLOR;
+    ctx.beginPath();
+    ctx.arc(x, y, 5, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.stroke();
+  }
+
   static drawPenSelectionBox(ctx: CanvasRenderingContext2D, pen: Pen) {
     const path = pen.path;
     const minX = Math.min(...path.map((point) => point.x));
@@ -16,22 +30,21 @@ class Selection {
     const maxX = Math.max(...path.map((point) => point.x));
     const maxY = Math.max(...path.map((point) => point.y));
 
-    ctx.strokeStyle = 'gray';
+    ctx.strokeStyle = this.SELECTION_COLOR;
     ctx.lineWidth = 2;
     ctx.setLineDash([5, 5]);
     ctx.strokeRect(minX - 5, minY - 5, maxX - minX + 10, maxY - minY + 10);
+
+    //four dots in each corner
+    this.drawDots(ctx, minX - 5, minY - 5);
+    this.drawDots(ctx, maxX + 5, minY - 5);
+    this.drawDots(ctx, minX - 5, maxY + 5);
+    this.drawDots(ctx, maxX + 5, maxY + 5);
   }
 
   static drawLineSelectionBox(ctx: CanvasRenderingContext2D, line: Line) {
-    ctx.strokeStyle = 'gray';
-    ctx.lineWidth = 2;
-    ctx.setLineDash([5, 5]);
-    ctx.strokeRect(
-      Math.min(line.x1, line.x2) - line.strokeWidth / 2 - 5,
-      Math.min(line.y1, line.y2) - line.strokeWidth / 2 - 5,
-      Math.abs(line.x1 - line.x2) + line.strokeWidth + 10,
-      Math.abs(line.y1 - line.y2) + line.strokeWidth + 10
-    );
+    this.drawDots(ctx, line.x1, line.y1);
+    this.drawDots(ctx, line.x2, line.y2);
   }
 
   static drawPolygonSelectionBox(ctx: CanvasRenderingContext2D, polygon: Polygon) {
@@ -56,10 +69,16 @@ class Selection {
     const maxX = Math.max(...vertices.map((v) => v.x));
     const maxY = Math.max(...vertices.map((v) => v.y));
 
-    ctx.strokeStyle = 'gray';
+    ctx.strokeStyle = this.SELECTION_COLOR;
     ctx.lineWidth = 2;
     ctx.setLineDash([5, 5]);
-    ctx.strokeRect(minX - 10, minY - 10, maxX - minX + 20, maxY - minY + 20);
+    ctx.strokeRect(minX - 5, minY - 5, maxX - minX + 10, maxY - minY + 10);
+
+    //four dots in each corner
+    this.drawDots(ctx, minX - 5, minY - 5);
+    this.drawDots(ctx, maxX + 5, minY - 5);
+    this.drawDots(ctx, minX - 5, maxY + 5);
+    this.drawDots(ctx, maxX + 5, maxY + 5);
   }
 
   static drawEllipseSelectionBox(ctx: CanvasRenderingContext2D, ellipse: Ellipse) {
@@ -68,19 +87,25 @@ class Selection {
     const radiusX = Math.abs(ellipse.x1 - ellipse.x2) / 2;
     const radiusY = Math.abs(ellipse.y1 - ellipse.y2) / 2;
 
-    ctx.strokeStyle = 'gray';
+    const minX = xCenter - radiusX;
+    const minY = yCenter - radiusY;
+    const maxX = radiusX * 2;
+    const maxY = radiusY * 2;
+
+    ctx.strokeStyle = this.SELECTION_COLOR;
     ctx.lineWidth = 2;
     ctx.setLineDash([5, 5]);
-    ctx.strokeRect(
-      xCenter - radiusX - 5,
-      yCenter - radiusY - 5,
-      radiusX * 2 + 10,
-      radiusY * 2 + 10
-    );
+    ctx.strokeRect(minX - 5, minY - 5, maxX + 10, maxY + 10);
+
+    //four dots in each corner
+    this.drawDots(ctx, minX - 5, minY - 5);
+    this.drawDots(ctx, minX - 5, minY + maxY + 5);
+    this.drawDots(ctx, minX + maxX + 5, minY - 5);
+    this.drawDots(ctx, minX + maxX + 5, minY + maxY + 5);
   }
 
   static drawTextSelectionBox(ctx: CanvasRenderingContext2D, text: Text) {
-    ctx.strokeStyle = 'gray';
+    ctx.strokeStyle = this.SELECTION_COLOR;
     ctx.lineWidth = 2;
     ctx.setLineDash([5, 5]);
 
@@ -92,6 +117,12 @@ class Selection {
     const maxY = text.y + text.fontSize * 1.5 * lines.length;
 
     ctx.strokeRect(minX - 5, minY - 5, maxX - minX + 10, maxY - minY + 10);
+
+    //four dots in each corner
+    this.drawDots(ctx, minX - 5, minY - 5);
+    this.drawDots(ctx, minX - 5, maxY + 5);
+    this.drawDots(ctx, maxX + 5, minY - 5);
+    this.drawDots(ctx, maxX + 5, maxY + 5);
   }
 
   static clearAllSelections() {
@@ -165,7 +196,7 @@ class Selection {
           break;
         case Text:
           if (Text.isTextHovered(shape as Text, mouseRef, ctx)) {
-            console.log((shape as Text).text)
+            console.log((shape as Text).text);
             Selection.drawTextSelectionBox(ctx, shape as Text);
           }
 
