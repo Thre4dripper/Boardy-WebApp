@@ -43,21 +43,19 @@ class Line extends BaseShape {
     }
   }
 
-  static renderAllLines(ctx: CanvasRenderingContext2D) {
-    Line.lines.forEach((line) => {
-      if (line.x1 === line.x2 && line.y1 === line.y2) {
-        return;
-      }
-      BaseShape.draw(line, ctx);
-      ctx.beginPath();
-      ctx.moveTo(line.x1, line.y1);
-      ctx.lineTo(line.x2, line.y2);
-      ctx.stroke();
+  static drawStoredLine(ctx: CanvasRenderingContext2D, line: Line) {
+    if (line.x1 === line.x2 && line.y1 === line.y2) {
+      return;
+    }
+    BaseShape.draw(line, ctx);
+    ctx.beginPath();
+    ctx.moveTo(line.x1, line.y1);
+    ctx.lineTo(line.x2, line.y2);
+    ctx.stroke();
 
-      if (line.isSelected) {
-        Selection.drawLineSelectionBox(ctx, line);
-      }
-    });
+    if (line.isSelected) {
+      Selection.drawLineSelectionBox(ctx, line);
+    }
   }
 
   static isLineHovered(line: Line, mouseRef: React.MutableRefObject<Mouse>) {

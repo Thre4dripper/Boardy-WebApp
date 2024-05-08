@@ -14,6 +14,7 @@ import { FillColor, StrokeColor } from '@/enums/Colors';
 import { ArrowHeads } from '@/enums/ArrowHeads';
 import { Fonts } from '@/enums/Fonts';
 import Selection from '@/models/Selection';
+import Store from '@/store/Store';
 
 export type Mouse = {
   x: number;
@@ -70,23 +71,8 @@ export default function Home() {
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
 
-      //draw pens
-      Pen.renderAllPens(ctx);
-
-      //draw lines
-      Line.renderAllLines(ctx);
-
-      //draw ellipses
-      Ellipse.renderAllEllipses(ctx);
-
-      //draw arrows
-      Arrow.renderAllArrows(ctx);
-
-      //draw polygons
-      Polygon.renderAllPolygons(ctx);
-
-      //draw texts
-      Text.renderAllTexts(ctx);
+      //draw all shapes
+      Store.drawAllShapes(ctx);
       drawFn();
     },
     []

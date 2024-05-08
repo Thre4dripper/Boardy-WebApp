@@ -72,42 +72,40 @@ class Polygon extends BaseShape {
     }
   }
 
-  static renderAllPolygons(ctx: CanvasRenderingContext2D) {
-    Polygon.polygons.forEach((polygon) => {
-      if (polygon.x1 === polygon.x2 && polygon.y1 === polygon.y2) {
-        return;
-      }
-      BaseShape.draw(polygon, ctx);
-      ctx.fillStyle = polygon.fillColor;
+  static drawStoredPolygon(ctx: CanvasRenderingContext2D, polygon: Polygon) {
+    if (polygon.x1 === polygon.x2 && polygon.y1 === polygon.y2) {
+      return;
+    }
+    BaseShape.draw(polygon, ctx);
+    ctx.fillStyle = polygon.fillColor;
 
-      ctx.beginPath();
-      const x = (polygon.x1 + polygon.x2) / 2;
-      const y = (polygon.y1 + polygon.y2) / 2;
-      const radiusX = Math.abs(polygon.x1 - polygon.x2) / 2;
-      const radiusY = Math.abs(polygon.y1 - polygon.y2) / 2;
+    ctx.beginPath();
+    const x = (polygon.x1 + polygon.x2) / 2;
+    const y = (polygon.y1 + polygon.y2) / 2;
+    const radiusX = Math.abs(polygon.x1 - polygon.x2) / 2;
+    const radiusY = Math.abs(polygon.y1 - polygon.y2) / 2;
 
-      const path = new Path2D();
-      for (let d = 0; d <= 360; d++) {
-        if (d % (360 / polygon.sides) === 0) {
-          const a = ((d + polygon.rotation) * Math.PI) / 180;
-          const x1 = x + radiusX * Math.cos(a);
-          const y1 = y + radiusY * Math.sin(a);
-          if (d === 0) {
-            path.moveTo(x1, y1);
-          } else {
-            path.lineTo(x1, y1);
-          }
+    const path = new Path2D();
+    for (let d = 0; d <= 360; d++) {
+      if (d % (360 / polygon.sides) === 0) {
+        const a = ((d + polygon.rotation) * Math.PI) / 180;
+        const x1 = x + radiusX * Math.cos(a);
+        const y1 = y + radiusY * Math.sin(a);
+        if (d === 0) {
+          path.moveTo(x1, y1);
+        } else {
+          path.lineTo(x1, y1);
         }
       }
-      path.closePath();
+    }
+    path.closePath();
 
-      ctx.fill(path);
-      ctx.stroke(path);
+    ctx.fill(path);
+    ctx.stroke(path);
 
-      if (polygon.isSelected) {
-        Selection.drawPolygonSelectionBox(ctx, polygon);
-      }
-    });
+    if (polygon.isSelected) {
+      Selection.drawPolygonSelectionBox(ctx, polygon);
+    }
   }
 
   static isPolygonHovered(polygon: Polygon, mouseRef: React.MutableRefObject<Mouse>) {

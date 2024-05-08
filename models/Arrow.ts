@@ -83,106 +83,104 @@ class Arrow extends BaseShape {
     return { x4, y4, x5, y5 };
   }
 
-  static renderAllArrows(ctx: CanvasRenderingContext2D) {
-    Arrow.arrows.forEach((arrow) => {
-      if (arrow.x1 === arrow.x2 && arrow.y1 === arrow.y2) {
-        return;
-      }
-      BaseShape.draw(arrow, ctx);
+  static drawStoredArrow(ctx: CanvasRenderingContext2D, arrow: Arrow) {
+    if (arrow.x1 === arrow.x2 && arrow.y1 === arrow.y2) {
+      return;
+    }
+    BaseShape.draw(arrow, ctx);
+    ctx.beginPath();
+    ctx.moveTo(arrow.x1, arrow.y1);
+    ctx.lineTo(arrow.x2, arrow.y2);
+    ctx.stroke();
+
+    // Calculate the angle of the line
+    const angle = Math.atan2(arrow.y2 - arrow.y1, arrow.x2 - arrow.x1);
+    const arrowheadLength = arrow.strokeWidth * 5;
+    const arrowheadWidth = arrowheadLength * 0.5;
+
+    // Calculate the positions of the arrowhead points
+    if (arrow.leftArrowHead === ArrowHeads.Arrow) {
+      const { x4, y4, x5, y5 } = Arrow.calculateArrowheadPoints(
+        arrow.x1,
+        arrow.y1,
+        angle,
+        arrowheadLength,
+        arrowheadWidth
+      );
+
+      // Draw the arrowhead
+      ctx.setLineDash([]);
       ctx.beginPath();
       ctx.moveTo(arrow.x1, arrow.y1);
-      ctx.lineTo(arrow.x2, arrow.y2);
+      ctx.lineTo(x4, y4);
+      ctx.moveTo(arrow.x1, arrow.y1);
+      ctx.lineTo(x5, y5);
       ctx.stroke();
+    } else if (arrow.leftArrowHead === ArrowHeads.Triangle) {
+      const { x4, y4, x5, y5 } = Arrow.calculateArrowheadPoints(
+        arrow.x1,
+        arrow.y1,
+        angle,
+        arrowheadLength,
+        arrowheadWidth
+      );
 
-      // Calculate the angle of the line
-      const angle = Math.atan2(arrow.y2 - arrow.y1, arrow.x2 - arrow.x1);
-      const arrowheadLength = arrow.strokeWidth * 5;
-      const arrowheadWidth = arrowheadLength * 0.5;
+      // Draw the arrowhead
+      ctx.setLineDash([]);
+      ctx.beginPath();
 
-      // Calculate the positions of the arrowhead points
-      if (arrow.leftArrowHead === ArrowHeads.Arrow) {
-        const { x4, y4, x5, y5 } = Arrow.calculateArrowheadPoints(
-          arrow.x1,
-          arrow.y1,
-          angle,
-          arrowheadLength,
-          arrowheadWidth
-        );
+      const path = new Path2D();
+      path.moveTo(arrow.x1, arrow.y1);
+      path.lineTo(x4, y4);
+      path.lineTo(x5, y5);
+      path.lineTo(arrow.x1, arrow.y1);
+      ctx.fillStyle = arrow.strokeColor;
+      ctx.fill(path);
+      ctx.stroke(path);
+    }
 
-        // Draw the arrowhead
-        ctx.setLineDash([]);
-        ctx.beginPath();
-        ctx.moveTo(arrow.x1, arrow.y1);
-        ctx.lineTo(x4, y4);
-        ctx.moveTo(arrow.x1, arrow.y1);
-        ctx.lineTo(x5, y5);
-        ctx.stroke();
-      } else if (arrow.leftArrowHead === ArrowHeads.Triangle) {
-        const { x4, y4, x5, y5 } = Arrow.calculateArrowheadPoints(
-          arrow.x1,
-          arrow.y1,
-          angle,
-          arrowheadLength,
-          arrowheadWidth
-        );
+    if (arrow.rightArrowHead === ArrowHeads.Arrow) {
+      const { x4, y4, x5, y5 } = Arrow.calculateArrowheadPoints(
+        arrow.x2,
+        arrow.y2,
+        angle + Math.PI,
+        arrowheadLength,
+        arrowheadWidth
+      );
 
-        // Draw the arrowhead
-        ctx.setLineDash([]);
-        ctx.beginPath();
+      // Draw the arrowhead
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.moveTo(arrow.x2, arrow.y2);
+      ctx.lineTo(x4, y4);
+      ctx.moveTo(arrow.x2, arrow.y2);
+      ctx.lineTo(x5, y5);
+      ctx.stroke();
+    } else if (arrow.rightArrowHead === ArrowHeads.Triangle) {
+      const { x4, y4, x5, y5 } = Arrow.calculateArrowheadPoints(
+        arrow.x2,
+        arrow.y2,
+        angle + Math.PI,
+        arrowheadLength,
+        arrowheadWidth
+      );
 
-        const path = new Path2D();
-        path.moveTo(arrow.x1, arrow.y1);
-        path.lineTo(x4, y4);
-        path.lineTo(x5, y5);
-        path.lineTo(arrow.x1, arrow.y1);
-        ctx.fillStyle = arrow.strokeColor;
-        ctx.fill(path);
-        ctx.stroke(path);
-      }
+      // Draw the arrowhead
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      const path = new Path2D();
+      path.moveTo(arrow.x2, arrow.y2);
+      path.lineTo(x4, y4);
+      path.lineTo(x5, y5);
+      path.lineTo(arrow.x2, arrow.y2);
+      ctx.fillStyle = arrow.strokeColor;
+      ctx.fill(path);
+      ctx.stroke(path);
+    }
 
-      if (arrow.rightArrowHead === ArrowHeads.Arrow) {
-        const { x4, y4, x5, y5 } = Arrow.calculateArrowheadPoints(
-          arrow.x2,
-          arrow.y2,
-          angle + Math.PI,
-          arrowheadLength,
-          arrowheadWidth
-        );
-
-        // Draw the arrowhead
-        ctx.setLineDash([]);
-        ctx.beginPath();
-        ctx.moveTo(arrow.x2, arrow.y2);
-        ctx.lineTo(x4, y4);
-        ctx.moveTo(arrow.x2, arrow.y2);
-        ctx.lineTo(x5, y5);
-        ctx.stroke();
-      } else if (arrow.rightArrowHead === ArrowHeads.Triangle) {
-        const { x4, y4, x5, y5 } = Arrow.calculateArrowheadPoints(
-          arrow.x2,
-          arrow.y2,
-          angle + Math.PI,
-          arrowheadLength,
-          arrowheadWidth
-        );
-
-        // Draw the arrowhead
-        ctx.setLineDash([]);
-        ctx.beginPath();
-        const path = new Path2D();
-        path.moveTo(arrow.x2, arrow.y2);
-        path.lineTo(x4, y4);
-        path.lineTo(x5, y5);
-        path.lineTo(arrow.x2, arrow.y2);
-        ctx.fillStyle = arrow.strokeColor;
-        ctx.fill(path);
-        ctx.stroke(path);
-      }
-
-      if (arrow.isSelected) {
-        Selection.drawLineSelectionBox(ctx, arrow);
-      }
-    });
+    if (arrow.isSelected) {
+      Selection.drawLineSelectionBox(ctx, arrow);
+    }
   }
 
   static isArrowHovered(arrow: Arrow, mouseRef: React.MutableRefObject<Mouse>) {
