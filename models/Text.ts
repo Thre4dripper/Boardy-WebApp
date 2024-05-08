@@ -2,6 +2,7 @@ import React from 'react';
 import { Mouse } from '@/app/page';
 import { StrokeColor } from '@/enums/Colors';
 import { Fonts } from '@/enums/Fonts';
+import Selection from '@/models/Selection';
 
 class Text {
   x: number;
@@ -67,51 +68,71 @@ class Text {
     }
   }
 
-  static renderAllTexts(ctx: CanvasRenderingContext2D) {
-    Text.texts.forEach((text) => {
-      ctx.font = `${text.fontSize}px ${text.fontFamily}`;
-      ctx.fillStyle = text.fontColor;
+  static drawStoredText(ctx: CanvasRenderingContext2D, text: Text) {
+    ctx.font = `${text.fontSize}px ${text.fontFamily}`;
+    ctx.fillStyle = text.fontColor;
 
-      let verticalOffset = 0;
+    let verticalOffset = 0;
 
-      switch (text.fontFamily.replace(/['"]+/g, '')) {
-        case Fonts.Arial:
-          verticalOffset = text.fontSize * 0.41;
-          break;
-        case Fonts.Verdana:
-          verticalOffset = text.fontSize * 0.36;
-          break;
-        case Fonts.Tahoma:
-          verticalOffset = text.fontSize * 0.36;
-          break;
-        case Fonts.TrebuchetMS:
-          verticalOffset = text.fontSize * 0.4;
-          break;
-        case Fonts.TimesNewRoman:
-          verticalOffset = text.fontSize * 0.41;
-          break;
-        case Fonts.Georgia:
-          verticalOffset = text.fontSize * 0.41;
-          break;
-        case Fonts.Garamond:
-          verticalOffset = text.fontSize * 0.45;
-          break;
-        case Fonts.CourierNew:
-          verticalOffset = text.fontSize * 0.48;
-          break;
-        case Fonts.BrushScriptMT:
-          verticalOffset = text.fontSize * 0.48;
-          break;
-        case Fonts.ComicSansMS:
-          verticalOffset = text.fontSize * 0.35;
-          break;
-      }
+    switch (text.fontFamily.replace(/['"]+/g, '')) {
+      case Fonts.Arial:
+        verticalOffset = text.fontSize * 0.41;
+        break;
+      case Fonts.Verdana:
+        verticalOffset = text.fontSize * 0.36;
+        break;
+      case Fonts.Tahoma:
+        verticalOffset = text.fontSize * 0.36;
+        break;
+      case Fonts.TrebuchetMS:
+        verticalOffset = text.fontSize * 0.4;
+        break;
+      case Fonts.TimesNewRoman:
+        verticalOffset = text.fontSize * 0.41;
+        break;
+      case Fonts.Georgia:
+        verticalOffset = text.fontSize * 0.41;
+        break;
+      case Fonts.Garamond:
+        verticalOffset = text.fontSize * 0.45;
+        break;
+      case Fonts.CourierNew:
+        verticalOffset = text.fontSize * 0.48;
+        break;
+      case Fonts.BrushScriptMT:
+        verticalOffset = text.fontSize * 0.48;
+        break;
+      case Fonts.ComicSansMS:
+        verticalOffset = text.fontSize * 0.35;
+        break;
+    }
 
-      const lines = text.text.split('\n');
-      lines.forEach((line, index) => {
-        ctx.fillText(line, text.x, text.y + text.fontSize * (index + 1) * 1.5 - verticalOffset);
-      });
+    const lines = text.text.split('\n');
+    lines.forEach((line, index) => {
+      ctx.fillText(line, text.x, text.y + text.fontSize * (index + 1) * 1.5 - verticalOffset);
     });
+
+    if (text.isSelected) {
+      Selection.drawTextSelectionBox(ctx, text);
+    }
+  }
+
+  static isTextHovered(
+    text: Text,
+    mouseRef: React.MutableRefObject<Mouse>,
+    ctx: CanvasRenderingContext2D
+  ) {
+    const { x, y } = mouseRef.current;
+    const lines = text.text.split('\n');
+
+    const minX = text.x;
+    const minY = text.y - text.fontSize * 1.5;
+    const maxX = text.x + Math.max(...lines.map((line) => ctx.measureText(line).width));
+    const maxY = text.y + text.fontSize * 1.5 * lines.length;
+
+    ctx.font = `${text.fontSize}px ${text.fontFamily}`;
+
+    return x >= minX && x <= maxX && y >= minY && y <= maxY;
   }
 
   static createInput(

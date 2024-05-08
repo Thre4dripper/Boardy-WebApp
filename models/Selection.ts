@@ -6,6 +6,7 @@ import Pen from '@/models/Pen';
 import Arrow from '@/models/Arrow';
 import Ellipse from '@/models/Ellipse';
 import Polygon from '@/models/Polygon';
+import Text from '@/models/Text';
 
 class Selection {
   static drawPenSelectionBox(ctx: CanvasRenderingContext2D, pen: Pen) {
@@ -78,6 +79,21 @@ class Selection {
     );
   }
 
+  static drawTextSelectionBox(ctx: CanvasRenderingContext2D, text: Text) {
+    ctx.strokeStyle = 'gray';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 5]);
+
+    const lines = text.text.split('\n');
+
+    const minX = text.x;
+    const minY = text.y;
+    const maxX = text.x + Math.max(...lines.map((line) => ctx.measureText(line).width));
+    const maxY = text.y + text.fontSize * 1.5 * lines.length;
+
+    ctx.strokeRect(minX - 5, minY - 5, maxX - minX + 10, maxY - minY + 10);
+  }
+
   static clearAllSelections() {
     const allData = Store.getCombinedData();
     allData.forEach((shape) => {
@@ -145,6 +161,18 @@ class Selection {
             //remove all selections
             Selection.clearAllSelections();
             (shape as Arrow).setIsSelected(true);
+          }
+          break;
+        case Text:
+          if (Text.isTextHovered(shape as Text, mouseRef, ctx)) {
+            console.log((shape as Text).text)
+            Selection.drawTextSelectionBox(ctx, shape as Text);
+          }
+
+          if (mouseRef.current.down && Text.isTextHovered(shape as Text, mouseRef, ctx)) {
+            //remove all selections
+            Selection.clearAllSelections();
+            (shape as Text).setIsSelected(true);
           }
           break;
         default:
