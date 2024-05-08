@@ -3,6 +3,8 @@ import { Mouse } from '@/app/page';
 import React from 'react';
 import { FillColor, StrokeColor } from '@/enums/Colors';
 import { StrokeVariant } from '@/enums/StrokeVariant';
+import Selection from '@/models/Selection';
+import Line from '@/models/line';
 
 class Polygon extends BaseShape {
   sides: number;
@@ -101,7 +103,72 @@ class Polygon extends BaseShape {
 
       ctx.fill(path);
       ctx.stroke(path);
+
+      if (polygon.isSelected) {
+        Selection.drawPolygonSelectionBox(ctx, polygon);
+      }
     });
+  }
+
+  static isPolygonHovered(polygon: Polygon, mouseRef: React.MutableRefObject<Mouse>) {
+    const x = mouseRef.current.x;
+    const y = mouseRef.current.y;
+    const vertices = [];
+
+    const xCenter = (polygon.x1 + polygon.x2) / 2;
+    const yCenter = (polygon.y1 + polygon.y2) / 2;
+    const radiusX = Math.abs(polygon.x1 - polygon.x2) / 2;
+    const radiusY = Math.abs(polygon.y1 - polygon.y2) / 2;
+
+    for (let d = 0; d <= 360; d++) {
+      if (d % (360 / polygon.sides) === 0) {
+        const a = ((d + polygon.rotation) * Math.PI) / 180;
+        const x1 = xCenter + radiusX * Math.cos(a);
+        const y1 = yCenter + radiusY * Math.sin(a);
+        vertices.push({ x: x1, y: y1 });
+      }
+    }
+
+    if (polygon.fillColor === FillColor.Transparent) {
+      let isOnBoundary = false;
+      for (let i = 0; i < vertices.length; i++) {
+        // Get all lines of the polygon
+        const p1 = vertices[i];
+        const p2 = vertices[(i + 1) % vertices.length];
+
+        const line = new Line(
+          p1.x,
+          p1.y,
+          p2.x,
+          p2.y,
+          polygon.strokeColor,
+          polygon.strokeWidth,
+          polygon.strokeVariant
+        );
+
+        // Check if the mouse is hovering over the line
+        if (Line.isLineHovered(line, mouseRef)) {
+          isOnBoundary = true;
+          break;
+        }
+      }
+
+      return isOnBoundary;
+    } else {
+      //ray casting algorithm
+      let inside = false;
+
+      for (let i = 0, j = vertices.length - 1; i < vertices.length; j = i++) {
+        const xi = vertices[i].x;
+        const yi = vertices[i].y;
+        const xj = vertices[j].x;
+        const yj = vertices[j].y;
+        const intersect = yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
+        if (intersect) inside = !inside;
+      }
+
+      return inside;
+    }
   }
 }
 

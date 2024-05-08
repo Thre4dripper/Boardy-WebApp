@@ -5,6 +5,7 @@ import Store from '@/store/Store';
 import Pen from '@/models/Pen';
 import Arrow from '@/models/Arrow';
 import Ellipse from '@/models/Ellipse';
+import Polygon from '@/models/Polygon';
 
 class Selection {
   static drawPenSelectionBox(ctx: CanvasRenderingContext2D, pen: Pen) {
@@ -25,11 +26,39 @@ class Selection {
     ctx.lineWidth = 2;
     ctx.setLineDash([5, 5]);
     ctx.strokeRect(
-      Math.min(line.x1, line.x2) - 5,
-      Math.min(line.y1, line.y2) - 5,
-      Math.abs(line.x1 - line.x2) + 10,
-      Math.abs(line.y1 - line.y2) + 10
+      Math.min(line.x1, line.x2) - line.strokeWidth / 2 - 5,
+      Math.min(line.y1, line.y2) - line.strokeWidth / 2 - 5,
+      Math.abs(line.x1 - line.x2) + line.strokeWidth + 10,
+      Math.abs(line.y1 - line.y2) + line.strokeWidth + 10
     );
+  }
+
+  static drawPolygonSelectionBox(ctx: CanvasRenderingContext2D, polygon: Polygon) {
+    const vertices = [];
+
+    const xCenter = (polygon.x1 + polygon.x2) / 2;
+    const yCenter = (polygon.y1 + polygon.y2) / 2;
+    const radiusX = Math.abs(polygon.x1 - polygon.x2) / 2;
+    const radiusY = Math.abs(polygon.y1 - polygon.y2) / 2;
+
+    for (let d = 0; d <= 360; d++) {
+      if (d % (360 / polygon.sides) === 0) {
+        const a = ((d + polygon.rotation) * Math.PI) / 180;
+        const x1 = xCenter + radiusX * Math.cos(a);
+        const y1 = yCenter + radiusY * Math.sin(a);
+        vertices.push({ x: x1, y: y1 });
+      }
+    }
+
+    const minX = Math.min(...vertices.map((v) => v.x));
+    const minY = Math.min(...vertices.map((v) => v.y));
+    const maxX = Math.max(...vertices.map((v) => v.x));
+    const maxY = Math.max(...vertices.map((v) => v.y));
+
+    ctx.strokeStyle = 'gray';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 5]);
+    ctx.strokeRect(minX - 10, minY - 10, maxX - minX + 20, maxY - minY + 20);
   }
 
   static drawEllipseSelectionBox(ctx: CanvasRenderingContext2D, ellipse: Ellipse) {
@@ -83,6 +112,17 @@ class Selection {
             //remove all selections
             Selection.clearAllSelections();
             (shape as Line).setIsSelected(true);
+          }
+          break;
+        case Polygon:
+          if (Polygon.isPolygonHovered(shape as Polygon, mouseRef)) {
+            Selection.drawPolygonSelectionBox(ctx, shape as Polygon);
+          }
+
+          if (mouseRef.current.down && Polygon.isPolygonHovered(shape as Polygon, mouseRef)) {
+            //remove all selections
+            Selection.clearAllSelections();
+            (shape as Polygon).setIsSelected(true);
           }
           break;
         case Ellipse:
