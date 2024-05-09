@@ -137,17 +137,40 @@ class Selection {
     mouseRef: React.MutableRefObject<Mouse>
   ) {
     const allData = Store.getCombinedData();
+
     allData.forEach((shape) => {
       switch (shape.constructor) {
         case Pen:
-          if (Pen.isPenHovered(shape as Pen, mouseRef)) {
-            Selection.drawPenSelectionBox(ctx, shape as Pen);
+          const pen = shape as Pen;
+
+          //change cursor to move if pen bounding box is hovered
+          if (pen.isSelected && Pen.isPenSelectionHovered(pen, mouseRef)) {
+            mouseRef.current.cursor = 'move';
           }
 
-          if (mouseRef.current.down && Pen.isPenHovered(shape as Pen, mouseRef)) {
+          //clear selection if mouse is clicked outside pen bounding box
+          if (mouseRef.current.down && !Pen.isPenSelectionHovered(pen, mouseRef)) {
+            pen.setIsSelected(false);
+          }
+
+          //draw selection box if pen hovered and mouse should be in upstate or no other shape is selected
+          if (
+            Pen.isPenHovered(pen, mouseRef) &&
+            (!mouseRef.current.down || !allData.some((s) => s.isSelected))
+          ) {
+            Selection.drawPenSelectionBox(ctx, pen);
+            mouseRef.current.cursor = 'move';
+          }
+
+          //select pen if hovered and mouse is clicked and no other shape is selected
+          if (
+            mouseRef.current.down &&
+            Pen.isPenHovered(pen, mouseRef) &&
+            !allData.some((s) => s.isSelected)
+          ) {
             //remove all selections
             Selection.clearAllSelections();
-            (shape as Pen).setIsSelected(true);
+            pen.setIsSelected(true);
           }
           break;
         case Line:
@@ -277,7 +300,6 @@ class Selection {
     mouseRef.current.prevX = mouseRef.current.x;
     mouseRef.current.prevY = mouseRef.current.y;
   }
-
 }
 
 export default Selection;

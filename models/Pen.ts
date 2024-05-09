@@ -101,6 +101,22 @@ class Pen extends BaseShape {
 
     return false;
   }
+
+  static isPenSelectionHovered(pen: Pen, mouseRef: React.MutableRefObject<Mouse>) {
+    // Get selection bounds
+    const minX = Math.min(...pen.path.map((point) => point.x));
+    const minY = Math.min(...pen.path.map((point) => point.y));
+    const maxX = Math.max(...pen.path.map((point) => point.x));
+    const maxY = Math.max(...pen.path.map((point) => point.y));
+
+    // Check if the mouse is within the bounds
+    return (
+      mouseRef.current.x >= minX - 5 &&
+      mouseRef.current.x <= maxX + 5 &&
+      mouseRef.current.y >= minY - 5 &&
+      mouseRef.current.y <= maxY + 5
+    );
+  }
 }
 
 export default Pen;

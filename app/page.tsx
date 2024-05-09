@@ -22,11 +22,12 @@ export type Mouse = {
   prevX: number;
   prevY: number;
   down: boolean;
+  cursor: string;
 };
 export default function Home() {
   const parentRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const mouseRef = useRef<Mouse>({ x: 0, y: 0, prevX: 0, prevY: 0, down: false });
+  const mouseRef = useRef<Mouse>({ x: 0, y: 0, prevX: 0, prevY: 0, down: false, cursor: 'default' });
 
   const [selectedTool, setSelectedTool] = useState<Tools>(Tools.Pen);
 
@@ -93,8 +94,12 @@ export default function Home() {
     const animate = () => {
       switch (selectedTool) {
         case Tools.Select:
-          canvas.style.cursor = 'default';
-          draw(canvas, ctx, Selection.drawSelectionBoxes.bind(null, ctx, mouseRef));
+          mouseRef.current.cursor = 'default';
+          draw(
+            canvas,
+            ctx,
+            Selection.drawSelectionBoxes.bind(null, ctx, mouseRef)
+          );
           Selection.moveSelectedShape(mouseRef);
           break;
         case Tools.Pen:
@@ -109,7 +114,7 @@ export default function Home() {
               selectedStrokeVariant
             )
           );
-          canvas.style.cursor = 'crosshair';
+          mouseRef.current.cursor = 'crosshair';
           break;
         case Tools.Line:
           draw(
@@ -123,7 +128,7 @@ export default function Home() {
               selectedStrokeVariant
             )
           );
-          canvas.style.cursor = 'crosshair';
+          mouseRef.current.cursor = 'crosshair';
           break;
         case Tools.Ellipse:
           draw(
@@ -138,7 +143,7 @@ export default function Home() {
               selectedFillColor
             )
           );
-          canvas.style.cursor = 'crosshair';
+          mouseRef.current.cursor = 'crosshair';
           break;
         case Tools.Polygon:
           draw(
@@ -155,7 +160,7 @@ export default function Home() {
               selectedFillColor
             )
           );
-          canvas.style.cursor = 'crosshair';
+          mouseRef.current.cursor = 'crosshair';
           break;
         case Tools.Arrow:
           draw(
@@ -171,7 +176,7 @@ export default function Home() {
               selectedRightArrowHead
             )
           );
-          canvas.style.cursor = 'crosshair';
+          mouseRef.current.cursor = 'crosshair';
           break;
         case Tools.Text:
           draw(
@@ -187,9 +192,11 @@ export default function Home() {
               Date.now()
             )
           );
-          canvas.style.cursor = 'text';
+          mouseRef.current.cursor = 'text';
           break;
       }
+
+      canvas.style.cursor = mouseRef.current.cursor;
       animateId = requestAnimationFrame(animate);
     };
 
@@ -243,6 +250,7 @@ export default function Home() {
       prevX: mouseRef.current.x,
       prevY: mouseRef.current.y,
       down: mouseRef.current.down,
+      cursor: mouseRef.current.cursor,
     };
   };
 
