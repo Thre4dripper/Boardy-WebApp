@@ -174,59 +174,168 @@ class Selection {
           }
           break;
         case Line:
-          if (Line.isLineHovered(shape as Line, mouseRef)) {
-            Selection.drawLineSelectionBox(ctx, shape as Line);
+          const line = shape as Line;
+
+          //change cursor to move if line bounding box is hovered
+          if (line.isSelected && Line.isLineHovered(line, mouseRef)) {
+            mouseRef.current.cursor = 'move';
           }
 
-          if (mouseRef.current.down && Line.isLineHovered(shape as Line, mouseRef)) {
+          //clear selection if mouse is clicked outside line bounding box
+          if (mouseRef.current.down && !Line.isLineHovered(line, mouseRef)) {
+            line.setIsSelected(false);
+          }
+
+          //draw selection box if line hovered and mouse should be in upstate or no other shape is selected
+          if (
+            Line.isLineHovered(line, mouseRef) &&
+            (!mouseRef.current.down || !allData.some((s) => s.isSelected))
+          ) {
+            Selection.drawLineSelectionBox(ctx, line);
+            mouseRef.current.cursor = 'move';
+          }
+
+          //select line if hovered and mouse is clicked and no other shape is selected
+          if (
+            mouseRef.current.down &&
+            Line.isLineHovered(line, mouseRef) &&
+            !allData.some((s) => s.isSelected)
+          ) {
             //remove all selections
             Selection.clearAllSelections();
-            (shape as Line).setIsSelected(true);
+            line.setIsSelected(true);
           }
           break;
         case Polygon:
-          if (Polygon.isPolygonHovered(shape as Polygon, mouseRef)) {
-            Selection.drawPolygonSelectionBox(ctx, shape as Polygon);
+          const polygon = shape as Polygon;
+
+          //change cursor to move if polygon bounding box is hovered
+          if (polygon.isSelected && Polygon.isPolygonSelectionHovered(polygon, mouseRef)) {
+            mouseRef.current.cursor = 'move';
           }
 
-          if (mouseRef.current.down && Polygon.isPolygonHovered(shape as Polygon, mouseRef)) {
+          //clear selection if mouse is clicked outside polygon bounding box
+          if (mouseRef.current.down && !Polygon.isPolygonSelectionHovered(polygon, mouseRef)) {
+            polygon.setIsSelected(false);
+          }
+
+          //draw selection box if polygon hovered and mouse should be in upstate or no other shape is selected
+          if (
+            Polygon.isPolygonHovered(polygon, mouseRef) &&
+            (!mouseRef.current.down || !allData.some((s) => s.isSelected))
+          ) {
+            Selection.drawPolygonSelectionBox(ctx, polygon);
+            mouseRef.current.cursor = 'move';
+          }
+
+          //select polygon if hovered and mouse is clicked and no other shape is selected
+          if (
+            mouseRef.current.down &&
+            Polygon.isPolygonHovered(polygon, mouseRef) &&
+            !allData.some((s) => s.isSelected)
+          ) {
             //remove all selections
             Selection.clearAllSelections();
-            (shape as Polygon).setIsSelected(true);
+            polygon.setIsSelected(true);
           }
           break;
         case Ellipse:
-          if (Ellipse.isEllipseHovered(shape as Ellipse, mouseRef)) {
-            Selection.drawEllipseSelectionBox(ctx, shape as Ellipse);
+          const ellipse = shape as Ellipse;
+
+          //change cursor to move if ellipse bounding box is hovered
+          if (ellipse.isSelected && Ellipse.isEllipseSelectionHovered(ellipse, mouseRef)) {
+            mouseRef.current.cursor = 'move';
           }
 
-          if (mouseRef.current.down && Ellipse.isEllipseHovered(shape as Ellipse, mouseRef)) {
+          //clear selection if mouse is clicked outside ellipse bounding box
+          if (mouseRef.current.down && !Ellipse.isEllipseSelectionHovered(ellipse, mouseRef)) {
+            ellipse.setIsSelected(false);
+          }
+
+          //draw selection box if ellipse hovered and mouse should be in upstate or no other shape is selected
+          if (
+            Ellipse.isEllipseHovered(ellipse, mouseRef) &&
+            (!mouseRef.current.down || !allData.some((s) => s.isSelected))
+          ) {
+            Selection.drawEllipseSelectionBox(ctx, ellipse);
+            mouseRef.current.cursor = 'move';
+          }
+
+          //select ellipse if hovered and mouse is clicked and no other shape is selected
+          if (
+            mouseRef.current.down &&
+            Ellipse.isEllipseHovered(ellipse, mouseRef) &&
+            !allData.some((s) => s.isSelected)
+          ) {
             //remove all selections
             Selection.clearAllSelections();
-            (shape as Ellipse).setIsSelected(true);
+            ellipse.setIsSelected(true);
           }
           break;
         case Arrow:
-          if (Arrow.isArrowHovered(shape as Arrow, mouseRef)) {
-            Selection.drawLineSelectionBox(ctx, shape as Arrow);
+          const arrow = shape as Arrow;
+
+          //change cursor to move if arrow bounding box is hovered
+          if (arrow.isSelected && Arrow.isArrowHovered(arrow, mouseRef)) {
+            mouseRef.current.cursor = 'move';
           }
 
-          if (mouseRef.current.down && Arrow.isArrowHovered(shape as Arrow, mouseRef)) {
+          //clear selection if mouse is clicked outside arrow bounding box
+          if (mouseRef.current.down && !Arrow.isArrowHovered(arrow, mouseRef)) {
+            arrow.setIsSelected(false);
+          }
+
+          //draw selection box if arrow hovered and mouse should be in upstate or no other shape is selected
+          if (
+            Arrow.isArrowHovered(arrow, mouseRef) &&
+            (!mouseRef.current.down || !allData.some((s) => s.isSelected))
+          ) {
+            Selection.drawLineSelectionBox(ctx, arrow);
+            mouseRef.current.cursor = 'move';
+          }
+
+          //select arrow if hovered and mouse is clicked and no other shape is selected
+          if (
+            mouseRef.current.down &&
+            Arrow.isArrowHovered(arrow, mouseRef) &&
+            !allData.some((s) => s.isSelected)
+          ) {
             //remove all selections
             Selection.clearAllSelections();
-            (shape as Arrow).setIsSelected(true);
+            arrow.setIsSelected(true);
           }
           break;
         case Text:
-          if (Text.isTextHovered(shape as Text, mouseRef, ctx)) {
-            console.log((shape as Text).text);
-            Selection.drawTextSelectionBox(ctx, shape as Text);
+          const text = shape as Text;
+
+          //change cursor to move if text bounding box is hovered
+          if (text.isSelected && Text.isTextHovered(text, mouseRef, ctx)) {
+            mouseRef.current.cursor = 'move';
           }
 
-          if (mouseRef.current.down && Text.isTextHovered(shape as Text, mouseRef, ctx)) {
+          //clear selection if mouse is clicked outside text bounding box
+          if (mouseRef.current.down && !Text.isTextHovered(text, mouseRef, ctx)) {
+            text.setIsSelected(false);
+          }
+
+          //draw selection box if text hovered and mouse should be in upstate or no other shape is selected
+          if (
+            Text.isTextHovered(text, mouseRef, ctx) &&
+            (!mouseRef.current.down || !allData.some((s) => s.isSelected))
+          ) {
+            Selection.drawTextSelectionBox(ctx, text);
+            mouseRef.current.cursor = 'move';
+          }
+
+          //select text if hovered and mouse is clicked and no other shape is selected
+          if (
+            mouseRef.current.down &&
+            Text.isTextHovered(text, mouseRef, ctx) &&
+            !allData.some((s) => s.isSelected)
+          ) {
             //remove all selections
             Selection.clearAllSelections();
-            (shape as Text).setIsSelected(true);
+            text.setIsSelected(true);
           }
           break;
         default:

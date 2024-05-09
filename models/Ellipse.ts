@@ -99,6 +99,24 @@ class Ellipse extends BaseShape {
       return distance <= 1.2 && distance >= 0.8;
     }
   }
+
+  static isEllipseSelectionHovered(ellipse: Ellipse, mouseRef: React.MutableRefObject<Mouse>) {
+    // Get rectangular selection bounds
+
+    const minX = Math.min(ellipse.x1, ellipse.x2);
+    const minY = Math.min(ellipse.y1, ellipse.y2);
+    const maxX = Math.max(ellipse.x1, ellipse.x2);
+    const maxY = Math.max(ellipse.y1, ellipse.y2);
+
+    // Get mouse position
+    const x = mouseRef.current.x;
+    const y = mouseRef.current.y;
+
+    const tolerance = 5;
+
+    // Check if mouse is within bounds
+    return x >= minX - tolerance && x <= maxX + tolerance && y >= minY - tolerance && y <= maxY + tolerance;
+  }
 }
 
 export default Ellipse;

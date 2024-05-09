@@ -109,12 +109,14 @@ class Pen extends BaseShape {
     const maxX = Math.max(...pen.path.map((point) => point.x));
     const maxY = Math.max(...pen.path.map((point) => point.y));
 
+    const tolerance = 5;
+
     // Check if the mouse is within the bounds
     return (
-      mouseRef.current.x >= minX - 5 &&
-      mouseRef.current.x <= maxX + 5 &&
-      mouseRef.current.y >= minY - 5 &&
-      mouseRef.current.y <= maxY + 5
+      mouseRef.current.x >= minX - tolerance &&
+      mouseRef.current.x <= maxX + tolerance &&
+      mouseRef.current.y >= minY - tolerance &&
+      mouseRef.current.y <= maxY + tolerance
     );
   }
 }

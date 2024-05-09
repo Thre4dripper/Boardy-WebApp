@@ -6,6 +6,7 @@ import Polygon from '@/models/Polygon';
 import Text from '@/models/Text';
 
 class Store {
+  //TODO centralize all shapes in one place to avoid explicit computation
   static getCombinedData() {
     return [
       ...Pen.getAllPens().filter((pen) => pen.path.length > 1),

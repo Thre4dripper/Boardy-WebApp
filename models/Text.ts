@@ -126,7 +126,7 @@ class Text {
     const lines = text.text.split('\n');
 
     const minX = text.x;
-    const minY = text.y - text.fontSize * 1.5;
+    const minY = text.y - text.fontSize / 3;
     const maxX = text.x + Math.max(...lines.map((line) => ctx.measureText(line).width));
     const maxY = text.y + text.fontSize * 1.5 * lines.length;
 
@@ -135,6 +135,7 @@ class Text {
     return x >= minX && x <= maxX && y >= minY && y <= maxY;
   }
 
+  //TODO fix input box coords
   static createInput(
     x: number,
     y: number,

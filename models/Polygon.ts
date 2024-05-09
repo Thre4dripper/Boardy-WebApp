@@ -168,6 +168,41 @@ class Polygon extends BaseShape {
       return inside;
     }
   }
+
+  static isPolygonSelectionHovered(polygon: Polygon, mouseRef: React.MutableRefObject<Mouse>) {
+    // Get rectangular selection bounds
+
+    const xCenter = (polygon.x1 + polygon.x2) / 2;
+    const yCenter = (polygon.y1 + polygon.y2) / 2;
+    const radiusX = Math.abs(polygon.x1 - polygon.x2) / 2;
+    const radiusY = Math.abs(polygon.y1 - polygon.y2) / 2;
+
+    //TODO memoize polygon vertices
+    const vertices = [];
+    for (let d = 0; d <= 360; d++) {
+      if (d % (360 / polygon.sides) === 0) {
+        const a = ((d + polygon.rotation) * Math.PI) / 180;
+        const x1 = xCenter + radiusX * Math.cos(a);
+        const y1 = yCenter + radiusY * Math.sin(a);
+        vertices.push({ x: x1, y: y1 });
+      }
+    }
+
+    const minX = Math.min(...vertices.map((point) => point.x));
+    const minY = Math.min(...vertices.map((point) => point.y));
+    const maxX = Math.max(...vertices.map((point) => point.x));
+    const maxY = Math.max(...vertices.map((point) => point.y));
+
+    const tolerance = 5;
+
+    // Check if the mouse is within the bounds
+    return (
+      mouseRef.current.x >= minX - tolerance &&
+      mouseRef.current.x <= maxX + tolerance &&
+      mouseRef.current.y >= minY - tolerance &&
+      mouseRef.current.y <= maxY + tolerance
+    );
+  }
 }
 
 export default Polygon;
