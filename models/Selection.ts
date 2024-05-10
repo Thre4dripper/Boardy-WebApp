@@ -126,7 +126,7 @@ class Selection {
   }
 
   static clearAllSelections() {
-    const allData = Store.getCombinedData();
+    const allData = Store.allShapes
     allData.forEach((shape) => {
       shape.setIsSelected(false);
     });
@@ -136,7 +136,7 @@ class Selection {
     ctx: CanvasRenderingContext2D,
     mouseRef: React.MutableRefObject<Mouse>
   ) {
-    const allData = Store.getCombinedData();
+    const allData = Store.allShapes
 
     allData.forEach((shape) => {
       switch (shape.constructor) {
@@ -345,7 +345,7 @@ class Selection {
   }
 
   static moveSelectedShape(mouseRef: React.MutableRefObject<Mouse>) {
-    const allData = Store.getCombinedData();
+    const allData = Store.allShapes
     const selectedShape = allData.find((shape) => shape.isSelected);
     if (!selectedShape || !mouseRef.current.down) {
       return;

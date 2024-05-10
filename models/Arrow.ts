@@ -5,6 +5,7 @@ import { StrokeColor } from '@/enums/Colors';
 import { StrokeVariant } from '@/enums/StrokeVariant';
 import { ArrowHeads } from '@/enums/ArrowHeads';
 import Selection from '@/models/Selection';
+import Store from '@/store/Store';
 
 class Arrow extends BaseShape {
   leftArrowHead: ArrowHeads;
@@ -26,10 +27,6 @@ class Arrow extends BaseShape {
     this.rightArrowHead = rightArrowHead;
   }
 
-  private static arrows: Arrow[] = [];
-
-  static getAllArrows = () => Arrow.arrows;
-
   static drawCurrentArrow(
     mouseRef: React.MutableRefObject<Mouse>,
     selectedStrokeColor: StrokeColor,
@@ -38,7 +35,7 @@ class Arrow extends BaseShape {
     selectedLeftArrowHead: ArrowHeads,
     selectedRightArrowHead: ArrowHeads
   ) {
-    const arrows = Arrow.arrows;
+    const arrows = Store.allShapes.filter((shape) => shape instanceof Arrow) as Arrow[];
     if (mouseRef.current.down) {
       const lastArrow = arrows[arrows.length - 1];
       lastArrow.x2 = mouseRef.current.x;
@@ -49,9 +46,9 @@ class Arrow extends BaseShape {
         arrows[arrows.length - 1].x1 === arrows[arrows.length - 1].x2 &&
         arrows[arrows.length - 1].y1 === arrows[arrows.length - 1].y2
       ) {
-        arrows.pop();
+        Store.allShapes.pop();
       }
-      arrows.push(
+      Store.allShapes.push(
         new Arrow(
           mouseRef.current.x,
           mouseRef.current.y,

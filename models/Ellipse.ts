@@ -4,6 +4,7 @@ import React from 'react';
 import { FillColor, StrokeColor } from '@/enums/Colors';
 import { StrokeVariant } from '@/enums/StrokeVariant';
 import Selection from '@/models/Selection';
+import Store from '@/store/Store';
 
 class Ellipse extends BaseShape {
   fillColor: FillColor;
@@ -22,10 +23,6 @@ class Ellipse extends BaseShape {
     this.fillColor = fillColor;
   }
 
-  private static ellipses: Ellipse[] = [];
-
-  static getAllEllipses = () => Ellipse.ellipses;
-
   static drawCurrentEllipse(
     mouseRef: React.MutableRefObject<Mouse>,
     selectedStrokeColor: StrokeColor,
@@ -33,7 +30,7 @@ class Ellipse extends BaseShape {
     selectedStrokeVariant: StrokeVariant,
     selectedFillColor: FillColor
   ) {
-    const ellipses = Ellipse.ellipses;
+    const ellipses = Store.allShapes.filter((shape) => shape instanceof Ellipse) as Ellipse[];
     if (mouseRef.current.down) {
       const lastEllipse = ellipses[ellipses.length - 1];
       lastEllipse.x2 = mouseRef.current.x;
@@ -44,9 +41,9 @@ class Ellipse extends BaseShape {
         ellipses[ellipses.length - 1].x1 === ellipses[ellipses.length - 1].x2 &&
         ellipses[ellipses.length - 1].y1 === ellipses[ellipses.length - 1].y2
       ) {
-        ellipses.pop();
+        Store.allShapes.pop();
       }
-      ellipses.push(
+      Store.allShapes.push(
         new Ellipse(
           mouseRef.current.x,
           mouseRef.current.y,

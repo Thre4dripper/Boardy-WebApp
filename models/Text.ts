@@ -3,6 +3,7 @@ import { Mouse } from '@/app/page';
 import { StrokeColor } from '@/enums/Colors';
 import { Fonts } from '@/enums/Fonts';
 import Selection from '@/models/Selection';
+import Store from '@/store/Store';
 
 class Text {
   x: number;
@@ -37,9 +38,6 @@ class Text {
   }
 
   static TEXT_DIV_TAG = 'text-input';
-  private static texts: Text[] = [];
-
-  static getAllTexts = () => Text.texts;
 
   static drawCurrentText(
     mouseRef: React.MutableRefObject<Mouse>,
@@ -188,10 +186,6 @@ class Text {
     //convert input elements to canvas elements
     inputElements.forEach((inputElement) => {
       const input = inputElement as HTMLDivElement;
-      if (input.innerText === '') {
-        parentDiv.removeChild(inputElement);
-        return;
-      }
       const text = new Text(
         parseInt(input.style.left),
         parseInt(input.style.top),
@@ -201,14 +195,15 @@ class Text {
         input.style.fontFamily,
         parseInt(input.dataset.timeStamp!)
       );
-      Text.texts.push(text);
+      Store.allShapes.push(text);
       parentDiv.removeChild(inputElement);
     });
   }
 
   static convertToHtml(parentDiv: HTMLElement) {
     //convert canvas elements to input elements
-    Text.texts.forEach((text) => {
+    const texts = Store.allShapes.filter((shape) => shape instanceof Text) as Text[];
+    texts.forEach((text) => {
       const input = Text.createInput(
         text.x,
         text.y,
@@ -223,7 +218,8 @@ class Text {
       parentDiv.appendChild(input);
     });
 
-    Text.texts = [];
+    //clear all texts
+    Store.allShapes = Store.allShapes.filter((shape) => !(shape instanceof Text));
   }
 }
 

@@ -5,6 +5,7 @@ import { FillColor, StrokeColor } from '@/enums/Colors';
 import { StrokeVariant } from '@/enums/StrokeVariant';
 import Selection from '@/models/Selection';
 import Line from '@/models/line';
+import Store from '@/store/Store';
 
 class Polygon extends BaseShape {
   sides: number;
@@ -29,10 +30,6 @@ class Polygon extends BaseShape {
     this.fillColor = fillColor;
   }
 
-  private static polygons: Polygon[] = [];
-
-  static getAllPolygons = () => Polygon.polygons;
-
   static drawCurrentPolygon(
     mouseRef: React.MutableRefObject<Mouse>,
     selectedStrokeColor: StrokeColor,
@@ -42,7 +39,7 @@ class Polygon extends BaseShape {
     rotation: number,
     selectedFillColor: FillColor
   ) {
-    const polygons = Polygon.polygons;
+    const polygons = Store.allShapes.filter((shape) => shape instanceof Polygon) as Polygon[];
     if (mouseRef.current.down) {
       const lastPolygon = polygons[polygons.length - 1];
       lastPolygon.x2 = mouseRef.current.x;
@@ -53,9 +50,9 @@ class Polygon extends BaseShape {
         polygons[polygons.length - 1].x1 === polygons[polygons.length - 1].x2 &&
         polygons[polygons.length - 1].y1 === polygons[polygons.length - 1].y2
       ) {
-        polygons.pop();
+        Store.allShapes.pop();
       }
-      polygons.push(
+      Store.allShapes.push(
         new Polygon(
           mouseRef.current.x,
           mouseRef.current.y,

@@ -5,6 +5,7 @@ import { Mouse } from '@/app/page';
 import { StrokeColor } from '@/enums/Colors';
 import { StrokeVariant } from '@/enums/StrokeVariant';
 import Selection from '@/models/Selection';
+import Store from '@/store/Store';
 
 class Pen extends BaseShape {
   path: Point[] = [];
@@ -14,25 +15,21 @@ class Pen extends BaseShape {
     this.path = path;
   }
 
-  private static pens: Pen[] = [];
-
-  static getAllPens = () => Pen.pens;
-
   static drawCurrentPen(
     mouseRef: React.MutableRefObject<Mouse>,
     selectedStrokeColor: StrokeColor,
     selectedStrokeWidth: number,
     selectedStrokeVariant: StrokeVariant
   ) {
-    const allPens = Pen.pens;
+    const allPens = Store.allShapes.filter((shape) => shape instanceof Pen) as Pen[];
     if (mouseRef.current.down) {
       const lastPen = allPens[allPens.length - 1];
       lastPen.path.push({ x: mouseRef.current.x, y: mouseRef.current.y });
     } else {
       if (allPens.length > 0 && allPens[allPens.length - 1].path.length <= 1) {
-        allPens.pop();
+        Store.allShapes.pop();
       }
-      allPens.push(
+      Store.allShapes.push(
         new Pen(
           [{ x: mouseRef.current.x, y: mouseRef.current.y }],
           selectedStrokeColor,

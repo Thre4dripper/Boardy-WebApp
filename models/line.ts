@@ -4,19 +4,16 @@ import React from 'react';
 import { StrokeColor } from '@/enums/Colors';
 import { StrokeVariant } from '@/enums/StrokeVariant';
 import Selection from '@/models/Selection';
+import Store from '@/store/Store';
 
 class Line extends BaseShape {
-  private static lines: Line[] = [];
-
-  static getAllLines = () => Line.lines;
-
   static drawCurrentLine(
     mouseRef: React.MutableRefObject<Mouse>,
     selectedStrokeColor: StrokeColor,
     selectedStrokeWidth: number,
     selectedStrokeVariant: StrokeVariant
   ) {
-    const lines = Line.lines;
+    const lines = Store.allShapes.filter((shape) => shape instanceof Line) as Line[];
     if (mouseRef.current.down) {
       const lastLine = lines[lines.length - 1];
       lastLine.x2 = mouseRef.current.x;
@@ -27,9 +24,9 @@ class Line extends BaseShape {
         lines[lines.length - 1].x1 === lines[lines.length - 1].x2 &&
         lines[lines.length - 1].y1 === lines[lines.length - 1].y2
       ) {
-        lines.pop();
+        Store.allShapes.pop();
       }
-      lines.push(
+      Store.allShapes.push(
         new Line(
           mouseRef.current.x,
           mouseRef.current.y,

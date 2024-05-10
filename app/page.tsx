@@ -27,7 +27,14 @@ export type Mouse = {
 export default function Home() {
   const parentRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const mouseRef = useRef<Mouse>({ x: 0, y: 0, prevX: 0, prevY: 0, down: false, cursor: 'default' });
+  const mouseRef = useRef<Mouse>({
+    x: 0,
+    y: 0,
+    prevX: 0,
+    prevY: 0,
+    down: false,
+    cursor: 'default',
+  });
 
   const [selectedTool, setSelectedTool] = useState<Tools>(Tools.Pen);
 
@@ -74,12 +81,15 @@ export default function Home() {
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
 
+      //filter all empty shapes except that is selected
+      Store.filterEmptyShapes(selectedTool);
+
       //draw all shapes
       Store.drawAllShapes(ctx);
 
       drawFn();
     },
-    []
+    [selectedTool]
   );
 
   useEffect(() => {
@@ -92,6 +102,19 @@ export default function Home() {
     if (!ctx) return;
 
     const animate = () => {
+
+      //conversion to html or canvas happen before drawing anything else
+      if (selectedTool === Tools.Text) {
+        Text.convertToHtml(parentRef.current as HTMLElement);
+      } else {
+        Text.convertToCanvas(parentRef.current as HTMLElement);
+      }
+
+      //clear all selections if the selected tool is not select before drawing anything
+      if (selectedTool !== Tools.Select) {
+        Selection.clearAllSelections();
+      }
+
       switch (selectedTool) {
         case Tools.Select:
           mouseRef.current.cursor = 'default';
@@ -201,16 +224,6 @@ export default function Home() {
     };
 
     animate();
-
-    if (selectedTool === Tools.Text) {
-      Text.convertToHtml(parentRef.current as HTMLElement);
-    } else {
-      Text.convertToCanvas(parentRef.current as HTMLElement);
-    }
-
-    if (selectedTool !== Tools.Select) {
-      Selection.clearAllSelections();
-    }
 
     document.addEventListener('keydown', (e) => {
       if (e.key === '1') setSelectedTool(Tools.Pen);
