@@ -7,6 +7,10 @@ import Arrow from '@/models/Arrow';
 import Ellipse from '@/models/Ellipse';
 import Polygon from '@/models/Polygon';
 import Text from '@/models/Text';
+import Cursors from '@/enums/Cursors';
+
+let flag = false;
+let isMouseUp = false;
 
 class Selection {
   static SELECTION_COLOR = 'rgb(93,121,157)';
@@ -126,7 +130,7 @@ class Selection {
   }
 
   static clearAllSelections() {
-    const allData = Store.allShapes
+    const allData = Store.allShapes;
     allData.forEach((shape) => {
       shape.setIsSelected(false);
     });
@@ -136,7 +140,20 @@ class Selection {
     ctx: CanvasRenderingContext2D,
     mouseRef: React.MutableRefObject<Mouse>
   ) {
-    const allData = Store.allShapes
+    const allData = Store.allShapes;
+
+    if (mouseRef.current.down) {
+      flag = true;
+    }
+
+    //when mouse is up then for an instant, isMouseUp will be true
+    if (!mouseRef.current.down && flag) {
+      setTimeout(() => {
+        isMouseUp = false;
+      }, 10);
+      flag = false;
+      isMouseUp = true;
+    }
 
     allData.forEach((shape) => {
       switch (shape.constructor) {
@@ -145,11 +162,11 @@ class Selection {
 
           //change cursor to move if pen bounding box is hovered
           if (pen.isSelected && Pen.isPenSelectionHovered(pen, mouseRef)) {
-            mouseRef.current.cursor = 'move';
+            mouseRef.current.cursor = Cursors.MOVE;
           }
 
           //clear selection if mouse is clicked outside pen bounding box
-          if (mouseRef.current.down && !Pen.isPenSelectionHovered(pen, mouseRef)) {
+          if (isMouseUp && !Pen.isPenSelectionHovered(pen, mouseRef)) {
             pen.setIsSelected(false);
           }
 
@@ -159,7 +176,7 @@ class Selection {
             (!mouseRef.current.down || !allData.some((s) => s.isSelected))
           ) {
             Selection.drawPenSelectionBox(ctx, pen);
-            mouseRef.current.cursor = 'move';
+            mouseRef.current.cursor = Cursors.MOVE;
           }
 
           //select pen if hovered and mouse is clicked and no other shape is selected
@@ -178,11 +195,11 @@ class Selection {
 
           //change cursor to move if line bounding box is hovered
           if (line.isSelected && Line.isLineHovered(line, mouseRef)) {
-            mouseRef.current.cursor = 'move';
+            mouseRef.current.cursor = Cursors.MOVE;
           }
 
           //clear selection if mouse is clicked outside line bounding box
-          if (mouseRef.current.down && !Line.isLineHovered(line, mouseRef)) {
+          if (isMouseUp && !Line.isLineHovered(line, mouseRef)) {
             line.setIsSelected(false);
           }
 
@@ -192,7 +209,7 @@ class Selection {
             (!mouseRef.current.down || !allData.some((s) => s.isSelected))
           ) {
             Selection.drawLineSelectionBox(ctx, line);
-            mouseRef.current.cursor = 'move';
+            mouseRef.current.cursor = Cursors.MOVE;
           }
 
           //select line if hovered and mouse is clicked and no other shape is selected
@@ -211,11 +228,11 @@ class Selection {
 
           //change cursor to move if polygon bounding box is hovered
           if (polygon.isSelected && Polygon.isPolygonSelectionHovered(polygon, mouseRef)) {
-            mouseRef.current.cursor = 'move';
+            mouseRef.current.cursor = Cursors.MOVE;
           }
 
           //clear selection if mouse is clicked outside polygon bounding box
-          if (mouseRef.current.down && !Polygon.isPolygonSelectionHovered(polygon, mouseRef)) {
+          if (isMouseUp && !Polygon.isPolygonSelectionHovered(polygon, mouseRef)) {
             polygon.setIsSelected(false);
           }
 
@@ -225,7 +242,7 @@ class Selection {
             (!mouseRef.current.down || !allData.some((s) => s.isSelected))
           ) {
             Selection.drawPolygonSelectionBox(ctx, polygon);
-            mouseRef.current.cursor = 'move';
+            mouseRef.current.cursor = Cursors.MOVE;
           }
 
           //select polygon if hovered and mouse is clicked and no other shape is selected
@@ -244,11 +261,11 @@ class Selection {
 
           //change cursor to move if ellipse bounding box is hovered
           if (ellipse.isSelected && Ellipse.isEllipseSelectionHovered(ellipse, mouseRef)) {
-            mouseRef.current.cursor = 'move';
+            mouseRef.current.cursor = Cursors.MOVE;
           }
 
           //clear selection if mouse is clicked outside ellipse bounding box
-          if (mouseRef.current.down && !Ellipse.isEllipseSelectionHovered(ellipse, mouseRef)) {
+          if (isMouseUp && !Ellipse.isEllipseSelectionHovered(ellipse, mouseRef)) {
             ellipse.setIsSelected(false);
           }
 
@@ -258,7 +275,7 @@ class Selection {
             (!mouseRef.current.down || !allData.some((s) => s.isSelected))
           ) {
             Selection.drawEllipseSelectionBox(ctx, ellipse);
-            mouseRef.current.cursor = 'move';
+            mouseRef.current.cursor = Cursors.MOVE;
           }
 
           //select ellipse if hovered and mouse is clicked and no other shape is selected
@@ -277,11 +294,11 @@ class Selection {
 
           //change cursor to move if arrow bounding box is hovered
           if (arrow.isSelected && Arrow.isArrowHovered(arrow, mouseRef)) {
-            mouseRef.current.cursor = 'move';
+            mouseRef.current.cursor = Cursors.MOVE;
           }
 
           //clear selection if mouse is clicked outside arrow bounding box
-          if (mouseRef.current.down && !Arrow.isArrowHovered(arrow, mouseRef)) {
+          if (isMouseUp && !Arrow.isArrowHovered(arrow, mouseRef)) {
             arrow.setIsSelected(false);
           }
 
@@ -291,7 +308,7 @@ class Selection {
             (!mouseRef.current.down || !allData.some((s) => s.isSelected))
           ) {
             Selection.drawLineSelectionBox(ctx, arrow);
-            mouseRef.current.cursor = 'move';
+            mouseRef.current.cursor = Cursors.MOVE;
           }
 
           //select arrow if hovered and mouse is clicked and no other shape is selected
@@ -310,11 +327,11 @@ class Selection {
 
           //change cursor to move if text bounding box is hovered
           if (text.isSelected && Text.isTextHovered(text, mouseRef, ctx)) {
-            mouseRef.current.cursor = 'move';
+            mouseRef.current.cursor = Cursors.MOVE;
           }
 
           //clear selection if mouse is clicked outside text bounding box
-          if (mouseRef.current.down && !Text.isTextHovered(text, mouseRef, ctx)) {
+          if (isMouseUp && !Text.isTextHovered(text, mouseRef, ctx)) {
             text.setIsSelected(false);
           }
 
@@ -324,7 +341,7 @@ class Selection {
             (!mouseRef.current.down || !allData.some((s) => s.isSelected))
           ) {
             Selection.drawTextSelectionBox(ctx, text);
-            mouseRef.current.cursor = 'move';
+            mouseRef.current.cursor = Cursors.MOVE;
           }
 
           //select text if hovered and mouse is clicked and no other shape is selected
@@ -345,7 +362,7 @@ class Selection {
   }
 
   static moveSelectedShape(mouseRef: React.MutableRefObject<Mouse>) {
-    const allData = Store.allShapes
+    const allData = Store.allShapes;
     const selectedShape = allData.find((shape) => shape.isSelected);
     if (!selectedShape || !mouseRef.current.down) {
       return;

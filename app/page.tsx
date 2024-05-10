@@ -15,6 +15,7 @@ import { ArrowHeads } from '@/enums/ArrowHeads';
 import { Fonts } from '@/enums/Fonts';
 import Selection from '@/models/Selection';
 import Store from '@/store/Store';
+import { Cursors } from '@/enums/Cursors';
 
 export type Mouse = {
   x: number;
@@ -22,7 +23,7 @@ export type Mouse = {
   prevX: number;
   prevY: number;
   down: boolean;
-  cursor: string;
+  cursor: Cursors;
 };
 export default function Home() {
   const parentRef = useRef<HTMLDivElement>(null);
@@ -33,7 +34,7 @@ export default function Home() {
     prevX: 0,
     prevY: 0,
     down: false,
-    cursor: 'default',
+    cursor: Cursors.DEFAULT,
   });
 
   const [selectedTool, setSelectedTool] = useState<Tools>(Tools.Pen);
@@ -126,7 +127,7 @@ export default function Home() {
 
       switch (selectedTool) {
         case Tools.Select:
-          mouseRef.current.cursor = 'default';
+          mouseRef.current.cursor = Cursors.DEFAULT;
           draw(
             canvas,
             offscreenCtx,
@@ -146,7 +147,7 @@ export default function Home() {
               selectedStrokeVariant
             )
           );
-          mouseRef.current.cursor = 'crosshair';
+          mouseRef.current.cursor = Cursors.CROSSHAIR;
           break;
         case Tools.Line:
           draw(
@@ -160,7 +161,7 @@ export default function Home() {
               selectedStrokeVariant
             )
           );
-          mouseRef.current.cursor = 'crosshair';
+          mouseRef.current.cursor = Cursors.CROSSHAIR;
           break;
         case Tools.Ellipse:
           draw(
@@ -175,7 +176,7 @@ export default function Home() {
               selectedFillColor
             )
           );
-          mouseRef.current.cursor = 'crosshair';
+          mouseRef.current.cursor = Cursors.CROSSHAIR;
           break;
         case Tools.Polygon:
           draw(
@@ -192,7 +193,7 @@ export default function Home() {
               selectedFillColor
             )
           );
-          mouseRef.current.cursor = 'crosshair';
+          mouseRef.current.cursor = Cursors.CROSSHAIR;
           break;
         case Tools.Arrow:
           draw(
@@ -208,7 +209,7 @@ export default function Home() {
               selectedRightArrowHead
             )
           );
-          mouseRef.current.cursor = 'crosshair';
+          mouseRef.current.cursor = Cursors.CROSSHAIR;
           break;
         case Tools.Text:
           draw(
@@ -224,7 +225,7 @@ export default function Home() {
               Store.allShapes.length
             )
           );
-          mouseRef.current.cursor = 'text';
+          mouseRef.current.cursor = Cursors.TEXT;
           break;
       }
 
