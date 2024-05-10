@@ -101,7 +101,16 @@ export default function Home() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    //offscreen canvas
+    const offscreenCanvas = document.createElement('canvas');
+    offscreenCanvas.width = canvas.width;
+    offscreenCanvas.height = canvas.height;
+    const offscreenCtx = offscreenCanvas.getContext('2d');
+
+    if (!offscreenCtx) return;
+
     const animate = () => {
+      animateId = requestAnimationFrame(animate);
 
       //conversion to html or canvas happen before drawing anything else
       if (selectedTool === Tools.Text) {
@@ -120,15 +129,15 @@ export default function Home() {
           mouseRef.current.cursor = 'default';
           draw(
             canvas,
-            ctx,
-            Selection.drawSelectionBoxes.bind(null, ctx, mouseRef)
+            offscreenCtx,
+            Selection.drawSelectionBoxes.bind(null, offscreenCtx, mouseRef)
           );
           Selection.moveSelectedShape(mouseRef);
           break;
         case Tools.Pen:
           draw(
             canvas,
-            ctx,
+            offscreenCtx,
             Pen.drawCurrentPen.bind(
               null,
               mouseRef,
@@ -142,7 +151,7 @@ export default function Home() {
         case Tools.Line:
           draw(
             canvas,
-            ctx,
+            offscreenCtx,
             Line.drawCurrentLine.bind(
               null,
               mouseRef,
@@ -156,7 +165,7 @@ export default function Home() {
         case Tools.Ellipse:
           draw(
             canvas,
-            ctx,
+            offscreenCtx,
             Ellipse.drawCurrentEllipse.bind(
               null,
               mouseRef,
@@ -171,7 +180,7 @@ export default function Home() {
         case Tools.Polygon:
           draw(
             canvas,
-            ctx,
+            offscreenCtx,
             Polygon.drawCurrentPolygon.bind(
               null,
               mouseRef,
@@ -188,7 +197,7 @@ export default function Home() {
         case Tools.Arrow:
           draw(
             canvas,
-            ctx,
+            offscreenCtx,
             Arrow.drawCurrentArrow.bind(
               null,
               mouseRef,
@@ -204,7 +213,7 @@ export default function Home() {
         case Tools.Text:
           draw(
             canvas,
-            ctx,
+            offscreenCtx,
             Text.drawCurrentText.bind(
               null,
               mouseRef,
@@ -220,7 +229,9 @@ export default function Home() {
       }
 
       canvas.style.cursor = mouseRef.current.cursor;
-      animateId = requestAnimationFrame(animate);
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(offscreenCanvas, 0, 0);
     };
 
     animate();
@@ -252,7 +263,18 @@ export default function Home() {
     selectedFontFamily,
   ]);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement> | MouseEvent) => {
+  const throttle = (callback: Function, delay: number) => {
+    let previousCall = new Date().getTime();
+    return function (this: any) {
+      const time = new Date().getTime();
+      if (time - previousCall >= delay) {
+        previousCall = time;
+        callback.apply(this, arguments);
+      }
+    };
+  };
+
+  const handleMouseMove = throttle((e: React.MouseEvent<HTMLCanvasElement> | MouseEvent) => {
     if (!canvasRef.current) return;
 
     const canvas = canvasRef.current;
@@ -265,7 +287,7 @@ export default function Home() {
       down: mouseRef.current.down,
       cursor: mouseRef.current.cursor,
     };
-  };
+  }, 5);
 
   const handleMouseDown = () => {
     mouseRef.current.down = true;
