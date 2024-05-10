@@ -176,7 +176,7 @@ class Arrow extends BaseShape {
     }
 
     if (arrow.isSelected) {
-      Selection.drawLineSelectionBox(ctx, arrow);
+      Selection.drawLineSelectionBox(ctx, arrow, true);
     }
   }
 

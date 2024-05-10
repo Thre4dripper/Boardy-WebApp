@@ -51,7 +51,7 @@ class Line extends BaseShape {
     ctx.stroke();
 
     if (line.isSelected) {
-      Selection.drawLineSelectionBox(ctx, line);
+      Selection.drawLineSelectionBox(ctx, line, true);
     }
   }
 

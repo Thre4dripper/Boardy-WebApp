@@ -113,7 +113,7 @@ class Text {
     });
 
     if (text.isSelected) {
-      Selection.drawTextSelectionBox(ctx, text);
+      Selection.drawTextSelectionBox(ctx, text, true);
     }
   }
 

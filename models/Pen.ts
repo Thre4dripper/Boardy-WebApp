@@ -69,7 +69,7 @@ class Pen extends BaseShape {
     ctx.stroke();
 
     if (pen.isSelected) {
-      Selection.drawPenSelectionBox(ctx, pen);
+      Selection.drawPenSelectionBox(ctx, pen, true);
     }
   }
 

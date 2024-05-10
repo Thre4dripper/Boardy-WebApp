@@ -75,7 +75,7 @@ class Ellipse extends BaseShape {
     ctx.stroke();
 
     if (ellipse.isSelected) {
-      Selection.drawEllipseSelectionBox(ctx, ellipse);
+      Selection.drawEllipseSelectionBox(ctx, ellipse, true);
     }
   }
 
@@ -112,7 +112,12 @@ class Ellipse extends BaseShape {
     const tolerance = 5;
 
     // Check if mouse is within bounds
-    return x >= minX - tolerance && x <= maxX + tolerance && y >= minY - tolerance && y <= maxY + tolerance;
+    return (
+      x >= minX - tolerance &&
+      x <= maxX + tolerance &&
+      y >= minY - tolerance &&
+      y <= maxY + tolerance
+    );
   }
 }
 

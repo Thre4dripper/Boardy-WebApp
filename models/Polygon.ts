@@ -101,7 +101,7 @@ class Polygon extends BaseShape {
     ctx.stroke(path);
 
     if (polygon.isSelected) {
-      Selection.drawPolygonSelectionBox(ctx, polygon);
+      Selection.drawPolygonSelectionBox(ctx, polygon, true);
     }
   }
 

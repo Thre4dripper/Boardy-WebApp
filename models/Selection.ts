@@ -27,7 +27,7 @@ class Selection {
     ctx.stroke();
   }
 
-  static drawPenSelectionBox(ctx: CanvasRenderingContext2D, pen: Pen) {
+  static drawPenSelectionBox(ctx: CanvasRenderingContext2D, pen: Pen, fullSelect: boolean) {
     const path = pen.path;
     const minX = Math.min(...path.map((point) => point.x));
     const minY = Math.min(...path.map((point) => point.y));
@@ -35,10 +35,16 @@ class Selection {
     const maxY = Math.max(...path.map((point) => point.y));
 
     ctx.strokeStyle = this.SELECTION_COLOR;
-    ctx.lineWidth = 2;
-    ctx.setLineDash([5, 5]);
+    if (fullSelect) {
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 5]);
+    } else {
+      ctx.lineWidth = 0.8;
+      ctx.setLineDash([]);
+    }
     ctx.strokeRect(minX - 5, minY - 5, maxX - minX + 10, maxY - minY + 10);
 
+    if (!fullSelect) return;
     //four dots in each corner
     this.drawDots(ctx, minX - 5, minY - 5);
     this.drawDots(ctx, maxX + 5, minY - 5);
@@ -46,12 +52,17 @@ class Selection {
     this.drawDots(ctx, maxX + 5, maxY + 5);
   }
 
-  static drawLineSelectionBox(ctx: CanvasRenderingContext2D, line: Line) {
+  static drawLineSelectionBox(ctx: CanvasRenderingContext2D, line: Line, fullSelect: boolean) {
+    if (!fullSelect) return;
     this.drawDots(ctx, line.x1, line.y1);
     this.drawDots(ctx, line.x2, line.y2);
   }
 
-  static drawPolygonSelectionBox(ctx: CanvasRenderingContext2D, polygon: Polygon) {
+  static drawPolygonSelectionBox(
+    ctx: CanvasRenderingContext2D,
+    polygon: Polygon,
+    fullSelect: boolean
+  ) {
     const vertices = [];
 
     const xCenter = (polygon.x1 + polygon.x2) / 2;
@@ -74,18 +85,28 @@ class Selection {
     const maxY = Math.max(...vertices.map((v) => v.y));
 
     ctx.strokeStyle = this.SELECTION_COLOR;
-    ctx.lineWidth = 2;
-    ctx.setLineDash([5, 5]);
-    ctx.strokeRect(minX - 5, minY - 5, maxX - minX + 10, maxY - minY + 10);
+    if (fullSelect) {
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 5]);
+    } else {
+      ctx.lineWidth = 0.8;
+      ctx.setLineDash([]);
+    }
+    ctx.strokeRect(minX - 10, minY - 10, maxX - minX + 20, maxY - minY + 20);
 
+    if (!fullSelect) return;
     //four dots in each corner
-    this.drawDots(ctx, minX - 5, minY - 5);
-    this.drawDots(ctx, maxX + 5, minY - 5);
-    this.drawDots(ctx, minX - 5, maxY + 5);
-    this.drawDots(ctx, maxX + 5, maxY + 5);
+    this.drawDots(ctx, minX - 10, minY - 10);
+    this.drawDots(ctx, maxX + 10, minY - 10);
+    this.drawDots(ctx, minX - 10, maxY + 10);
+    this.drawDots(ctx, maxX + 10, maxY + 10);
   }
 
-  static drawEllipseSelectionBox(ctx: CanvasRenderingContext2D, ellipse: Ellipse) {
+  static drawEllipseSelectionBox(
+    ctx: CanvasRenderingContext2D,
+    ellipse: Ellipse,
+    fullSelect: boolean
+  ) {
     const xCenter = (ellipse.x1 + ellipse.x2) / 2;
     const yCenter = (ellipse.y1 + ellipse.y2) / 2;
     const radiusX = Math.abs(ellipse.x1 - ellipse.x2) / 2;
@@ -97,10 +118,16 @@ class Selection {
     const maxY = radiusY * 2;
 
     ctx.strokeStyle = this.SELECTION_COLOR;
-    ctx.lineWidth = 2;
-    ctx.setLineDash([5, 5]);
+    if (fullSelect) {
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 5]);
+    } else {
+      ctx.lineWidth = 0.8;
+      ctx.setLineDash([]);
+    }
     ctx.strokeRect(minX - 5, minY - 5, maxX + 10, maxY + 10);
 
+    if (!fullSelect) return;
     //four dots in each corner
     this.drawDots(ctx, minX - 5, minY - 5);
     this.drawDots(ctx, minX - 5, minY + maxY + 5);
@@ -108,10 +135,15 @@ class Selection {
     this.drawDots(ctx, minX + maxX + 5, minY + maxY + 5);
   }
 
-  static drawTextSelectionBox(ctx: CanvasRenderingContext2D, text: Text) {
+  static drawTextSelectionBox(ctx: CanvasRenderingContext2D, text: Text, fullSelect: boolean) {
     ctx.strokeStyle = this.SELECTION_COLOR;
-    ctx.lineWidth = 2;
-    ctx.setLineDash([5, 5]);
+    if (fullSelect) {
+      ctx.setLineDash([5, 5]);
+      ctx.lineWidth = 2;
+    } else {
+      ctx.setLineDash([]);
+      ctx.lineWidth = 0.8;
+    }
 
     const lines = text.text.split('\n');
 
@@ -122,6 +154,7 @@ class Selection {
 
     ctx.strokeRect(minX - 5, minY - 5, maxX - minX + 10, maxY - minY + 10);
 
+    if (!fullSelect) return;
     //four dots in each corner
     this.drawDots(ctx, minX - 5, minY - 5);
     this.drawDots(ctx, minX - 5, maxY + 5);
@@ -171,20 +204,13 @@ class Selection {
           }
 
           //draw selection box if pen hovered and mouse should be in upstate or no other shape is selected
-          if (
-            Pen.isPenHovered(pen, mouseRef) &&
-            (!mouseRef.current.down || !allData.some((s) => s.isSelected))
-          ) {
-            Selection.drawPenSelectionBox(ctx, pen);
+          if (!pen.isSelected && !isMouseUp && Pen.isPenHovered(pen, mouseRef)) {
+            Selection.drawPenSelectionBox(ctx, pen, false);
             mouseRef.current.cursor = Cursors.MOVE;
           }
 
           //select pen if hovered and mouse is clicked and no other shape is selected
-          if (
-            mouseRef.current.down &&
-            Pen.isPenHovered(pen, mouseRef) &&
-            !allData.some((s) => s.isSelected)
-          ) {
+          if (isMouseUp && Pen.isPenHovered(pen, mouseRef)) {
             //remove all selections
             Selection.clearAllSelections();
             pen.setIsSelected(true);
@@ -204,20 +230,13 @@ class Selection {
           }
 
           //draw selection box if line hovered and mouse should be in upstate or no other shape is selected
-          if (
-            Line.isLineHovered(line, mouseRef) &&
-            (!mouseRef.current.down || !allData.some((s) => s.isSelected))
-          ) {
-            Selection.drawLineSelectionBox(ctx, line);
+          if (!line.isSelected && !isMouseUp && Line.isLineHovered(line, mouseRef)) {
+            Selection.drawLineSelectionBox(ctx, line, false);
             mouseRef.current.cursor = Cursors.MOVE;
           }
 
           //select line if hovered and mouse is clicked and no other shape is selected
-          if (
-            mouseRef.current.down &&
-            Line.isLineHovered(line, mouseRef) &&
-            !allData.some((s) => s.isSelected)
-          ) {
+          if (isMouseUp && Line.isLineHovered(line, mouseRef)) {
             //remove all selections
             Selection.clearAllSelections();
             line.setIsSelected(true);
@@ -237,20 +256,13 @@ class Selection {
           }
 
           //draw selection box if polygon hovered and mouse should be in upstate or no other shape is selected
-          if (
-            Polygon.isPolygonHovered(polygon, mouseRef) &&
-            (!mouseRef.current.down || !allData.some((s) => s.isSelected))
-          ) {
-            Selection.drawPolygonSelectionBox(ctx, polygon);
+          if (!polygon.isSelected && !isMouseUp && Polygon.isPolygonHovered(polygon, mouseRef)) {
+            Selection.drawPolygonSelectionBox(ctx, polygon, false);
             mouseRef.current.cursor = Cursors.MOVE;
           }
 
           //select polygon if hovered and mouse is clicked and no other shape is selected
-          if (
-            mouseRef.current.down &&
-            Polygon.isPolygonHovered(polygon, mouseRef) &&
-            !allData.some((s) => s.isSelected)
-          ) {
+          if (isMouseUp && Polygon.isPolygonHovered(polygon, mouseRef)) {
             //remove all selections
             Selection.clearAllSelections();
             polygon.setIsSelected(true);
@@ -270,20 +282,13 @@ class Selection {
           }
 
           //draw selection box if ellipse hovered and mouse should be in upstate or no other shape is selected
-          if (
-            Ellipse.isEllipseHovered(ellipse, mouseRef) &&
-            (!mouseRef.current.down || !allData.some((s) => s.isSelected))
-          ) {
-            Selection.drawEllipseSelectionBox(ctx, ellipse);
+          if (!ellipse.isSelected && !isMouseUp && Ellipse.isEllipseHovered(ellipse, mouseRef)) {
+            Selection.drawEllipseSelectionBox(ctx, ellipse, false);
             mouseRef.current.cursor = Cursors.MOVE;
           }
 
           //select ellipse if hovered and mouse is clicked and no other shape is selected
-          if (
-            mouseRef.current.down &&
-            Ellipse.isEllipseHovered(ellipse, mouseRef) &&
-            !allData.some((s) => s.isSelected)
-          ) {
+          if (isMouseUp && Ellipse.isEllipseHovered(ellipse, mouseRef)) {
             //remove all selections
             Selection.clearAllSelections();
             ellipse.setIsSelected(true);
@@ -303,20 +308,13 @@ class Selection {
           }
 
           //draw selection box if arrow hovered and mouse should be in upstate or no other shape is selected
-          if (
-            Arrow.isArrowHovered(arrow, mouseRef) &&
-            (!mouseRef.current.down || !allData.some((s) => s.isSelected))
-          ) {
-            Selection.drawLineSelectionBox(ctx, arrow);
+          if (!arrow.isSelected && !isMouseUp && Arrow.isArrowHovered(arrow, mouseRef)) {
+            Selection.drawLineSelectionBox(ctx, arrow, false);
             mouseRef.current.cursor = Cursors.MOVE;
           }
 
           //select arrow if hovered and mouse is clicked and no other shape is selected
-          if (
-            mouseRef.current.down &&
-            Arrow.isArrowHovered(arrow, mouseRef) &&
-            !allData.some((s) => s.isSelected)
-          ) {
+          if (isMouseUp && Arrow.isArrowHovered(arrow, mouseRef)) {
             //remove all selections
             Selection.clearAllSelections();
             arrow.setIsSelected(true);
@@ -336,20 +334,13 @@ class Selection {
           }
 
           //draw selection box if text hovered and mouse should be in upstate or no other shape is selected
-          if (
-            Text.isTextHovered(text, mouseRef, ctx) &&
-            (!mouseRef.current.down || !allData.some((s) => s.isSelected))
-          ) {
-            Selection.drawTextSelectionBox(ctx, text);
+          if (!text.isSelected &&  !isMouseUp && Text.isTextHovered(text, mouseRef, ctx)) {
+            Selection.drawTextSelectionBox(ctx, text, false);
             mouseRef.current.cursor = Cursors.MOVE;
           }
 
           //select text if hovered and mouse is clicked and no other shape is selected
-          if (
-            mouseRef.current.down &&
-            Text.isTextHovered(text, mouseRef, ctx) &&
-            !allData.some((s) => s.isSelected)
-          ) {
+          if (isMouseUp && Text.isTextHovered(text, mouseRef, ctx)) {
             //remove all selections
             Selection.clearAllSelections();
             text.setIsSelected(true);
