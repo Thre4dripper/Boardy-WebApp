@@ -148,7 +148,7 @@ class Text {
     inputElement.className = Text.TEXT_DIV_TAG;
     inputElement.contentEditable = 'true';
     inputElement.style.position = 'absolute';
-    inputElement.style.top = `${y}px`;
+    inputElement.style.top = `${y - fontSize / 1.5}px`;
     inputElement.style.left = `${x}px`;
     inputElement.style.border = 'none';
     inputElement.style.outline = 'none';
