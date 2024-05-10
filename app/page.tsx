@@ -237,12 +237,13 @@ export default function Home() {
     animate();
 
     document.addEventListener('keydown', (e) => {
-      if (e.key === '1') setSelectedTool(Tools.Pen);
-      if (e.key === '2') setSelectedTool(Tools.Line);
-      if (e.key === '3') setSelectedTool(Tools.Polygon);
-      if (e.key === '4') setSelectedTool(Tools.Ellipse);
-      if (e.key === '5') setSelectedTool(Tools.Arrow);
-      if (e.key === '6') setSelectedTool(Tools.Text);
+      if (e.key === '1') setSelectedTool(Tools.Select);
+      if (e.key === '2') setSelectedTool(Tools.Pen);
+      if (e.key === '3') setSelectedTool(Tools.Line);
+      if (e.key === '4') setSelectedTool(Tools.Polygon);
+      if (e.key === '5') setSelectedTool(Tools.Ellipse);
+      if (e.key === '6') setSelectedTool(Tools.Arrow);
+      if (e.key === '7') setSelectedTool(Tools.Text);
     });
     return () => {
       window.cancelAnimationFrame(animateId);
