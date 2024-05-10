@@ -12,7 +12,7 @@ class Text {
   fontSize: number;
   fontColor: StrokeColor;
   fontFamily: string;
-  timeStamp: number;
+  stackIndex: number;
   isSelected: boolean = false;
 
   setIsSelected(isSelected: boolean) {
@@ -26,7 +26,7 @@ class Text {
     fontSize: number,
     fontColor: StrokeColor,
     fontFamily: string,
-    timeStamp: number
+    stackIndex: number
   ) {
     this.x = x;
     this.y = y;
@@ -34,7 +34,7 @@ class Text {
     this.fontSize = fontSize;
     this.fontColor = fontColor;
     this.fontFamily = fontFamily;
-    this.timeStamp = timeStamp;
+    this.stackIndex = stackIndex;
   }
 
   static TEXT_DIV_TAG = 'text-input';
@@ -45,9 +45,11 @@ class Text {
     selectedFontSize: number,
     selectedFontColor: StrokeColor,
     selectedFontFamily: string,
-    timeStamp: number
+    stackIndex: number
   ) {
     if (mouseRef.current.down) {
+      //get input elements count for stack index
+      const inputElements = parentRef.current?.querySelectorAll(`.${Text.TEXT_DIV_TAG}`);
       const inputElement = Text.createInput(
         mouseRef.current.x,
         mouseRef.current.y,
@@ -56,7 +58,7 @@ class Text {
         selectedFontFamily,
         parentRef.current?.clientWidth as number,
         parentRef.current?.clientHeight as number,
-        timeStamp
+        stackIndex + (inputElements?.length || 0)
       );
 
       parentRef.current?.appendChild(inputElement);
@@ -133,7 +135,6 @@ class Text {
     return x >= minX && x <= maxX && y >= minY && y <= maxY;
   }
 
-  //TODO fix input box coords
   static createInput(
     x: number,
     y: number,
@@ -142,7 +143,7 @@ class Text {
     fontFamily: string,
     screenWidth: number,
     screenHeight: number,
-    timeStamp: number
+    stackIndex: number
   ) {
     const inputElement = document.createElement('div');
     inputElement.className = Text.TEXT_DIV_TAG;
@@ -157,7 +158,7 @@ class Text {
     inputElement.style.fontSize = `${fontSize}px`;
     inputElement.style.fontFamily = fontFamily;
     inputElement.style.backgroundColor = 'transparent';
-    inputElement.dataset.timeStamp = timeStamp.toString();
+    inputElement.dataset.stackIndex = stackIndex.toString();
 
     inputElement.oninput = () => {
       //   move the input element to the left if it exceeds the screen width
@@ -193,9 +194,11 @@ class Text {
         parseInt(input.style.fontSize),
         input.style.color as StrokeColor,
         input.style.fontFamily,
-        parseInt(input.dataset.timeStamp!)
+        parseInt(input.dataset.stackIndex!)
       );
-      Store.allShapes.push(text);
+
+      const stackIndex = parseInt(input.dataset.stackIndex!);
+      Store.allShapes.splice(stackIndex, 0, text);
       parentDiv.removeChild(inputElement);
     });
   }
@@ -212,7 +215,7 @@ class Text {
         text.fontFamily,
         parentDiv.clientWidth,
         parentDiv.clientHeight,
-        text.timeStamp
+        text.stackIndex
       );
       input.innerText = text.text;
       parentDiv.appendChild(input);

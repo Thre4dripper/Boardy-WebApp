@@ -221,7 +221,7 @@ export default function Home() {
               selectedFontSize,
               selectedStrokeColor,
               selectedFontFamily,
-              Date.now()
+              Store.allShapes.length
             )
           );
           mouseRef.current.cursor = 'text';
