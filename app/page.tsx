@@ -277,20 +277,23 @@ export default function Home() {
     };
   };
 
-  const handleMouseMove = throttle((e: React.MouseEvent<HTMLCanvasElement> | MouseEvent) => {
-    if (!canvasRef.current) return;
+  const handleMouseMove = throttle(
+    (e: React.MouseEvent<HTMLCanvasElement> | MouseEvent) => {
+      if (!canvasRef.current) return;
 
-    const canvas = canvasRef.current;
-    const rect = canvas.getBoundingClientRect();
-    mouseRef.current = {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-      prevX: mouseRef.current.x,
-      prevY: mouseRef.current.y,
-      down: mouseRef.current.down,
-      cursor: mouseRef.current.cursor,
-    };
-  }, selectedTool === Tools.Eraser ? 0 : 5);
+      const canvas = canvasRef.current;
+      const rect = canvas.getBoundingClientRect();
+      mouseRef.current = {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
+        prevX: mouseRef.current.x,
+        prevY: mouseRef.current.y,
+        down: mouseRef.current.down,
+        cursor: mouseRef.current.cursor,
+      };
+    },
+    selectedTool === Tools.Eraser ? 0 : 5
+  );
 
   const handleMouseDown = () => {
     mouseRef.current.down = true;
@@ -302,7 +305,7 @@ export default function Home() {
 
   return (
     <div className={'h-full bg-white relative overflow-hidden'} ref={parentRef}>
-      {selectedTool !== Tools.Select && (
+      {selectedTool !== Tools.Select && selectedTool !== Tools.Eraser && (
         <PropertiesCard
           selectedTool={selectedTool}
           selectedStrokeColor={selectedStrokeColor}

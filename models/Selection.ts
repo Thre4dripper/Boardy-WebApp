@@ -203,8 +203,8 @@ class Selection {
             pen.setIsSelected(false);
           }
 
-          //draw selection box if pen hovered and mouse should be in upstate or no other shape is selected
-          if (!pen.isSelected && !isMouseUp && Pen.isPenHovered(pen, mouseRef)) {
+          //draw selection box when pen is not selected and hovered and mouse should be in upstate
+          if (!pen.isSelected && !mouseRef.current.down && Pen.isPenHovered(pen, mouseRef)) {
             Selection.drawPenSelectionBox(ctx, pen, false);
             mouseRef.current.cursor = Cursors.MOVE;
           }
@@ -229,8 +229,8 @@ class Selection {
             line.setIsSelected(false);
           }
 
-          //draw selection box if line hovered and mouse should be in upstate or no other shape is selected
-          if (!line.isSelected && !isMouseUp && Line.isLineHovered(line, mouseRef)) {
+          //draw selection box when pen is not selected and hovered and mouse should be in upstate
+          if (!line.isSelected && !mouseRef.current.down && Line.isLineHovered(line, mouseRef)) {
             Selection.drawLineSelectionBox(ctx, line, false);
             mouseRef.current.cursor = Cursors.MOVE;
           }
@@ -255,8 +255,8 @@ class Selection {
             polygon.setIsSelected(false);
           }
 
-          //draw selection box if polygon hovered and mouse should be in upstate or no other shape is selected
-          if (!polygon.isSelected && !isMouseUp && Polygon.isPolygonHovered(polygon, mouseRef)) {
+          //draw selection box when pen is not selected and hovered and mouse should be in upstate
+          if (!polygon.isSelected && !mouseRef.current.down && Polygon.isPolygonHovered(polygon, mouseRef)) {
             Selection.drawPolygonSelectionBox(ctx, polygon, false);
             mouseRef.current.cursor = Cursors.MOVE;
           }
@@ -281,8 +281,8 @@ class Selection {
             ellipse.setIsSelected(false);
           }
 
-          //draw selection box if ellipse hovered and mouse should be in upstate or no other shape is selected
-          if (!ellipse.isSelected && !isMouseUp && Ellipse.isEllipseHovered(ellipse, mouseRef)) {
+          //draw selection box when pen is not selected and hovered and mouse should be in upstate
+          if (!ellipse.isSelected && !mouseRef.current.down && Ellipse.isEllipseHovered(ellipse, mouseRef)) {
             Selection.drawEllipseSelectionBox(ctx, ellipse, false);
             mouseRef.current.cursor = Cursors.MOVE;
           }
@@ -307,8 +307,8 @@ class Selection {
             arrow.setIsSelected(false);
           }
 
-          //draw selection box if arrow hovered and mouse should be in upstate or no other shape is selected
-          if (!arrow.isSelected && !isMouseUp && Arrow.isArrowHovered(arrow, mouseRef)) {
+          //draw selection box when pen is not selected and hovered and mouse should be in upstate
+          if (!arrow.isSelected && !mouseRef.current.down && Arrow.isArrowHovered(arrow, mouseRef)) {
             Selection.drawLineSelectionBox(ctx, arrow, false);
             mouseRef.current.cursor = Cursors.MOVE;
           }
@@ -333,8 +333,8 @@ class Selection {
             text.setIsSelected(false);
           }
 
-          //draw selection box if text hovered and mouse should be in upstate or no other shape is selected
-          if (!text.isSelected &&  !isMouseUp && Text.isTextHovered(text, mouseRef, ctx)) {
+          //draw selection box when pen is not selected and hovered and mouse should be in upstate
+          if (!text.isSelected && !mouseRef.current.down && Text.isTextHovered(text, mouseRef, ctx)) {
             Selection.drawTextSelectionBox(ctx, text, false);
             mouseRef.current.cursor = Cursors.MOVE;
           }
