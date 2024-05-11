@@ -7,6 +7,7 @@ export enum Cursors {
   NESW_RESIZE = 'nesw-resize',
   NWSE_RESIZE = 'nwse-resize',
   TEXT = 'text',
+  NONE = 'none',
 }
 
 export default Cursors;

@@ -16,6 +16,7 @@ import { Fonts } from '@/enums/Fonts';
 import Selection from '@/models/Selection';
 import Store from '@/store/Store';
 import { Cursors } from '@/enums/Cursors';
+import Eraser from '@/models/Eraser';
 
 export type Mouse = {
   x: number;
@@ -227,6 +228,10 @@ export default function Home() {
           );
           mouseRef.current.cursor = Cursors.TEXT;
           break;
+        case Tools.Eraser:
+          draw(canvas, offscreenCtx, Eraser.drawEraser.bind(null, mouseRef, offscreenCtx));
+          mouseRef.current.cursor = Cursors.NONE;
+          break;
       }
 
       canvas.style.cursor = mouseRef.current.cursor;
@@ -238,13 +243,9 @@ export default function Home() {
     animate();
 
     document.addEventListener('keydown', (e) => {
-      if (e.key === '1') setSelectedTool(Tools.Select);
-      if (e.key === '2') setSelectedTool(Tools.Pen);
-      if (e.key === '3') setSelectedTool(Tools.Line);
-      if (e.key === '4') setSelectedTool(Tools.Polygon);
-      if (e.key === '5') setSelectedTool(Tools.Ellipse);
-      if (e.key === '6') setSelectedTool(Tools.Arrow);
-      if (e.key === '7') setSelectedTool(Tools.Text);
+      Object.values(Tools).forEach((tool, index) => {
+        if (e.key === (index + 1).toString()) setSelectedTool(tool);
+      });
     });
     return () => {
       window.cancelAnimationFrame(animateId);
@@ -289,7 +290,7 @@ export default function Home() {
       down: mouseRef.current.down,
       cursor: mouseRef.current.cursor,
     };
-  }, 5);
+  }, selectedTool === Tools.Eraser ? 0 : 5);
 
   const handleMouseDown = () => {
     mouseRef.current.down = true;
