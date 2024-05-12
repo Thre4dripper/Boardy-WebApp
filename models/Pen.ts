@@ -6,6 +6,7 @@ import { StrokeColor } from '@/enums/Colors';
 import { StrokeVariant } from '@/enums/StrokeVariant';
 import Selection from '@/models/Selection';
 import Store from '@/store/Store';
+import { SelectionResize } from '@/enums/SelectionResize';
 
 class Pen extends BaseShape {
   path: Point[] = [];
@@ -106,7 +107,7 @@ class Pen extends BaseShape {
     const maxX = Math.max(...pen.path.map((point) => point.x));
     const maxY = Math.max(...pen.path.map((point) => point.y));
 
-    const tolerance = 5;
+    const tolerance = 15;
 
     // Check if the mouse is within the bounds
     return (
@@ -115,6 +116,66 @@ class Pen extends BaseShape {
       mouseRef.current.y >= minY - tolerance &&
       mouseRef.current.y <= maxY + tolerance
     );
+  }
+
+  static getHoveredEdgeOrCorner(pen: Pen, mouseRef: React.MutableRefObject<Mouse>) {
+    // Get selection bounds
+    const minX = Math.min(...pen.path.map((point) => point.x));
+    const minY = Math.min(...pen.path.map((point) => point.y));
+    const maxX = Math.max(...pen.path.map((point) => point.x));
+    const maxY = Math.max(...pen.path.map((point) => point.y));
+
+    const tolerance = 10;
+    const cornerTolerance = 12; // Extra tolerance for corners
+
+    // Check if the mouse is within the bounds of each edge or corner
+    if (
+      Math.abs(mouseRef.current.x - minX) <= cornerTolerance &&
+      Math.abs(mouseRef.current.y - minY) <= cornerTolerance
+    ) {
+      return SelectionResize.TopLeft;
+    } else if (
+      Math.abs(mouseRef.current.x - maxX) <= cornerTolerance &&
+      Math.abs(mouseRef.current.y - minY) <= cornerTolerance
+    ) {
+      return SelectionResize.TopRight;
+    } else if (
+      Math.abs(mouseRef.current.x - maxX) <= cornerTolerance &&
+      Math.abs(mouseRef.current.y - maxY) <= cornerTolerance
+    ) {
+      return SelectionResize.BottomRight;
+    } else if (
+      Math.abs(mouseRef.current.x - minX) <= cornerTolerance &&
+      Math.abs(mouseRef.current.y - maxY) <= cornerTolerance
+    ) {
+      return SelectionResize.BottomLeft;
+    } else if (
+      mouseRef.current.x >= minX - tolerance &&
+      mouseRef.current.x <= maxX + tolerance &&
+      Math.abs(mouseRef.current.y - minY) <= tolerance
+    ) {
+      return SelectionResize.Top;
+    } else if (
+      mouseRef.current.x >= minX - tolerance &&
+      mouseRef.current.x <= maxX + tolerance &&
+      Math.abs(mouseRef.current.y - maxY) <= tolerance
+    ) {
+      return SelectionResize.Bottom;
+    } else if (
+      mouseRef.current.y >= minY - tolerance &&
+      mouseRef.current.y <= maxY + tolerance &&
+      Math.abs(mouseRef.current.x - minX) <= tolerance
+    ) {
+      return SelectionResize.Left;
+    } else if (
+      mouseRef.current.y >= minY - tolerance &&
+      mouseRef.current.y <= maxY + tolerance &&
+      Math.abs(mouseRef.current.x - maxX) <= tolerance
+    ) {
+      return SelectionResize.Right;
+    } else {
+      return SelectionResize.None;
+    }
   }
 }
 

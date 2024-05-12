@@ -8,6 +8,7 @@ import Ellipse from '@/models/Ellipse';
 import Polygon from '@/models/Polygon';
 import Text from '@/models/Text';
 import Cursors from '@/enums/Cursors';
+import { SelectionResize } from '@/enums/SelectionResize';
 
 let flag = false;
 let isMouseUp = false;
@@ -256,7 +257,11 @@ class Selection {
           }
 
           //draw selection box when pen is not selected and hovered and mouse should be in upstate
-          if (!polygon.isSelected && !mouseRef.current.down && Polygon.isPolygonHovered(polygon, mouseRef)) {
+          if (
+            !polygon.isSelected &&
+            !mouseRef.current.down &&
+            Polygon.isPolygonHovered(polygon, mouseRef)
+          ) {
             Selection.drawPolygonSelectionBox(ctx, polygon, false);
             mouseRef.current.cursor = Cursors.MOVE;
           }
@@ -282,7 +287,11 @@ class Selection {
           }
 
           //draw selection box when pen is not selected and hovered and mouse should be in upstate
-          if (!ellipse.isSelected && !mouseRef.current.down && Ellipse.isEllipseHovered(ellipse, mouseRef)) {
+          if (
+            !ellipse.isSelected &&
+            !mouseRef.current.down &&
+            Ellipse.isEllipseHovered(ellipse, mouseRef)
+          ) {
             Selection.drawEllipseSelectionBox(ctx, ellipse, false);
             mouseRef.current.cursor = Cursors.MOVE;
           }
@@ -308,7 +317,11 @@ class Selection {
           }
 
           //draw selection box when pen is not selected and hovered and mouse should be in upstate
-          if (!arrow.isSelected && !mouseRef.current.down && Arrow.isArrowHovered(arrow, mouseRef)) {
+          if (
+            !arrow.isSelected &&
+            !mouseRef.current.down &&
+            Arrow.isArrowHovered(arrow, mouseRef)
+          ) {
             Selection.drawLineSelectionBox(ctx, arrow, false);
             mouseRef.current.cursor = Cursors.MOVE;
           }
@@ -334,7 +347,11 @@ class Selection {
           }
 
           //draw selection box when pen is not selected and hovered and mouse should be in upstate
-          if (!text.isSelected && !mouseRef.current.down && Text.isTextHovered(text, mouseRef, ctx)) {
+          if (
+            !text.isSelected &&
+            !mouseRef.current.down &&
+            Text.isTextHovered(text, mouseRef, ctx)
+          ) {
             Selection.drawTextSelectionBox(ctx, text, false);
             mouseRef.current.cursor = Cursors.MOVE;
           }
@@ -350,6 +367,9 @@ class Selection {
           break;
       }
     });
+
+    //render resize cursor
+    Selection.renderResizeCursor(mouseRef);
   }
 
   static moveSelectedShape(mouseRef: React.MutableRefObject<Mouse>) {
@@ -357,12 +377,6 @@ class Selection {
     const selectedShape = allData.find((shape) => shape.isSelected);
     if (!selectedShape || !mouseRef.current.down) {
       return;
-    }
-
-    if (!mouseRef.current.prevX || !mouseRef.current.prevY) {
-      mouseRef.current.prevX = mouseRef.current.x;
-      mouseRef.current.prevY = mouseRef.current.y;
-      return; // Skip moving the shape if it's the first mouse movement
     }
 
     const dx = mouseRef.current.x - mouseRef.current.prevX;
@@ -416,6 +430,44 @@ class Selection {
     // Update the previous mouse position
     mouseRef.current.prevX = mouseRef.current.x;
     mouseRef.current.prevY = mouseRef.current.y;
+  }
+
+  static renderResizeCursor(mouseRef: React.MutableRefObject<Mouse>) {
+    const allData = Store.allShapes;
+    const selectedShape = allData.find((shape) => shape.isSelected);
+    if (!selectedShape) {
+      return;
+    }
+
+    switch (selectedShape.constructor) {
+      case Pen:
+        const pen = selectedShape as Pen;
+        const cursor = Pen.getHoveredEdgeOrCorner(pen, mouseRef);
+        switch (cursor) {
+          case SelectionResize.TopLeft:
+          case SelectionResize.BottomRight:
+            mouseRef.current.cursor = Cursors.NWSE_RESIZE;
+            break;
+          case SelectionResize.TopRight:
+          case SelectionResize.BottomLeft:
+            mouseRef.current.cursor = Cursors.NESW_RESIZE;
+            break;
+          case SelectionResize.Top:
+          case SelectionResize.Bottom:
+            mouseRef.current.cursor = Cursors.VERTICAL_RESIZE;
+            break;
+          case SelectionResize.Left:
+          case SelectionResize.Right:
+            mouseRef.current.cursor = Cursors.HORIZONTAL_RESIZE;
+            break;
+          default:
+            break;
+        }
+        break;
+
+      default:
+        break;
+    }
   }
 }
 
