@@ -2,10 +2,10 @@ import React from 'react';
 import { Mouse } from '@/app/page';
 import { StrokeColor } from '@/enums/Colors';
 import { Fonts } from '@/enums/Fonts';
-import Selection from '@/models/Selection';
+import SelectionService from '@/services/selection.service';
 import Store from '@/store/Store';
 
-class Text {
+class TextService {
   x: number;
   y: number;
   text: string;
@@ -49,8 +49,8 @@ class Text {
   ) {
     if (mouseRef.current.down) {
       //get input elements count for stack index
-      const inputElements = parentRef.current?.querySelectorAll(`.${Text.TEXT_DIV_TAG}`);
-      const inputElement = Text.createInput(
+      const inputElements = parentRef.current?.querySelectorAll(`.${TextService.TEXT_DIV_TAG}`);
+      const inputElement = TextService.createInput(
         mouseRef.current.x,
         mouseRef.current.y,
         selectedFontSize,
@@ -68,7 +68,7 @@ class Text {
     }
   }
 
-  static drawStoredText(ctx: CanvasRenderingContext2D, text: Text) {
+  static drawStoredText(ctx: CanvasRenderingContext2D, text: TextService) {
     ctx.font = `${text.fontSize}px ${text.fontFamily}`;
     ctx.fillStyle = text.fontColor;
 
@@ -113,12 +113,12 @@ class Text {
     });
 
     if (text.isSelected) {
-      Selection.drawTextSelectionBox(ctx, text, true);
+      SelectionService.drawTextSelectionBox(ctx, text, true);
     }
   }
 
   static isTextHovered(
-    text: Text,
+    text: TextService,
     mouseRef: React.MutableRefObject<Mouse>,
     ctx: CanvasRenderingContext2D
   ) {
@@ -146,7 +146,7 @@ class Text {
     stackIndex: number
   ) {
     const inputElement = document.createElement('div');
-    inputElement.className = Text.TEXT_DIV_TAG;
+    inputElement.className = TextService.TEXT_DIV_TAG;
     inputElement.contentEditable = 'true';
     inputElement.style.position = 'absolute';
     inputElement.style.top = `${y - fontSize / 1.5}px`;
@@ -181,13 +181,13 @@ class Text {
     const allChildren = Array.from(parentDiv.children);
 
     const inputElements = allChildren.filter((child) => {
-      return child.className === Text.TEXT_DIV_TAG;
+      return child.className === TextService.TEXT_DIV_TAG;
     });
 
     //convert input elements to canvas elements
     inputElements.forEach((inputElement) => {
       const input = inputElement as HTMLDivElement;
-      const text = new Text(
+      const text = new TextService(
         parseInt(input.style.left),
         parseInt(input.style.top),
         input.innerText,
@@ -205,9 +205,9 @@ class Text {
 
   static convertToHtml(parentDiv: HTMLElement) {
     //convert canvas elements to input elements
-    const texts = Store.allShapes.filter((shape) => shape instanceof Text) as Text[];
+    const texts = Store.allShapes.filter((shape) => shape instanceof TextService) as TextService[];
     texts.forEach((text) => {
-      const input = Text.createInput(
+      const input = TextService.createInput(
         text.x,
         text.y,
         text.fontSize,
@@ -222,8 +222,8 @@ class Text {
     });
 
     //clear all texts
-    Store.allShapes = Store.allShapes.filter((shape) => !(shape instanceof Text));
+    Store.allShapes = Store.allShapes.filter((shape) => !(shape instanceof TextService));
   }
 }
 
-export default Text;
+export default TextService;

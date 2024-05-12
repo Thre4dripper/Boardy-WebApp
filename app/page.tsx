@@ -1,22 +1,23 @@
 'use client';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import Pen from '@/models/Pen';
-import Line from '@/models/line';
+import PenService from '@/services/pen.service';
+import LineService from '@/services/line.service';
 import ToolsCard from '@/components/ToolsCard';
 import { Tools } from '@/enums/Tools';
-import Ellipse from '@/models/Ellipse';
-import Arrow from '@/models/Arrow';
-import Polygon from '@/models/Polygon';
-import Text from '@/models/Text';
+import EllipseService from '@/services/ellipse.service';
+import ArrowService from '@/services/arrow.service';
+import PolygonService from '@/services/polygon.service';
+import TextService from '@/services/text.service';
 import PropertiesCard from '@/components/properties-card';
 import { StrokeVariant } from '@/enums/StrokeVariant';
 import { FillColor, StrokeColor } from '@/enums/Colors';
 import { ArrowHeads } from '@/enums/ArrowHeads';
 import { Fonts } from '@/enums/Fonts';
-import Selection from '@/models/Selection';
+import SelectionService from '@/services/selection.service';
 import Store from '@/store/Store';
 import { Cursors } from '@/enums/Cursors';
-import Eraser from '@/models/Eraser';
+import EraserService from '@/services/eraser.service';
+import MoveResizeService from '@/services/move.resize.service';
 
 export type Mouse = {
   x: number;
@@ -116,14 +117,14 @@ export default function Home() {
 
       //conversion to html or canvas happen before drawing anything else
       if (selectedTool === Tools.Text) {
-        Text.convertToHtml(parentRef.current as HTMLElement);
+        TextService.convertToHtml(parentRef.current as HTMLElement);
       } else {
-        Text.convertToCanvas(parentRef.current as HTMLElement);
+        TextService.convertToCanvas(parentRef.current as HTMLElement);
       }
 
       //clear all selections if the selected tool is not select before drawing anything
       if (selectedTool !== Tools.Select) {
-        Selection.clearAllSelections();
+        SelectionService.clearAllSelections();
       }
 
       switch (selectedTool) {
@@ -132,15 +133,15 @@ export default function Home() {
           draw(
             canvas,
             offscreenCtx,
-            Selection.drawSelectionBoxes.bind(null, offscreenCtx, mouseRef)
+            SelectionService.drawSelectionBoxes.bind(null, offscreenCtx, mouseRef)
           );
-          Selection.moveSelectedShape(mouseRef);
+          MoveResizeService.moveSelectedShape(mouseRef);
           break;
         case Tools.Pen:
           draw(
             canvas,
             offscreenCtx,
-            Pen.drawCurrentPen.bind(
+            PenService.drawCurrentPen.bind(
               null,
               mouseRef,
               selectedStrokeColor,
@@ -154,7 +155,7 @@ export default function Home() {
           draw(
             canvas,
             offscreenCtx,
-            Line.drawCurrentLine.bind(
+            LineService.drawCurrentLine.bind(
               null,
               mouseRef,
               selectedStrokeColor,
@@ -168,7 +169,7 @@ export default function Home() {
           draw(
             canvas,
             offscreenCtx,
-            Ellipse.drawCurrentEllipse.bind(
+            EllipseService.drawCurrentEllipse.bind(
               null,
               mouseRef,
               selectedStrokeColor,
@@ -183,7 +184,7 @@ export default function Home() {
           draw(
             canvas,
             offscreenCtx,
-            Polygon.drawCurrentPolygon.bind(
+            PolygonService.drawCurrentPolygon.bind(
               null,
               mouseRef,
               selectedStrokeColor,
@@ -200,7 +201,7 @@ export default function Home() {
           draw(
             canvas,
             offscreenCtx,
-            Arrow.drawCurrentArrow.bind(
+            ArrowService.drawCurrentArrow.bind(
               null,
               mouseRef,
               selectedStrokeColor,
@@ -216,7 +217,7 @@ export default function Home() {
           draw(
             canvas,
             offscreenCtx,
-            Text.drawCurrentText.bind(
+            TextService.drawCurrentText.bind(
               null,
               mouseRef,
               parentRef,
@@ -229,7 +230,7 @@ export default function Home() {
           mouseRef.current.cursor = Cursors.TEXT;
           break;
         case Tools.Eraser:
-          draw(canvas, offscreenCtx, Eraser.drawEraser.bind(null, mouseRef, offscreenCtx));
+          draw(canvas, offscreenCtx, EraserService.drawEraser.bind(null, mouseRef, offscreenCtx));
           mouseRef.current.cursor = Cursors.NONE;
           break;
       }

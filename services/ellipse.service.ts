@@ -1,12 +1,12 @@
-import BaseShape from '@/models/BaseShape';
+import BaseShapeService from '@/services/baseShape.service';
 import { Mouse } from '@/app/page';
 import React from 'react';
 import { FillColor, StrokeColor } from '@/enums/Colors';
 import { StrokeVariant } from '@/enums/StrokeVariant';
-import Selection from '@/models/Selection';
+import SelectionService from '@/services/selection.service';
 import Store from '@/store/Store';
 
-class Ellipse extends BaseShape {
+class EllipseService extends BaseShapeService {
   fillColor: FillColor;
 
   constructor(
@@ -30,7 +30,9 @@ class Ellipse extends BaseShape {
     selectedStrokeVariant: StrokeVariant,
     selectedFillColor: FillColor
   ) {
-    const ellipses = Store.allShapes.filter((shape) => shape instanceof Ellipse) as Ellipse[];
+    const ellipses = Store.allShapes.filter(
+      (shape) => shape instanceof EllipseService
+    ) as EllipseService[];
     if (mouseRef.current.down) {
       const lastEllipse = ellipses[ellipses.length - 1];
       lastEllipse.x2 = mouseRef.current.x;
@@ -44,7 +46,7 @@ class Ellipse extends BaseShape {
         Store.allShapes.pop();
       }
       Store.allShapes.push(
-        new Ellipse(
+        new EllipseService(
           mouseRef.current.x,
           mouseRef.current.y,
           mouseRef.current.x,
@@ -58,11 +60,11 @@ class Ellipse extends BaseShape {
     }
   }
 
-  static drawStoredEllipse(ctx: CanvasRenderingContext2D, ellipse: Ellipse) {
+  static drawStoredEllipse(ctx: CanvasRenderingContext2D, ellipse: EllipseService) {
     if (ellipse.x1 === ellipse.x2 && ellipse.y1 === ellipse.y2) {
       return;
     }
-    BaseShape.draw(ellipse, ctx);
+    BaseShapeService.draw(ellipse, ctx);
     ctx.beginPath();
     const x = (ellipse.x1 + ellipse.x2) / 2;
     const y = (ellipse.y1 + ellipse.y2) / 2;
@@ -75,11 +77,11 @@ class Ellipse extends BaseShape {
     ctx.stroke();
 
     if (ellipse.isSelected) {
-      Selection.drawEllipseSelectionBox(ctx, ellipse, true);
+      SelectionService.drawEllipseSelectionBox(ctx, ellipse, true);
     }
   }
 
-  static isEllipseHovered(ellipse: Ellipse, mouseRef: React.MutableRefObject<Mouse>) {
+  static isEllipseHovered(ellipse: EllipseService, mouseRef: React.MutableRefObject<Mouse>) {
     const xCenter = (ellipse.x1 + ellipse.x2) / 2;
     const yCenter = (ellipse.y1 + ellipse.y2) / 2;
     const radiusX = Math.abs(ellipse.x1 - ellipse.x2) / 2;
@@ -97,7 +99,10 @@ class Ellipse extends BaseShape {
     }
   }
 
-  static isEllipseSelectionHovered(ellipse: Ellipse, mouseRef: React.MutableRefObject<Mouse>) {
+  static isEllipseSelectionHovered(
+    ellipse: EllipseService,
+    mouseRef: React.MutableRefObject<Mouse>
+  ) {
     // Get rectangular selection bounds
 
     const minX = Math.min(ellipse.x1, ellipse.x2);
@@ -121,4 +126,4 @@ class Ellipse extends BaseShape {
   }
 }
 
-export default Ellipse;
+export default EllipseService;

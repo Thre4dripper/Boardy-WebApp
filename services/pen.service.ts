@@ -1,14 +1,23 @@
-import Point from '@/models/Point';
-import BaseShape from '@/models/BaseShape';
+import BaseShapeService from '@/services/baseShape.service';
 import React from 'react';
 import { Mouse } from '@/app/page';
 import { StrokeColor } from '@/enums/Colors';
 import { StrokeVariant } from '@/enums/StrokeVariant';
-import Selection from '@/models/Selection';
+import SelectionService from '@/services/selection.service';
 import Store from '@/store/Store';
 import { SelectionResize } from '@/enums/SelectionResize';
 
-class Pen extends BaseShape {
+class Point {
+  x: number;
+  y: number;
+
+  constructor(x: number, y: number) {
+    this.x = x;
+    this.y = y;
+  }
+}
+
+class PenService extends BaseShapeService {
   path: Point[] = [];
 
   constructor(path: Point[], color: StrokeColor, size: number, variant: StrokeVariant) {
@@ -22,7 +31,7 @@ class Pen extends BaseShape {
     selectedStrokeWidth: number,
     selectedStrokeVariant: StrokeVariant
   ) {
-    const allPens = Store.allShapes.filter((shape) => shape instanceof Pen) as Pen[];
+    const allPens = Store.allShapes.filter((shape) => shape instanceof PenService) as PenService[];
     if (mouseRef.current.down) {
       const lastPen = allPens[allPens.length - 1];
       lastPen.path.push({ x: mouseRef.current.x, y: mouseRef.current.y });
@@ -31,7 +40,7 @@ class Pen extends BaseShape {
         Store.allShapes.pop();
       }
       Store.allShapes.push(
-        new Pen(
+        new PenService(
           [{ x: mouseRef.current.x, y: mouseRef.current.y }],
           selectedStrokeColor,
           selectedStrokeWidth,
@@ -41,8 +50,8 @@ class Pen extends BaseShape {
     }
   }
 
-  static drawStoredPen(ctx: CanvasRenderingContext2D, pen: Pen) {
-    BaseShape.draw(pen, ctx);
+  static drawStoredPen(ctx: CanvasRenderingContext2D, pen: PenService) {
+    BaseShapeService.draw(pen, ctx);
     ctx.beginPath();
     if (pen.path.length > 3) {
       ctx.moveTo(pen.path[0].x, pen.path[0].y);
@@ -70,11 +79,11 @@ class Pen extends BaseShape {
     ctx.stroke();
 
     if (pen.isSelected) {
-      Selection.drawPenSelectionBox(ctx, pen, true);
+      SelectionService.drawPenSelectionBox(ctx, pen, true);
     }
   }
 
-  static isPenHovered(pen: Pen, mouseRef: React.MutableRefObject<Mouse>) {
+  static isPenHovered(pen: PenService, mouseRef: React.MutableRefObject<Mouse>) {
     const path = pen.path;
     const threshold = pen.strokeWidth + 2; // distance threshold
 
@@ -100,7 +109,7 @@ class Pen extends BaseShape {
     return false;
   }
 
-  static isPenSelectionHovered(pen: Pen, mouseRef: React.MutableRefObject<Mouse>) {
+  static isPenSelectionHovered(pen: PenService, mouseRef: React.MutableRefObject<Mouse>) {
     // Get selection bounds
     const minX = Math.min(...pen.path.map((point) => point.x));
     const minY = Math.min(...pen.path.map((point) => point.y));
@@ -118,7 +127,7 @@ class Pen extends BaseShape {
     );
   }
 
-  static getHoveredEdgeOrCorner(pen: Pen, mouseRef: React.MutableRefObject<Mouse>) {
+  static getHoveredEdgeOrCorner(pen: PenService, mouseRef: React.MutableRefObject<Mouse>) {
     // Get selection bounds
     const minX = Math.min(...pen.path.map((point) => point.x));
     const minY = Math.min(...pen.path.map((point) => point.y));
@@ -179,4 +188,4 @@ class Pen extends BaseShape {
   }
 }
 
-export default Pen;
+export default PenService;

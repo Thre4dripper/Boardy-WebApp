@@ -1,13 +1,19 @@
-import Pen from '@/models/Pen';
-import Line from '@/models/line';
-import Ellipse from '@/models/Ellipse';
-import Arrow from '@/models/Arrow';
-import Polygon from '@/models/Polygon';
-import Text from '@/models/Text';
+import PenService from '@/services/pen.service';
+import LineService from '@/services/line.service';
+import EllipseService from '@/services/ellipse.service';
+import ArrowService from '@/services/arrow.service';
+import PolygonService from '@/services/polygon.service';
+import TextService from '@/services/text.service';
 import { Tools } from '@/enums/Tools';
-import BaseShape from '@/models/BaseShape';
+import BaseShapeService from '@/services/baseShape.service';
 
-type Shape = Pen | Line | Ellipse | Arrow | Polygon | Text;
+type Shape =
+  | PenService
+  | LineService
+  | EllipseService
+  | ArrowService
+  | PolygonService
+  | TextService;
 
 class Store {
   static allShapes: Shape[] = [];
@@ -17,15 +23,15 @@ class Store {
 
     const allFilters = [
       (shape: Shape) => {
-        const pen = shape as Pen;
+        const pen = shape as PenService;
         return pen.path.length > 1;
       },
       (shape: Shape) => {
-        const line = shape as BaseShape;
+        const line = shape as BaseShapeService;
         return line.x1 !== line.x2 || line.y1 !== line.y2;
       },
       (shape: Shape) => {
-        const text = shape as Text;
+        const text = shape as TextService;
         return text.text.length > 0;
       },
     ];
@@ -35,22 +41,22 @@ class Store {
       let condition = false;
 
       switch (shape.constructor) {
-        case Pen:
+        case PenService:
           condition = selectedTool === Tools.Pen || allFilters[0](shape);
           break;
-        case Line:
+        case LineService:
           condition = selectedTool === Tools.Line || allFilters[1](shape);
           break;
-        case Ellipse:
+        case EllipseService:
           condition = selectedTool === Tools.Ellipse || allFilters[1](shape);
           break;
-        case Arrow:
+        case ArrowService:
           condition = selectedTool === Tools.Arrow || allFilters[1](shape);
           break;
-        case Polygon:
+        case PolygonService:
           condition = selectedTool === Tools.Polygon || allFilters[1](shape);
           break;
-        case Text:
+        case TextService:
           condition = selectedTool === Tools.Text || allFilters[2](shape);
           break;
         default:
@@ -61,30 +67,29 @@ class Store {
         this.allShapes.splice(i, 1);
       }
     }
-
   }
 
   static drawAllShapes(ctx: CanvasRenderingContext2D) {
     //draw all shapes
     this.allShapes.forEach((shape) => {
       switch (shape.constructor) {
-        case Pen:
-          Pen.drawStoredPen(ctx, shape as Pen);
+        case PenService:
+          PenService.drawStoredPen(ctx, shape as PenService);
           break;
-        case Line:
-          Line.drawStoredLine(ctx, shape as Line);
+        case LineService:
+          LineService.drawStoredLine(ctx, shape as LineService);
           break;
-        case Ellipse:
-          Ellipse.drawStoredEllipse(ctx, shape as Ellipse);
+        case EllipseService:
+          EllipseService.drawStoredEllipse(ctx, shape as EllipseService);
           break;
-        case Arrow:
-          Arrow.drawStoredArrow(ctx, shape as Arrow);
+        case ArrowService:
+          ArrowService.drawStoredArrow(ctx, shape as ArrowService);
           break;
-        case Polygon:
-          Polygon.drawStoredPolygon(ctx, shape as Polygon);
+        case PolygonService:
+          PolygonService.drawStoredPolygon(ctx, shape as PolygonService);
           break;
-        case Text:
-          Text.drawStoredText(ctx, shape as Text);
+        case TextService:
+          TextService.drawStoredText(ctx, shape as TextService);
           break;
         default:
           break;

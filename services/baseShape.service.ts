@@ -1,7 +1,7 @@
 import { StrokeColor } from '@/enums/Colors';
 import { StrokeVariant } from '@/enums/StrokeVariant';
 
-class BaseShape {
+class BaseShapeService {
   x1: number;
   y1: number;
   x2: number;
@@ -35,7 +35,7 @@ class BaseShape {
     this.timeStamp = Date.now();
   }
 
-  static draw(shape: BaseShape, ctx: CanvasRenderingContext2D) {
+  static draw(shape: BaseShapeService, ctx: CanvasRenderingContext2D) {
     ctx.strokeStyle = shape.strokeColor;
     ctx.lineWidth = shape.strokeWidth;
     if (shape.strokeVariant === StrokeVariant.Dashed) {
@@ -48,4 +48,4 @@ class BaseShape {
   }
 }
 
-export default BaseShape;
+export default BaseShapeService;

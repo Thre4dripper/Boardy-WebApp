@@ -1,19 +1,19 @@
-import BaseShape from '@/models/BaseShape';
+import BaseShapeService from '@/services/baseShape.service';
 import { Mouse } from '@/app/page';
 import React from 'react';
 import { StrokeColor } from '@/enums/Colors';
 import { StrokeVariant } from '@/enums/StrokeVariant';
-import Selection from '@/models/Selection';
+import SelectionService from '@/services/selection.service';
 import Store from '@/store/Store';
 
-class Line extends BaseShape {
+class LineService extends BaseShapeService {
   static drawCurrentLine(
     mouseRef: React.MutableRefObject<Mouse>,
     selectedStrokeColor: StrokeColor,
     selectedStrokeWidth: number,
     selectedStrokeVariant: StrokeVariant
   ) {
-    const lines = Store.allShapes.filter((shape) => shape instanceof Line) as Line[];
+    const lines = Store.allShapes.filter((shape) => shape instanceof LineService) as LineService[];
     if (mouseRef.current.down) {
       const lastLine = lines[lines.length - 1];
       lastLine.x2 = mouseRef.current.x;
@@ -27,7 +27,7 @@ class Line extends BaseShape {
         Store.allShapes.pop();
       }
       Store.allShapes.push(
-        new Line(
+        new LineService(
           mouseRef.current.x,
           mouseRef.current.y,
           mouseRef.current.x,
@@ -40,22 +40,22 @@ class Line extends BaseShape {
     }
   }
 
-  static drawStoredLine(ctx: CanvasRenderingContext2D, line: Line) {
+  static drawStoredLine(ctx: CanvasRenderingContext2D, line: LineService) {
     if (line.x1 === line.x2 && line.y1 === line.y2) {
       return;
     }
-    BaseShape.draw(line, ctx);
+    BaseShapeService.draw(line, ctx);
     ctx.beginPath();
     ctx.moveTo(line.x1, line.y1);
     ctx.lineTo(line.x2, line.y2);
     ctx.stroke();
 
     if (line.isSelected) {
-      Selection.drawLineSelectionBox(ctx, line, true);
+      SelectionService.drawLineSelectionBox(ctx, line, true);
     }
   }
 
-  static isLineHovered(line: Line, mouseRef: React.MutableRefObject<Mouse>) {
+  static isLineHovered(line: LineService, mouseRef: React.MutableRefObject<Mouse>) {
     const { x1, y1, x2, y2 } = line;
     const { x, y } = mouseRef.current;
 
@@ -91,4 +91,4 @@ class Line extends BaseShape {
   }
 }
 
-export default Line;
+export default LineService;
