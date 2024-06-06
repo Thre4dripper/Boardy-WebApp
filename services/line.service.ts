@@ -5,6 +5,7 @@ import { StrokeColor } from '@/enums/Colors';
 import { StrokeVariant } from '@/enums/StrokeVariant';
 import SelectionService from '@/services/selection.service';
 import Store from '@/store/Store';
+import ResizeService from '@/services/resize.service';
 
 class LineService extends BaseShapeService {
   static drawCurrentLine(
@@ -88,6 +89,13 @@ class LineService extends BaseShapeService {
       y >= Math.min(y1, y2) &&
       y <= Math.max(y1, y2)
     );
+  }
+
+  static getHoveredEnds(line: LineService, mouseRef: React.MutableRefObject<Mouse>) {
+    const { x1, y1, x2, y2 } = line;
+    const tolerance = line.strokeWidth / 2 + 5;
+
+    return ResizeService.detectLineResizeSelection(mouseRef, tolerance, x1, y1, x2, y2);
   }
 }
 

@@ -6,6 +6,7 @@ import { StrokeVariant } from '@/enums/StrokeVariant';
 import { ArrowHeads } from '@/enums/ArrowHeads';
 import SelectionService from '@/services/selection.service';
 import Store from '@/store/Store';
+import ResizeService from '@/services/resize.service';
 
 class ArrowService extends BaseShapeService {
   leftArrowHead: ArrowHeads;
@@ -195,6 +196,13 @@ class ArrowService extends BaseShapeService {
       y >= Math.min(y1, y2) &&
       y <= Math.max(y1, y2)
     );
+  }
+
+  static getHoveredEnds(arrow: ArrowService, mouseRef: React.MutableRefObject<Mouse>) {
+    const { x1, y1, x2, y2 } = arrow;
+    const tolerance = arrow.strokeWidth / 2 + 5;
+
+    return ResizeService.detectLineResizeSelection(mouseRef, tolerance, x1, y1, x2, y2);
   }
 }
 

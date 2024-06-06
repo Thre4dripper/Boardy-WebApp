@@ -8,4 +8,8 @@ export enum SelectionResize {
   BottomLeft = 'BottomLeft',
   Left = 'Left',
   None = 'None',
+
+  //for lines and arrows
+  Start = 'Start',
+  End = 'End',
 }

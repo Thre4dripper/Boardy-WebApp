@@ -5,7 +5,7 @@ import { StrokeColor } from '@/enums/Colors';
 import { StrokeVariant } from '@/enums/StrokeVariant';
 import SelectionService from '@/services/selection.service';
 import Store from '@/store/Store';
-import { SelectionResize } from '@/enums/SelectionResize';
+import ResizeService from '@/services/resize.service';
 
 class Point {
   x: number;
@@ -116,7 +116,7 @@ class PenService extends BaseShapeService {
     const maxX = Math.max(...pen.path.map((point) => point.x));
     const maxY = Math.max(...pen.path.map((point) => point.y));
 
-    const tolerance = 15;
+    const tolerance = 10;
 
     // Check if the mouse is within the bounds
     return (
@@ -134,57 +134,7 @@ class PenService extends BaseShapeService {
     const maxX = Math.max(...pen.path.map((point) => point.x));
     const maxY = Math.max(...pen.path.map((point) => point.y));
 
-    const tolerance = 10;
-    const cornerTolerance = 12; // Extra tolerance for corners
-
-    // Check if the mouse is within the bounds of each edge or corner
-    if (
-      Math.abs(mouseRef.current.x - minX) <= cornerTolerance &&
-      Math.abs(mouseRef.current.y - minY) <= cornerTolerance
-    ) {
-      return SelectionResize.TopLeft;
-    } else if (
-      Math.abs(mouseRef.current.x - maxX) <= cornerTolerance &&
-      Math.abs(mouseRef.current.y - minY) <= cornerTolerance
-    ) {
-      return SelectionResize.TopRight;
-    } else if (
-      Math.abs(mouseRef.current.x - maxX) <= cornerTolerance &&
-      Math.abs(mouseRef.current.y - maxY) <= cornerTolerance
-    ) {
-      return SelectionResize.BottomRight;
-    } else if (
-      Math.abs(mouseRef.current.x - minX) <= cornerTolerance &&
-      Math.abs(mouseRef.current.y - maxY) <= cornerTolerance
-    ) {
-      return SelectionResize.BottomLeft;
-    } else if (
-      mouseRef.current.x >= minX - tolerance &&
-      mouseRef.current.x <= maxX + tolerance &&
-      Math.abs(mouseRef.current.y - minY) <= tolerance
-    ) {
-      return SelectionResize.Top;
-    } else if (
-      mouseRef.current.x >= minX - tolerance &&
-      mouseRef.current.x <= maxX + tolerance &&
-      Math.abs(mouseRef.current.y - maxY) <= tolerance
-    ) {
-      return SelectionResize.Bottom;
-    } else if (
-      mouseRef.current.y >= minY - tolerance &&
-      mouseRef.current.y <= maxY + tolerance &&
-      Math.abs(mouseRef.current.x - minX) <= tolerance
-    ) {
-      return SelectionResize.Left;
-    } else if (
-      mouseRef.current.y >= minY - tolerance &&
-      mouseRef.current.y <= maxY + tolerance &&
-      Math.abs(mouseRef.current.x - maxX) <= tolerance
-    ) {
-      return SelectionResize.Right;
-    } else {
-      return SelectionResize.None;
-    }
+    return ResizeService.detectRectangleResizeSelection(mouseRef, minX, minY, maxX, maxY);
   }
 }
 

@@ -6,6 +6,8 @@ import { StrokeVariant } from '@/enums/StrokeVariant';
 import SelectionService from '@/services/selection.service';
 import LineService from '@/services/line.service';
 import Store from '@/store/Store';
+import { SelectionResize } from '@/enums/SelectionResize';
+import ResizeService from '@/services/resize.service';
 
 class PolygonService extends BaseShapeService {
   sides: number;
@@ -204,6 +206,30 @@ class PolygonService extends BaseShapeService {
       mouseRef.current.y >= minY - tolerance &&
       mouseRef.current.y <= maxY + tolerance
     );
+  }
+
+  static getHoveredEdgeOrCorner(polygon: PolygonService, mouseRef: React.MutableRefObject<Mouse>) {
+    const xCenter = (polygon.x1 + polygon.x2) / 2;
+    const yCenter = (polygon.y1 + polygon.y2) / 2;
+    const radiusX = Math.abs(polygon.x1 - polygon.x2) / 2;
+    const radiusY = Math.abs(polygon.y1 - polygon.y2) / 2;
+
+    const vertices = [];
+    for (let d = 0; d <= 360; d++) {
+      if (d % (360 / polygon.sides) === 0) {
+        const a = ((d + polygon.rotation) * Math.PI) / 180;
+        const x1 = xCenter + radiusX * Math.cos(a);
+        const y1 = yCenter + radiusY * Math.sin(a);
+        vertices.push({ x: x1, y: y1 });
+      }
+    }
+
+    const minX = Math.min(...vertices.map((point) => point.x));
+    const minY = Math.min(...vertices.map((point) => point.y));
+    const maxX = Math.max(...vertices.map((point) => point.x));
+    const maxY = Math.max(...vertices.map((point) => point.y));
+
+    return ResizeService.detectRectangleResizeSelection(mouseRef, minX, minY, maxX, maxY);
   }
 }
 

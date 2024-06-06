@@ -8,7 +8,7 @@ import EllipseService from '@/services/ellipse.service';
 import PolygonService from '@/services/polygon.service';
 import TextService from '@/services/text.service';
 import Cursors from '@/enums/Cursors';
-import MoveResizeService from '@/services/move.resize.service';
+import ResizeService from '@/services/resize.service';
 
 let flag = false;
 let isMouseUp = false;
@@ -381,7 +381,7 @@ class SelectionService {
     });
 
     //render resize cursor
-    MoveResizeService.renderResizeCursor(mouseRef);
+    ResizeService.resizeCursor(mouseRef, ctx);
   }
 }
 

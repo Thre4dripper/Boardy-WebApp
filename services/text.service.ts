@@ -4,6 +4,7 @@ import { StrokeColor } from '@/enums/Colors';
 import { Fonts } from '@/enums/Fonts';
 import SelectionService from '@/services/selection.service';
 import Store from '@/store/Store';
+import ResizeService from '@/services/resize.service';
 
 class TextService {
   x: number;
@@ -133,6 +134,24 @@ class TextService {
     ctx.font = `${text.fontSize}px ${text.fontFamily}`;
 
     return x >= minX && x <= maxX && y >= minY && y <= maxY;
+  }
+
+  static getHoveredEdgeOrCorner(
+    text: TextService,
+    mouseRef: React.MutableRefObject<Mouse>,
+    ctx: CanvasRenderingContext2D
+  ) {
+    const { x, y } = mouseRef.current;
+    const lines = text.text.split('\n');
+
+    const minX = text.x;
+    const minY = text.y - text.fontSize / 3;
+    const maxX = text.x + Math.max(...lines.map((line) => ctx.measureText(line).width));
+    const maxY = text.y + text.fontSize * 1.5 * lines.length;
+
+    ctx.font = `${text.fontSize}px ${text.fontFamily}`;
+
+    return ResizeService.detectRectangleResizeSelection(mouseRef, minX, minY, maxX, maxY);
   }
 
   static createInput(

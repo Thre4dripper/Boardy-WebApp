@@ -7,10 +7,8 @@ import PolygonService from '@/services/polygon.service';
 import EllipseService from '@/services/ellipse.service';
 import ArrowService from '@/services/arrow.service';
 import TextService from '@/services/text.service';
-import { SelectionResize } from '@/enums/SelectionResize';
-import Cursors from '@/enums/Cursors';
 
-class MoveResizeService {
+class MoveService {
   static moveSelectedShape(mouseRef: React.MutableRefObject<Mouse>) {
     const allData = Store.allShapes;
     const selectedShape = allData.find((shape) => shape.isSelected);
@@ -70,44 +68,6 @@ class MoveResizeService {
     mouseRef.current.prevX = mouseRef.current.x;
     mouseRef.current.prevY = mouseRef.current.y;
   }
-
-  static renderResizeCursor(mouseRef: React.MutableRefObject<Mouse>) {
-    const allData = Store.allShapes;
-    const selectedShape = allData.find((shape) => shape.isSelected);
-    if (!selectedShape) {
-      return;
-    }
-
-    switch (selectedShape.constructor) {
-      case PenService:
-        const pen = selectedShape as PenService;
-        const cursor = PenService.getHoveredEdgeOrCorner(pen, mouseRef);
-        switch (cursor) {
-          case SelectionResize.TopLeft:
-          case SelectionResize.BottomRight:
-            mouseRef.current.cursor = Cursors.NWSE_RESIZE;
-            break;
-          case SelectionResize.TopRight:
-          case SelectionResize.BottomLeft:
-            mouseRef.current.cursor = Cursors.NESW_RESIZE;
-            break;
-          case SelectionResize.Top:
-          case SelectionResize.Bottom:
-            mouseRef.current.cursor = Cursors.VERTICAL_RESIZE;
-            break;
-          case SelectionResize.Left:
-          case SelectionResize.Right:
-            mouseRef.current.cursor = Cursors.HORIZONTAL_RESIZE;
-            break;
-          default:
-            break;
-        }
-        break;
-
-      default:
-        break;
-    }
-  }
 }
 
-export default MoveResizeService;
+export default MoveService;

@@ -5,6 +5,8 @@ import { FillColor, StrokeColor } from '@/enums/Colors';
 import { StrokeVariant } from '@/enums/StrokeVariant';
 import SelectionService from '@/services/selection.service';
 import Store from '@/store/Store';
+import { SelectionResize } from '@/enums/SelectionResize';
+import ResizeService from '@/services/resize.service';
 
 class EllipseService extends BaseShapeService {
   fillColor: FillColor;
@@ -123,6 +125,15 @@ class EllipseService extends BaseShapeService {
       y >= minY - tolerance &&
       y <= maxY + tolerance
     );
+  }
+
+  static getHoveredEdgeOrCorner(ellipse: EllipseService, mouseRef: React.MutableRefObject<Mouse>) {
+    const minX = Math.min(ellipse.x1, ellipse.x2);
+    const minY = Math.min(ellipse.y1, ellipse.y2);
+    const maxX = Math.max(ellipse.x1, ellipse.x2);
+    const maxY = Math.max(ellipse.y1, ellipse.y2);
+
+    return ResizeService.detectRectangleResizeSelection(mouseRef, minX, minY, maxX, maxY);
   }
 }
 

@@ -17,7 +17,7 @@ import SelectionService from '@/services/selection.service';
 import Store from '@/store/Store';
 import { Cursors } from '@/enums/Cursors';
 import EraserService from '@/services/eraser.service';
-import MoveResizeService from '@/services/move.resize.service';
+import MoveService from '@/services/move.service';
 
 export type Mouse = {
   x: number;
@@ -135,7 +135,7 @@ export default function Home() {
             offscreenCtx,
             SelectionService.drawSelectionBoxes.bind(null, offscreenCtx, mouseRef)
           );
-          MoveResizeService.moveSelectedShape(mouseRef);
+          MoveService.moveSelectedShape(mouseRef);
           break;
         case Tools.Pen:
           draw(
