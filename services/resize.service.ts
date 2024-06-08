@@ -194,7 +194,7 @@ class ResizeService {
   static resizeSelectedShape(mouseRef: React.MutableRefObject<Mouse>) {
     const allData = Store.allShapes;
     const selectedShape = allData.find((shape) => shape.isSelected);
-    if (!selectedShape || !mouseRef.current.down) {
+    if (!selectedShape || !mouseRef.current.down || mouseRef.current.cursorState !== 'resize') {
       return;
     }
 

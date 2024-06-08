@@ -29,6 +29,7 @@ export type Mouse = {
   down: boolean;
   cursor: Cursors;
   resizeState: SelectionResize;
+  cursorState: 'move' | 'resize' | 'none';
 };
 export default function Home() {
   const parentRef = useRef<HTMLDivElement>(null);
@@ -41,6 +42,7 @@ export default function Home() {
     down: false,
     cursor: Cursors.DEFAULT,
     resizeState: SelectionResize.None,
+    cursorState: 'none',
   });
 
   const [selectedTool, setSelectedTool] = useState<Tools>(Tools.Pen);
@@ -297,6 +299,7 @@ export default function Home() {
         down: mouseRef.current.down,
         cursor: mouseRef.current.cursor,
         resizeState: mouseRef.current.resizeState,
+        cursorState: mouseRef.current.cursorState,
       };
     },
     selectedTool === Tools.Eraser ? 0 : 5
@@ -308,6 +311,7 @@ export default function Home() {
 
   const handleMouseUp = () => {
     mouseRef.current.down = false;
+    mouseRef.current.cursorState = 'none';
   };
 
   return (

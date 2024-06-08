@@ -72,8 +72,8 @@ class SelectionService {
 
     const xCenter = (polygon.x1 + polygon.x2) / 2;
     const yCenter = (polygon.y1 + polygon.y2) / 2;
-    const radiusX = Math.abs(polygon.x1 - polygon.x2) / 2 * Math.sqrt(2);
-    const radiusY = Math.abs(polygon.y1 - polygon.y2) / 2 * Math.sqrt(2);
+    const radiusX = (Math.abs(polygon.x1 - polygon.x2) / 2) * Math.sqrt(2);
+    const radiusY = (Math.abs(polygon.y1 - polygon.y2) / 2) * Math.sqrt(2);
 
     for (let d = 0; d <= 360; d++) {
       if (d % (360 / polygon.sides) === 0) {
@@ -203,11 +203,7 @@ class SelectionService {
           const pen = shape as PenService;
 
           //change cursor to move if pen bounding box is hovered
-          if (
-            pen.isSelected &&
-            !mouseRef.current.down &&
-            PenService.isPenSelectionHovered(pen, mouseRef)
-          ) {
+          if (pen.isSelected && PenService.isPenSelectionHovered(pen, mouseRef)) {
             mouseRef.current.cursor = Cursors.MOVE;
           }
 
@@ -233,11 +229,7 @@ class SelectionService {
           const line = shape as LineService;
 
           //change cursor to move if line bounding box is hovered
-          if (
-            line.isSelected &&
-            !mouseRef.current.down &&
-            LineService.isLineHovered(line, mouseRef)
-          ) {
+          if (line.isSelected && LineService.isLineHovered(line, mouseRef)) {
             mouseRef.current.cursor = Cursors.MOVE;
           }
 
@@ -267,11 +259,7 @@ class SelectionService {
           const polygon = shape as PolygonService;
 
           //change cursor to move if polygon bounding box is hovered
-          if (
-            polygon.isSelected &&
-            !mouseRef.current.down &&
-            PolygonService.isPolygonSelectionHovered(polygon, mouseRef)
-          ) {
+          if (polygon.isSelected && PolygonService.isPolygonSelectionHovered(polygon, mouseRef)) {
             mouseRef.current.cursor = Cursors.MOVE;
           }
 
@@ -301,11 +289,7 @@ class SelectionService {
           const ellipse = shape as EllipseService;
 
           //change cursor to move if ellipse bounding box is hovered
-          if (
-            ellipse.isSelected &&
-            !mouseRef.current.down &&
-            EllipseService.isEllipseSelectionHovered(ellipse, mouseRef)
-          ) {
+          if (ellipse.isSelected && EllipseService.isEllipseSelectionHovered(ellipse, mouseRef)) {
             mouseRef.current.cursor = Cursors.MOVE;
           }
 
@@ -335,11 +319,7 @@ class SelectionService {
           const arrow = shape as ArrowService;
 
           //change cursor to move if arrow bounding box is hovered
-          if (
-            arrow.isSelected &&
-            !mouseRef.current.down &&
-            ArrowService.isArrowHovered(arrow, mouseRef)
-          ) {
+          if (arrow.isSelected && ArrowService.isArrowHovered(arrow, mouseRef)) {
             mouseRef.current.cursor = Cursors.MOVE;
           }
 
@@ -369,11 +349,7 @@ class SelectionService {
           const text = shape as TextService;
 
           //change cursor to move if text bounding box is hovered
-          if (
-            text.isSelected &&
-            !mouseRef.current.down &&
-            TextService.isTextHovered(text, mouseRef, ctx)
-          ) {
+          if (text.isSelected && TextService.isTextHovered(text, mouseRef, ctx)) {
             mouseRef.current.cursor = Cursors.MOVE;
           }
 
@@ -404,9 +380,27 @@ class SelectionService {
       }
     });
 
-    //render resize cursor
-    if (!mouseRef.current.down) {
-      ResizeService.resizeCursor(mouseRef, ctx);
+    if (mouseRef.current.cursorState !== 'none') {
+      return;
+    }
+
+    //cursor state should be none before changing it to resize or move
+
+    ResizeService.resizeCursor(mouseRef, ctx);
+
+    if (mouseRef.current.cursor === Cursors.MOVE && mouseRef.current.down) {
+      mouseRef.current.cursorState = 'move';
+    } else if (
+      [
+        Cursors.VERTICAL_RESIZE,
+        Cursors.HORIZONTAL_RESIZE,
+        Cursors.NESW_RESIZE,
+        Cursors.NWSE_RESIZE,
+        Cursors.POINTER,
+      ].includes(mouseRef.current.cursor) &&
+      mouseRef.current.down
+    ) {
+      mouseRef.current.cursorState = 'resize';
     }
   }
 }
