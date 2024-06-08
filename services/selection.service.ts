@@ -203,7 +203,11 @@ class SelectionService {
           const pen = shape as PenService;
 
           //change cursor to move if pen bounding box is hovered
-          if (pen.isSelected && PenService.isPenSelectionHovered(pen, mouseRef)) {
+          if (
+            pen.isSelected &&
+            !mouseRef.current.down &&
+            PenService.isPenSelectionHovered(pen, mouseRef)
+          ) {
             mouseRef.current.cursor = Cursors.MOVE;
           }
 
@@ -229,7 +233,11 @@ class SelectionService {
           const line = shape as LineService;
 
           //change cursor to move if line bounding box is hovered
-          if (line.isSelected && LineService.isLineHovered(line, mouseRef)) {
+          if (
+            line.isSelected &&
+            !mouseRef.current.down &&
+            LineService.isLineHovered(line, mouseRef)
+          ) {
             mouseRef.current.cursor = Cursors.MOVE;
           }
 
@@ -259,7 +267,11 @@ class SelectionService {
           const polygon = shape as PolygonService;
 
           //change cursor to move if polygon bounding box is hovered
-          if (polygon.isSelected && PolygonService.isPolygonSelectionHovered(polygon, mouseRef)) {
+          if (
+            polygon.isSelected &&
+            !mouseRef.current.down &&
+            PolygonService.isPolygonSelectionHovered(polygon, mouseRef)
+          ) {
             mouseRef.current.cursor = Cursors.MOVE;
           }
 
@@ -289,7 +301,11 @@ class SelectionService {
           const ellipse = shape as EllipseService;
 
           //change cursor to move if ellipse bounding box is hovered
-          if (ellipse.isSelected && EllipseService.isEllipseSelectionHovered(ellipse, mouseRef)) {
+          if (
+            ellipse.isSelected &&
+            !mouseRef.current.down &&
+            EllipseService.isEllipseSelectionHovered(ellipse, mouseRef)
+          ) {
             mouseRef.current.cursor = Cursors.MOVE;
           }
 
@@ -319,7 +335,11 @@ class SelectionService {
           const arrow = shape as ArrowService;
 
           //change cursor to move if arrow bounding box is hovered
-          if (arrow.isSelected && ArrowService.isArrowHovered(arrow, mouseRef)) {
+          if (
+            arrow.isSelected &&
+            !mouseRef.current.down &&
+            ArrowService.isArrowHovered(arrow, mouseRef)
+          ) {
             mouseRef.current.cursor = Cursors.MOVE;
           }
 
@@ -349,7 +369,11 @@ class SelectionService {
           const text = shape as TextService;
 
           //change cursor to move if text bounding box is hovered
-          if (text.isSelected && TextService.isTextHovered(text, mouseRef, ctx)) {
+          if (
+            text.isSelected &&
+            !mouseRef.current.down &&
+            TextService.isTextHovered(text, mouseRef, ctx)
+          ) {
             mouseRef.current.cursor = Cursors.MOVE;
           }
 
@@ -381,7 +405,9 @@ class SelectionService {
     });
 
     //render resize cursor
-    ResizeService.resizeCursor(mouseRef, ctx);
+    if (!mouseRef.current.down) {
+      ResizeService.resizeCursor(mouseRef, ctx);
+    }
   }
 }
 
