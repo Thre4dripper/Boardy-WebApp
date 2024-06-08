@@ -7,12 +7,13 @@ import PolygonService from '@/services/polygon.service';
 import EllipseService from '@/services/ellipse.service';
 import ArrowService from '@/services/arrow.service';
 import TextService from '@/services/text.service';
+import Cursors from '@/enums/Cursors';
 
 class MoveService {
   static moveSelectedShape(mouseRef: React.MutableRefObject<Mouse>) {
     const allData = Store.allShapes;
     const selectedShape = allData.find((shape) => shape.isSelected);
-    if (!selectedShape || !mouseRef.current.down) {
+    if (!selectedShape || !mouseRef.current.down || mouseRef.current.cursor !== Cursors.MOVE) {
       return;
     }
 

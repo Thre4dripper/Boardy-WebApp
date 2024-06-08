@@ -7,7 +7,7 @@ import SelectionService from '@/services/selection.service';
 import Store from '@/store/Store';
 import ResizeService from '@/services/resize.service';
 
-class Point {
+export class Point {
   x: number;
   y: number;
 

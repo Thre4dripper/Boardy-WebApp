@@ -18,6 +18,8 @@ import Store from '@/store/Store';
 import { Cursors } from '@/enums/Cursors';
 import EraserService from '@/services/eraser.service';
 import MoveService from '@/services/move.service';
+import { SelectionResize } from '@/enums/SelectionResize';
+import ResizeService from '@/services/resize.service';
 
 export type Mouse = {
   x: number;
@@ -26,6 +28,7 @@ export type Mouse = {
   prevY: number;
   down: boolean;
   cursor: Cursors;
+  resizeState: SelectionResize;
 };
 export default function Home() {
   const parentRef = useRef<HTMLDivElement>(null);
@@ -37,6 +40,7 @@ export default function Home() {
     prevY: 0,
     down: false,
     cursor: Cursors.DEFAULT,
+    resizeState: SelectionResize.None,
   });
 
   const [selectedTool, setSelectedTool] = useState<Tools>(Tools.Pen);
@@ -136,6 +140,7 @@ export default function Home() {
             SelectionService.drawSelectionBoxes.bind(null, offscreenCtx, mouseRef)
           );
           MoveService.moveSelectedShape(mouseRef);
+          ResizeService.resizeSelectedShape(mouseRef);
           break;
         case Tools.Pen:
           draw(
@@ -291,6 +296,7 @@ export default function Home() {
         prevY: mouseRef.current.y,
         down: mouseRef.current.down,
         cursor: mouseRef.current.cursor,
+        resizeState: mouseRef.current.resizeState,
       };
     },
     selectedTool === Tools.Eraser ? 0 : 5
