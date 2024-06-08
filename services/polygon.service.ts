@@ -6,7 +6,6 @@ import { StrokeVariant } from '@/enums/StrokeVariant';
 import SelectionService from '@/services/selection.service';
 import LineService from '@/services/line.service';
 import Store from '@/store/Store';
-import { SelectionResize } from '@/enums/SelectionResize';
 import ResizeService from '@/services/resize.service';
 
 class PolygonService extends BaseShapeService {
@@ -83,8 +82,8 @@ class PolygonService extends BaseShapeService {
     ctx.beginPath();
     const x = (polygon.x1 + polygon.x2) / 2;
     const y = (polygon.y1 + polygon.y2) / 2;
-    const radiusX = Math.abs(polygon.x1 - polygon.x2) / 2;
-    const radiusY = Math.abs(polygon.y1 - polygon.y2) / 2;
+    const radiusX = (Math.abs(polygon.x1 - polygon.x2) / 2) * Math.sqrt(2);
+    const radiusY = (Math.abs(polygon.y1 - polygon.y2) / 2) * Math.sqrt(2);
 
     const path = new Path2D();
     for (let d = 0; d <= 360; d++) {
@@ -116,8 +115,8 @@ class PolygonService extends BaseShapeService {
 
     const xCenter = (polygon.x1 + polygon.x2) / 2;
     const yCenter = (polygon.y1 + polygon.y2) / 2;
-    const radiusX = Math.abs(polygon.x1 - polygon.x2) / 2;
-    const radiusY = Math.abs(polygon.y1 - polygon.y2) / 2;
+    const radiusX = (Math.abs(polygon.x1 - polygon.x2) / 2) * Math.sqrt(2);
+    const radiusY = (Math.abs(polygon.y1 - polygon.y2) / 2) * Math.sqrt(2);
 
     for (let d = 0; d <= 360; d++) {
       if (d % (360 / polygon.sides) === 0) {
@@ -178,8 +177,8 @@ class PolygonService extends BaseShapeService {
 
     const xCenter = (polygon.x1 + polygon.x2) / 2;
     const yCenter = (polygon.y1 + polygon.y2) / 2;
-    const radiusX = Math.abs(polygon.x1 - polygon.x2) / 2;
-    const radiusY = Math.abs(polygon.y1 - polygon.y2) / 2;
+    const radiusX = Math.abs(polygon.x1 - polygon.x2) / 2 * Math.sqrt(2);
+    const radiusY = Math.abs(polygon.y1 - polygon.y2) / 2 * Math.sqrt(2);
 
     //TODO memoize polygon vertices
     const vertices = [];
@@ -211,8 +210,8 @@ class PolygonService extends BaseShapeService {
   static getHoveredEdgeOrCorner(polygon: PolygonService, mouseRef: React.MutableRefObject<Mouse>) {
     const xCenter = (polygon.x1 + polygon.x2) / 2;
     const yCenter = (polygon.y1 + polygon.y2) / 2;
-    const radiusX = Math.abs(polygon.x1 - polygon.x2) / 2;
-    const radiusY = Math.abs(polygon.y1 - polygon.y2) / 2;
+    const radiusX = Math.abs(polygon.x1 - polygon.x2) / 2 * Math.sqrt(2);
+    const radiusY = Math.abs(polygon.y1 - polygon.y2) / 2 * Math.sqrt(2);
 
     const vertices = [];
     for (let d = 0; d <= 360; d++) {

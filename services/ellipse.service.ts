@@ -5,7 +5,6 @@ import { FillColor, StrokeColor } from '@/enums/Colors';
 import { StrokeVariant } from '@/enums/StrokeVariant';
 import SelectionService from '@/services/selection.service';
 import Store from '@/store/Store';
-import { SelectionResize } from '@/enums/SelectionResize';
 import ResizeService from '@/services/resize.service';
 
 class EllipseService extends BaseShapeService {

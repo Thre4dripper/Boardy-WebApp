@@ -72,8 +72,8 @@ class SelectionService {
 
     const xCenter = (polygon.x1 + polygon.x2) / 2;
     const yCenter = (polygon.y1 + polygon.y2) / 2;
-    const radiusX = Math.abs(polygon.x1 - polygon.x2) / 2;
-    const radiusY = Math.abs(polygon.y1 - polygon.y2) / 2;
+    const radiusX = Math.abs(polygon.x1 - polygon.x2) / 2 * Math.sqrt(2);
+    const radiusY = Math.abs(polygon.y1 - polygon.y2) / 2 * Math.sqrt(2);
 
     for (let d = 0; d <= 360; d++) {
       if (d % (360 / polygon.sides) === 0) {
