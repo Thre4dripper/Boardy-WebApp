@@ -12,6 +12,9 @@ import ResizeService from '@/services/resize.service';
 
 let flag = false;
 let isMouseUp = false;
+let isMouseMoved = false;
+let initialX = -1;
+let initialY = -1;
 
 class SelectionService {
   static SELECTION_COLOR = 'rgb(93,121,157)';
@@ -186,6 +189,13 @@ class SelectionService {
 
     if (mouseRef.current.down) {
       flag = true;
+
+      if (initialX === -1 && initialY === -1) {
+        initialX = mouseRef.current.x;
+        initialY = mouseRef.current.y;
+      }
+
+      isMouseMoved = initialX !== mouseRef.current.x || initialY !== mouseRef.current.y;
     }
 
     //when mouse is up then for an instant, isMouseUp will be true
@@ -195,6 +205,8 @@ class SelectionService {
       }, 10);
       flag = false;
       isMouseUp = true;
+      initialX = -1;
+      initialY = -1;
     }
 
     allData.forEach((shape) => {
@@ -208,7 +220,7 @@ class SelectionService {
           }
 
           //clear selection if mouse is clicked outside pen bounding box
-          if (isMouseUp && !PenService.isPenSelectionHovered(pen, mouseRef)) {
+          if (isMouseUp && !isMouseMoved && !PenService.isPenSelectionHovered(pen, mouseRef)) {
             pen.setIsSelected(false);
           }
 
@@ -219,7 +231,7 @@ class SelectionService {
           }
 
           //select pen if hovered and mouse is clicked and no other shape is selected
-          if (isMouseUp && PenService.isPenHovered(pen, mouseRef)) {
+          if (isMouseUp && !isMouseMoved && PenService.isPenHovered(pen, mouseRef)) {
             //remove all selections
             SelectionService.clearAllSelections();
             pen.setIsSelected(true);
@@ -234,7 +246,7 @@ class SelectionService {
           }
 
           //clear selection if mouse is clicked outside line bounding box
-          if (isMouseUp && !LineService.isLineHovered(line, mouseRef)) {
+          if (isMouseUp && !isMouseMoved && !LineService.isLineHovered(line, mouseRef)) {
             line.setIsSelected(false);
           }
 
@@ -249,7 +261,7 @@ class SelectionService {
           }
 
           //select line if hovered and mouse is clicked and no other shape is selected
-          if (isMouseUp && LineService.isLineHovered(line, mouseRef)) {
+          if (isMouseUp && !isMouseMoved && LineService.isLineHovered(line, mouseRef)) {
             //remove all selections
             SelectionService.clearAllSelections();
             line.setIsSelected(true);
@@ -264,7 +276,11 @@ class SelectionService {
           }
 
           //clear selection if mouse is clicked outside polygon bounding box
-          if (isMouseUp && !PolygonService.isPolygonSelectionHovered(polygon, mouseRef)) {
+          if (
+            isMouseUp &&
+            !isMouseMoved &&
+            !PolygonService.isPolygonSelectionHovered(polygon, mouseRef)
+          ) {
             polygon.setIsSelected(false);
           }
 
@@ -279,7 +295,7 @@ class SelectionService {
           }
 
           //select polygon if hovered and mouse is clicked and no other shape is selected
-          if (isMouseUp && PolygonService.isPolygonHovered(polygon, mouseRef)) {
+          if (isMouseUp && !isMouseMoved && PolygonService.isPolygonHovered(polygon, mouseRef)) {
             //remove all selections
             SelectionService.clearAllSelections();
             polygon.setIsSelected(true);
@@ -294,7 +310,11 @@ class SelectionService {
           }
 
           //clear selection if mouse is clicked outside ellipse bounding box
-          if (isMouseUp && !EllipseService.isEllipseSelectionHovered(ellipse, mouseRef)) {
+          if (
+            isMouseUp &&
+            !isMouseMoved &&
+            !EllipseService.isEllipseSelectionHovered(ellipse, mouseRef)
+          ) {
             ellipse.setIsSelected(false);
           }
 
@@ -309,7 +329,7 @@ class SelectionService {
           }
 
           //select ellipse if hovered and mouse is clicked and no other shape is selected
-          if (isMouseUp && EllipseService.isEllipseHovered(ellipse, mouseRef)) {
+          if (isMouseUp && !isMouseMoved && EllipseService.isEllipseHovered(ellipse, mouseRef)) {
             //remove all selections
             SelectionService.clearAllSelections();
             ellipse.setIsSelected(true);
@@ -324,7 +344,7 @@ class SelectionService {
           }
 
           //clear selection if mouse is clicked outside arrow bounding box
-          if (isMouseUp && !ArrowService.isArrowHovered(arrow, mouseRef)) {
+          if (isMouseUp && !isMouseMoved && !ArrowService.isArrowHovered(arrow, mouseRef)) {
             arrow.setIsSelected(false);
           }
 
@@ -339,7 +359,7 @@ class SelectionService {
           }
 
           //select arrow if hovered and mouse is clicked and no other shape is selected
-          if (isMouseUp && ArrowService.isArrowHovered(arrow, mouseRef)) {
+          if (isMouseUp && !isMouseMoved && ArrowService.isArrowHovered(arrow, mouseRef)) {
             //remove all selections
             SelectionService.clearAllSelections();
             arrow.setIsSelected(true);
@@ -354,7 +374,7 @@ class SelectionService {
           }
 
           //clear selection if mouse is clicked outside text bounding box
-          if (isMouseUp && !TextService.isTextHovered(text, mouseRef, ctx)) {
+          if (isMouseUp && !isMouseMoved && !TextService.isTextHovered(text, mouseRef, ctx)) {
             text.setIsSelected(false);
           }
 
@@ -369,7 +389,7 @@ class SelectionService {
           }
 
           //select text if hovered and mouse is clicked and no other shape is selected
-          if (isMouseUp && TextService.isTextHovered(text, mouseRef, ctx)) {
+          if (isMouseUp && !isMouseMoved && TextService.isTextHovered(text, mouseRef, ctx)) {
             //remove all selections
             SelectionService.clearAllSelections();
             text.setIsSelected(true);
