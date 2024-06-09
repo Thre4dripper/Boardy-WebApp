@@ -293,8 +293,7 @@ class ResizeService {
         break;
       case TextService:
         const text = selectedShape as TextService;
-        text.x += dx;
-        text.y += dy;
+        this.resizeText(text, mouseRef, dx, dy);
         break;
       default:
         break;
@@ -427,6 +426,137 @@ class ResizeService {
         point.x += dx * moveFactorX;
         point.y += dy * moveFactorY;
       });
+    }
+  }
+
+  private static resizeText(
+    text: TextService,
+    mouseRef: React.MutableRefObject<Mouse>,
+    dx: number,
+    dy: number
+  ) {
+    const resizeState = mouseRef.current.resizeState;
+    if (resizeState === SelectionResize.Top) {
+      if (text.fontSize >= 15) {
+        text.fontSize -= dy;
+        if (text.fontSize < 15) {
+          text.fontSize = 15.00000001;
+          return;
+        }
+        text.x += (dy * text.text.length) / 4;
+        text.y += dy;
+      }
+    } else if (resizeState === SelectionResize.Bottom) {
+      if (text.fontSize >= 15) {
+        text.fontSize += dy;
+        if (text.fontSize < 15) {
+          text.fontSize = 15.00000001;
+          return;
+        }
+        text.x -= (dy * text.text.length) / 4;
+        text.y -= dy;
+      }
+    } else if (resizeState === SelectionResize.Left) {
+      if (text.fontSize >= 15) {
+        text.fontSize -= dx / 4;
+        if (text.fontSize < 15) {
+          text.fontSize = 15.00000001;
+          return;
+        }
+        text.x += dx;
+      }
+    } else if (resizeState === SelectionResize.Right) {
+      if (text.fontSize >= 15) {
+        text.fontSize += dx / 4;
+        if (text.fontSize < 15) {
+          text.fontSize = 15.00000001;
+          return;
+        }
+      }
+    } else if (resizeState === SelectionResize.BottomRight) {
+      // Calculate the diagonal distance moved by the mouse
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      // Determine the direction of the mouse movement
+      const directionX = mouseRef.current.x - mouseRef.current.prevX;
+      const directionY = mouseRef.current.y - mouseRef.current.prevY;
+
+      // Increase the font size if the mouse is moving towards bottom-right, decrease if it's moving towards top-left
+      if (directionX > 0 && directionY > 0) {
+        text.fontSize += distance / 4;
+      } else if (directionX < 0 && directionY < 0) {
+        text.fontSize -= distance / 4;
+      }
+
+      // Ensure the font size doesn't go below the minimum size
+      if (text.fontSize < 15) {
+        text.fontSize = 15.00000001;
+        return;
+      }
+    } else if (resizeState === SelectionResize.TopRight) {
+      // Calculate the diagonal distance moved by the mouse
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      // Determine the direction of the mouse movement
+      const directionX = mouseRef.current.x - mouseRef.current.prevX;
+      const directionY = mouseRef.current.y - mouseRef.current.prevY;
+
+      // Increase the font size if the mouse is moving towards top-right, decrease if it's moving towards bottom-left
+      if (directionX > 0 && directionY < 0) {
+        text.fontSize += distance / 4;
+      } else if (directionX < 0 && directionY > 0) {
+        text.fontSize -= distance / 4;
+      }
+
+      // Ensure the font size doesn't go below the minimum size
+      if (text.fontSize < 15) {
+        text.fontSize = 15.00000001;
+        return;
+      }
+      text.y += dy;
+    } else if (resizeState === SelectionResize.TopLeft) {
+      // Calculate the diagonal distance moved by the mouse
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      // Determine the direction of the mouse movement
+      const directionX = mouseRef.current.x - mouseRef.current.prevX;
+      const directionY = mouseRef.current.y - mouseRef.current.prevY;
+
+      // Increase the font size if the mouse is moving towards top-left, decrease if it's moving towards bottom-right
+      if (directionX < 0 && directionY < 0) {
+        text.fontSize += distance / 4;
+      } else if (directionX > 0 && directionY > 0) {
+        text.fontSize -= distance / 4;
+      }
+
+      // Ensure the font size doesn't go below the minimum size
+      if (text.fontSize < 15) {
+        text.fontSize = 15.00000001;
+        return;
+      }
+      text.x += dx;
+      text.y += dy;
+    } else if (resizeState === SelectionResize.BottomLeft) {
+      // Calculate the diagonal distance moved by the mouse
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      // Determine the direction of the mouse movement
+      const directionX = mouseRef.current.x - mouseRef.current.prevX;
+      const directionY = mouseRef.current.y - mouseRef.current.prevY;
+
+      // Increase the font size if the mouse is moving towards bottom-left, decrease if it's moving towards top-right
+      if (directionX < 0 && directionY > 0) {
+        text.fontSize += distance / 4;
+      } else if (directionX > 0 && directionY < 0) {
+        text.fontSize -= distance / 4;
+      }
+
+      // Ensure the font size doesn't go below the minimum size
+      if (text.fontSize < 15) {
+        text.fontSize = 15.00000001;
+        return;
+      }
+      text.x += dx;
     }
   }
 }

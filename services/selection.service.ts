@@ -160,9 +160,9 @@ class SelectionService {
     const lines = text.text.split('\n');
 
     const minX = text.x;
-    const minY = text.y;
+    const minY = text.y + text.fontSize / 4;
     const maxX = text.x + Math.max(...lines.map((line) => ctx.measureText(line).width));
-    const maxY = text.y + text.fontSize * 1.5 * lines.length;
+    const maxY = text.y + text.fontSize * 1.5 * lines.length - text.fontSize / 6;
 
     ctx.strokeRect(minX - 5, minY - 5, maxX - minX + 10, maxY - minY + 10);
 

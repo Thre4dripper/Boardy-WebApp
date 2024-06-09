@@ -123,15 +123,14 @@ class TextService {
     mouseRef: React.MutableRefObject<Mouse>,
     ctx: CanvasRenderingContext2D
   ) {
+    ctx.font = `${text.fontSize}px ${text.fontFamily}`;
     const { x, y } = mouseRef.current;
     const lines = text.text.split('\n');
 
     const minX = text.x;
-    const minY = text.y - text.fontSize / 3;
+    const minY = text.y + text.fontSize / 4;
     const maxX = text.x + Math.max(...lines.map((line) => ctx.measureText(line).width));
-    const maxY = text.y + text.fontSize * 1.5 * lines.length;
-
-    ctx.font = `${text.fontSize}px ${text.fontFamily}`;
+    const maxY = text.y + text.fontSize * 1.5 * lines.length - text.fontSize / 6;
 
     return x >= minX && x <= maxX && y >= minY && y <= maxY;
   }
@@ -141,15 +140,13 @@ class TextService {
     mouseRef: React.MutableRefObject<Mouse>,
     ctx: CanvasRenderingContext2D
   ) {
-    const { x, y } = mouseRef.current;
+    ctx.font = `${text.fontSize}px ${text.fontFamily}`;
     const lines = text.text.split('\n');
 
     const minX = text.x;
-    const minY = text.y - text.fontSize / 3;
+    const minY = text.y + text.fontSize / 4;
     const maxX = text.x + Math.max(...lines.map((line) => ctx.measureText(line).width));
-    const maxY = text.y + text.fontSize * 1.5 * lines.length;
-
-    ctx.font = `${text.fontSize}px ${text.fontFamily}`;
+    const maxY = text.y + text.fontSize * 1.5 * lines.length - text.fontSize / 6;
 
     return ResizeService.detectRectangleResizeSelection(mouseRef, minX, minY, maxX, maxY);
   }
@@ -168,7 +165,7 @@ class TextService {
     inputElement.className = TextService.TEXT_DIV_TAG;
     inputElement.contentEditable = 'true';
     inputElement.style.position = 'absolute';
-    inputElement.style.top = `${y - fontSize / 1.5}px`;
+    inputElement.style.top = `${y}px`;
     inputElement.style.left = `${x}px`;
     inputElement.style.border = 'none';
     inputElement.style.outline = 'none';
