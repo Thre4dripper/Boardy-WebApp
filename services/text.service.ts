@@ -143,12 +143,20 @@ class TextService {
     ctx.font = `${text.fontSize}px ${text.fontFamily}`;
     const lines = text.text.split('\n');
 
-    const minX = text.x;
-    const minY = text.y + text.fontSize / 4;
-    const maxX = text.x + Math.max(...lines.map((line) => ctx.measureText(line).width));
-    const maxY = text.y + text.fontSize * 1.5 * lines.length - text.fontSize / 6;
+    // const minX = text.x;
+    // const minY = text.y + text.fontSize / 4;
+    // const maxX = text.x + Math.max(...lines.map((line) => ctx.measureText(line).width));
+    // const maxY = text.y + text.fontSize * 1.5 * lines.length - text.fontSize / 6;
 
-    return ResizeService.detectRectangleResizeSelection(mouseRef, minX, minY, maxX, maxY);
+    const points = [
+      { x: text.x, y: text.y + text.fontSize / 4 },
+      {
+        x: text.x + Math.max(...lines.map((line) => ctx.measureText(line).width)),
+        y: text.y + text.fontSize * 1.5 * lines.length - text.fontSize / 6,
+      },
+    ];
+
+    return ResizeService.detectRectangleResizeSelection(mouseRef, points);
   }
 
   static createInput(

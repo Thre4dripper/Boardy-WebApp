@@ -65,52 +65,61 @@ class ResizeService {
     maxX: number,
     maxY: number
   ) {
+  /**
+   * @description Detects the resize state on rectangle selection of ellipse, polygon, pen and text
+   * @param mouseRef The mouse reference object
+   * @param points The points of the shape
+   */
     const tolerance = 10;
     const cornerTolerance = 12; // Extra tolerance for corners
 
+    const minX = Math.min(...points.map((p) => p.x));
+    const maxX = Math.max(...points.map((p) => p.x));
+    const minY = Math.min(...points.map((p) => p.y));
+    const maxY = Math.max(...points.map((p) => p.y));
+
+    const { x: mouseX, y: mouseY } = mouseRef.current;
+
     // Check if the mouse is within the bounds of each edge or corner
-    if (
-      Math.abs(mouseRef.current.x - minX) <= cornerTolerance &&
-      Math.abs(mouseRef.current.y - minY) <= cornerTolerance
-    ) {
+    if (Math.abs(mouseX - minX) <= cornerTolerance && Math.abs(mouseY - minY) <= cornerTolerance) {
       return SelectionResize.TopLeft;
     } else if (
-      Math.abs(mouseRef.current.x - maxX) <= cornerTolerance &&
-      Math.abs(mouseRef.current.y - minY) <= cornerTolerance
+      Math.abs(mouseX - maxX) <= cornerTolerance &&
+      Math.abs(mouseY - minY) <= cornerTolerance
     ) {
       return SelectionResize.TopRight;
     } else if (
-      Math.abs(mouseRef.current.x - maxX) <= cornerTolerance &&
-      Math.abs(mouseRef.current.y - maxY) <= cornerTolerance
+      Math.abs(mouseX - maxX) <= cornerTolerance &&
+      Math.abs(mouseY - maxY) <= cornerTolerance
     ) {
       return SelectionResize.BottomRight;
     } else if (
-      Math.abs(mouseRef.current.x - minX) <= cornerTolerance &&
-      Math.abs(mouseRef.current.y - maxY) <= cornerTolerance
+      Math.abs(mouseX - minX) <= cornerTolerance &&
+      Math.abs(mouseY - maxY) <= cornerTolerance
     ) {
       return SelectionResize.BottomLeft;
     } else if (
-      mouseRef.current.x >= minX - tolerance &&
-      mouseRef.current.x <= maxX + tolerance &&
-      Math.abs(mouseRef.current.y - minY) <= tolerance
+      mouseX >= minX - tolerance &&
+      mouseX <= maxX + tolerance &&
+      Math.abs(mouseY - minY) <= tolerance
     ) {
       return SelectionResize.Top;
     } else if (
-      mouseRef.current.x >= minX - tolerance &&
-      mouseRef.current.x <= maxX + tolerance &&
-      Math.abs(mouseRef.current.y - maxY) <= tolerance
+      mouseX >= minX - tolerance &&
+      mouseX <= maxX + tolerance &&
+      Math.abs(mouseY - maxY) <= tolerance
     ) {
       return SelectionResize.Bottom;
     } else if (
-      mouseRef.current.y >= minY - tolerance &&
-      mouseRef.current.y <= maxY + tolerance &&
-      Math.abs(mouseRef.current.x - minX) <= tolerance
+      mouseY >= minY - tolerance &&
+      mouseY <= maxY + tolerance &&
+      Math.abs(mouseX - minX) <= tolerance
     ) {
       return SelectionResize.Left;
     } else if (
-      mouseRef.current.y >= minY - tolerance &&
-      mouseRef.current.y <= maxY + tolerance &&
-      Math.abs(mouseRef.current.x - maxX) <= tolerance
+      mouseY >= minY - tolerance &&
+      mouseY <= maxY + tolerance &&
+      Math.abs(mouseX - maxX) <= tolerance
     ) {
       return SelectionResize.Right;
     } else {

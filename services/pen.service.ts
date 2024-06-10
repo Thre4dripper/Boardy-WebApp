@@ -129,12 +129,7 @@ class PenService extends BaseShapeService {
 
   static getHoveredEdgeOrCorner(pen: PenService, mouseRef: React.MutableRefObject<Mouse>) {
     // Get selection bounds
-    const minX = Math.min(...pen.path.map((point) => point.x));
-    const minY = Math.min(...pen.path.map((point) => point.y));
-    const maxX = Math.max(...pen.path.map((point) => point.x));
-    const maxY = Math.max(...pen.path.map((point) => point.y));
-
-    return ResizeService.detectRectangleResizeSelection(mouseRef, minX, minY, maxX, maxY);
+    return ResizeService.detectRectangleResizeSelection(mouseRef, pen.path);
   }
 }
 

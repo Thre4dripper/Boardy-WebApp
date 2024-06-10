@@ -127,12 +127,13 @@ class EllipseService extends BaseShapeService {
   }
 
   static getHoveredEdgeOrCorner(ellipse: EllipseService, mouseRef: React.MutableRefObject<Mouse>) {
-    const minX = Math.min(ellipse.x1, ellipse.x2);
-    const minY = Math.min(ellipse.y1, ellipse.y2);
-    const maxX = Math.max(ellipse.x1, ellipse.x2);
-    const maxY = Math.max(ellipse.y1, ellipse.y2);
+    const points = [
+      { x: ellipse.x1, y: ellipse.y1 },
+      { x: ellipse.x2, y: ellipse.y2 },
+    ];
 
     return ResizeService.detectRectangleResizeSelection(mouseRef, minX, minY, maxX, maxY);
+    return ResizeService.detectRectangleResizeSelection(mouseRef, points);
   }
 }
 

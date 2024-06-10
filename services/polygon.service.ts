@@ -223,12 +223,19 @@ class PolygonService extends BaseShapeService {
       }
     }
 
-    const minX = Math.min(...vertices.map((point) => point.x));
-    const minY = Math.min(...vertices.map((point) => point.y));
-    const maxX = Math.max(...vertices.map((point) => point.x));
-    const maxY = Math.max(...vertices.map((point) => point.y));
+    const points = [
+      {
+        x: Math.min(...vertices.map((point) => point.x)),
+        y: Math.min(...vertices.map((point) => point.y)),
+      },
+      {
+        x: Math.max(...vertices.map((point) => point.x)),
+        y: Math.max(...vertices.map((point) => point.y)),
+      },
+    ];
 
     return ResizeService.detectRectangleResizeSelection(mouseRef, minX, minY, maxX, maxY);
+    return ResizeService.detectRectangleResizeSelection(mouseRef, points);
   }
 }
 
