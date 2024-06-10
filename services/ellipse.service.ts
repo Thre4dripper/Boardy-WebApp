@@ -132,7 +132,9 @@ class EllipseService extends BaseShapeService {
       { x: ellipse.x2, y: ellipse.y2 },
     ];
 
-    return ResizeService.detectRectangleResizeSelection(mouseRef, minX, minY, maxX, maxY);
+    ellipse.horizontalInverted = ellipse.x1 > ellipse.x2;
+    ellipse.verticalInverted = ellipse.y1 > ellipse.y2;
+
     return ResizeService.detectRectangleResizeSelection(mouseRef, points);
   }
 }

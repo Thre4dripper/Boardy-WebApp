@@ -1,7 +1,7 @@
 import React from 'react';
 import { Mouse } from '@/app/page';
 import Store from '@/store/Store';
-import PenService from '@/services/pen.service';
+import PenService, { Point } from '@/services/pen.service';
 import LineService from '@/services/line.service';
 import PolygonService from '@/services/polygon.service';
 import EllipseService from '@/services/ellipse.service';
@@ -11,6 +11,11 @@ import { SelectionResize } from '@/enums/SelectionResize';
 import Cursors from '@/enums/Cursors';
 
 class ResizeService {
+  /**
+   * @description Detects the resize state of the selected shape and updates the cursor accordingly
+   * @param cursor The current cursor state
+   * @param mouseRef The mouse reference object
+   */
   static renderResizeCursor(cursor: SelectionResize, mouseRef: React.MutableRefObject<Mouse>) {
     switch (cursor) {
       case SelectionResize.TopLeft:
@@ -58,18 +63,12 @@ class ResizeService {
     }
   }
 
-  static detectRectangleResizeSelection(
-    mouseRef: React.MutableRefObject<Mouse>,
-    minX: number,
-    minY: number,
-    maxX: number,
-    maxY: number
-  ) {
   /**
    * @description Detects the resize state on rectangle selection of ellipse, polygon, pen and text
    * @param mouseRef The mouse reference object
    * @param points The points of the shape
    */
+  static detectRectangleResizeSelection(mouseRef: React.MutableRefObject<Mouse>, points: Point[]) {
     const tolerance = 10;
     const cornerTolerance = 12; // Extra tolerance for corners
 
@@ -127,6 +126,15 @@ class ResizeService {
     }
   }
 
+  /**
+   * @description Detects the resize state of line selection of line and arrow
+   * @param mouseRef The mouse reference object
+   * @param tolerance The tolerance for the resize detection
+   * @param x1 The x-coordinate of the start point
+   * @param y1 The y-coordinate of the start point
+   * @param x2 The x-coordinate of the end point
+   * @param y2 The y-coordinate of the end point
+   */
   static detectLineResizeSelection(
     mouseRef: React.MutableRefObject<Mouse>,
     tolerance: number,
@@ -149,6 +157,11 @@ class ResizeService {
     return SelectionResize.None;
   }
 
+  /**
+   * @description Detects the resize state of the selected shape
+   * @param mouseRef The mouse reference object
+   * @param ctx The canvas rendering context
+   */
   static resizeCursor(mouseRef: React.MutableRefObject<Mouse>, ctx: CanvasRenderingContext2D) {
     const allData = Store.allShapes;
     const selectedShape = allData.find((shape) => shape.isSelected);
@@ -200,6 +213,10 @@ class ResizeService {
     }
   }
 
+  /**
+   * @description Resizes the selected shape based on the resize state
+   * @param mouseRef The mouse reference object
+   */
   static resizeSelectedShape(mouseRef: React.MutableRefObject<Mouse>) {
     const allData = Store.allShapes;
     const selectedShape = allData.find((shape) => shape.isSelected);
@@ -214,95 +231,75 @@ class ResizeService {
 
     switch (selectedShape.constructor) {
       case PenService:
-        const pen = selectedShape as PenService;
-        this.resizePen(pen, mouseRef, dx, dy);
+        {
+          const pen = selectedShape as PenService;
+          this.resizePen(pen, mouseRef, dx, dy);
+        }
         break;
       case LineService:
-        const line = selectedShape as LineService;
-        if (resizeState === SelectionResize.Start) {
-          line.x1 += dx;
-          line.y1 += dy;
-        } else if (resizeState === SelectionResize.End) {
-          line.x2 += dx;
-          line.y2 += dy;
+        {
+          const line = selectedShape as LineService;
+          if (resizeState === SelectionResize.Start) {
+            line.x1 += dx;
+            line.y1 += dy;
+          } else if (resizeState === SelectionResize.End) {
+            line.x2 += dx;
+            line.y2 += dy;
+          }
         }
         break;
       case PolygonService:
-        const polygon = selectedShape as PolygonService;
-        if (resizeState === SelectionResize.TopLeft) {
-          polygon.x1 += dx;
-          polygon.y1 += dy;
-        }
-        if (resizeState === SelectionResize.BottomRight) {
-          polygon.x2 += dx;
-          polygon.y2 += dy;
-        }
-        if (resizeState === SelectionResize.TopRight) {
-          polygon.x2 += dx;
-          polygon.y1 += dy;
-        }
-        if (resizeState === SelectionResize.BottomLeft) {
-          polygon.x1 += dx;
-          polygon.y2 += dy;
-        }
-        if (resizeState === SelectionResize.Top) {
-          polygon.y1 += dy;
-        }
-        if (resizeState === SelectionResize.Bottom) {
-          polygon.y2 += dy;
-        }
-        if (resizeState === SelectionResize.Left) {
-          polygon.x1 += dx;
-        }
-        if (resizeState === SelectionResize.Right) {
-          polygon.x2 += dx;
-        }
+        {
+          const polygon = selectedShape as PolygonService;
 
+          const resizeProps = this.getResizeMappings(
+            resizeState,
+            polygon.horizontalInverted,
+            polygon.verticalInverted
+          );
+          if (resizeProps.xProp) {
+            polygon[resizeProps.xProp] += dx;
+          }
+          if (resizeProps.yProp) {
+            polygon[resizeProps.yProp] += dy;
+          }
+        }
         break;
       case EllipseService:
-        const ellipse = selectedShape as EllipseService;
-        if (resizeState === SelectionResize.TopLeft) {
-          ellipse.x1 += dx;
-          ellipse.y1 += dy;
-        }
-        if (resizeState === SelectionResize.BottomRight) {
-          ellipse.x2 += dx;
-          ellipse.y2 += dy;
-        }
-        if (resizeState === SelectionResize.TopRight) {
-          ellipse.x2 += dx;
-          ellipse.y1 += dy;
-        }
-        if (resizeState === SelectionResize.BottomLeft) {
-          ellipse.x1 += dx;
-          ellipse.y2 += dy;
-        }
-        if (resizeState === SelectionResize.Top) {
-          ellipse.y1 += dy;
-        }
-        if (resizeState === SelectionResize.Bottom) {
-          ellipse.y2 += dy;
-        }
-        if (resizeState === SelectionResize.Left) {
-          ellipse.x1 += dx;
-        }
-        if (resizeState === SelectionResize.Right) {
-          ellipse.x2 += dx;
+        {
+          const ellipse = selectedShape as EllipseService;
+
+          const resizeProps = this.getResizeMappings(
+            resizeState,
+            ellipse.horizontalInverted,
+            ellipse.verticalInverted
+          );
+
+          if (resizeProps.xProp) {
+            ellipse[resizeProps.xProp] += dx;
+          }
+          if (resizeProps.yProp) {
+            ellipse[resizeProps.yProp] += dy;
+          }
         }
         break;
       case ArrowService:
-        const arrow = selectedShape as ArrowService;
-        if (resizeState === SelectionResize.Start) {
-          arrow.x1 += dx;
-          arrow.y1 += dy;
-        } else if (resizeState === SelectionResize.End) {
-          arrow.x2 += dx;
-          arrow.y2 += dy;
+        {
+          const arrow = selectedShape as ArrowService;
+          if (resizeState === SelectionResize.Start) {
+            arrow.x1 += dx;
+            arrow.y1 += dy;
+          } else if (resizeState === SelectionResize.End) {
+            arrow.x2 += dx;
+            arrow.y2 += dy;
+          }
         }
         break;
       case TextService:
-        const text = selectedShape as TextService;
-        this.resizeText(text, mouseRef, dx, dy);
+        {
+          const text = selectedShape as TextService;
+          this.resizeText(text, mouseRef, dx, dy);
+        }
         break;
       default:
         break;
@@ -313,6 +310,58 @@ class ResizeService {
     mouseRef.current.prevY = mouseRef.current.y;
   }
 
+  /**
+   * @description Returns the resize mappings based on the resize state and inversion of shape, ellipse and polygon
+   * @param resizeState
+   * @param horizontalInverted
+   * @param verticalInverted
+   */
+  static getResizeMappings(
+    resizeState: SelectionResize,
+    horizontalInverted: boolean,
+    verticalInverted: boolean
+  ) {
+    interface ResizeProps {
+      xProp?: 'x1' | 'x2';
+      yProp?: 'y1' | 'y2';
+    }
+
+    const resizeMapping: Record<SelectionResize, ResizeProps> = {
+      [SelectionResize.TopLeft]: {
+        xProp: horizontalInverted ? 'x2' : 'x1',
+        yProp: verticalInverted ? 'y2' : 'y1',
+      },
+      [SelectionResize.BottomRight]: {
+        xProp: horizontalInverted ? 'x1' : 'x2',
+        yProp: verticalInverted ? 'y1' : 'y2',
+      },
+      [SelectionResize.TopRight]: {
+        xProp: horizontalInverted ? 'x1' : 'x2',
+        yProp: verticalInverted ? 'y2' : 'y1',
+      },
+      [SelectionResize.BottomLeft]: {
+        xProp: horizontalInverted ? 'x2' : 'x1',
+        yProp: verticalInverted ? 'y1' : 'y2',
+      },
+      [SelectionResize.Top]: { yProp: verticalInverted ? 'y2' : 'y1' },
+      [SelectionResize.Bottom]: { yProp: verticalInverted ? 'y1' : 'y2' },
+      [SelectionResize.Left]: { xProp: horizontalInverted ? 'x2' : 'x1' },
+      [SelectionResize.Right]: { xProp: horizontalInverted ? 'x1' : 'x2' },
+      [SelectionResize.None]: {}, // Explicitly include this case
+      [SelectionResize.Start]: {},
+      [SelectionResize.End]: {},
+    };
+
+    return resizeMapping[resizeState];
+  }
+
+  /**
+   * @description Resizes the pen based on the resize state
+   * @param pen The pen object
+   * @param mouseRef The mouse reference object
+   * @param dx The change in x-coordinate
+   * @param dy The change in y-coordinate
+   */
   static resizePen(
     pen: PenService,
     mouseRef: React.MutableRefObject<Mouse>,
@@ -438,6 +487,14 @@ class ResizeService {
     }
   }
 
+  /**
+   * @description Resizes the text based on the resize state
+   * @param text The text object
+   * @param mouseRef The mouse reference object
+   * @param dx The change in x-coordinate
+   * @param dy The change in y-coordinate
+   * @private
+   */
   private static resizeText(
     text: TextService,
     mouseRef: React.MutableRefObject<Mouse>,

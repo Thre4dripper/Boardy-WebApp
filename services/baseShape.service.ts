@@ -11,6 +11,8 @@ class BaseShapeService {
   strokeVariant: StrokeVariant;
   timeStamp: number;
   isSelected: boolean = false;
+  horizontalInverted: boolean = false;
+  verticalInverted: boolean = false;
 
   setIsSelected(isSelected: boolean) {
     this.isSelected = isSelected;
