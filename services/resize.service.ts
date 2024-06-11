@@ -368,122 +368,119 @@ class ResizeService {
     dx: number,
     dy: number
   ) {
-    if (mouseRef.current.resizeState === SelectionResize.Right) {
-      const leftMostPoint = pen.path.reduce((acc, point) => {
-        return point.x < acc.x ? point : acc;
-      }, pen.path[0]);
-      pen.path.forEach((point) => {
-        const distance = Math.abs(leftMostPoint.x - point.x);
+    const resizeState = mouseRef.current.resizeState;
+    const leftMostPoint = pen.horizontalInverted ? pen.path[pen.x2] : pen.path[pen.x1];
+    const rightMostPoint = pen.horizontalInverted ? pen.path[pen.x1] : pen.path[pen.x2];
+    const topMostPoint = pen.verticalInverted ? pen.path[pen.y2] : pen.path[pen.y1];
+    const bottomMostPoint = pen.verticalInverted ? pen.path[pen.y1] : pen.path[pen.y2];
 
-        const moveFactorX = distance / Math.abs(leftMostPoint.x - mouseRef.current.x);
+    switch (resizeState) {
+      case SelectionResize.Right:
+        {
+          const width = rightMostPoint.x - leftMostPoint.x;
 
-        point.x += dx * moveFactorX;
-      });
-    } else if (mouseRef.current.resizeState === SelectionResize.Left) {
-      const rightMostPoint = pen.path.reduce((acc, point) => {
-        return point.x > acc.x ? point : acc;
-      }, pen.path[0]);
-      pen.path.forEach((point) => {
-        const distance = Math.abs(rightMostPoint.x - point.x);
+          pen.path.forEach((point) => {
+            const distance = point.x - leftMostPoint.x;
+            let delta = distance * (dx / (width + 0.001)); // Prevent division by zero
+            point.x += delta;
+          });
+        }
+        break;
+      case SelectionResize.Left:
+        {
+          const width = rightMostPoint.x - leftMostPoint.x;
 
-        const moveFactorX = distance / Math.abs(rightMostPoint.x - mouseRef.current.x);
+          pen.path.forEach((point) => {
+            const distance = rightMostPoint.x - point.x;
+            let delta = distance * (dx / (width + 0.001)); // Prevent division by zero
+            point.x += delta;
+          });
+        }
+        break;
+      case SelectionResize.Top:
+        {
+          const height = topMostPoint.y - bottomMostPoint.y;
 
-        point.x += dx * moveFactorX;
-      });
-    } else if (mouseRef.current.resizeState === SelectionResize.Top) {
-      const bottomMostPoint = pen.path.reduce((acc, point) => {
-        return point.y > acc.y ? point : acc;
-      }, pen.path[0]);
-      pen.path.forEach((point) => {
-        const distance = Math.abs(bottomMostPoint.y - point.y);
+          pen.path.forEach((point) => {
+            const distance = point.y - bottomMostPoint.y;
+            let delta = distance * (dy / (height + 0.001)); // Prevent division by zero
+            point.y += delta;
+          });
+        }
+        break;
+      case SelectionResize.Bottom:
+        {
+          const height = topMostPoint.y - bottomMostPoint.y;
 
-        const moveFactorY = distance / Math.abs(bottomMostPoint.y - mouseRef.current.y);
+          pen.path.forEach((point) => {
+            const distance = topMostPoint.y - point.y;
+            let delta = distance * (dy / (height + 0.001)); // Prevent division by zero
+            point.y += delta;
+          });
+        }
+        break;
+      case SelectionResize.TopLeft:
+        {
+          const width = rightMostPoint.x - leftMostPoint.x;
+          const height = topMostPoint.y - bottomMostPoint.y;
 
-        point.y += dy * moveFactorY;
-      });
-    } else if (mouseRef.current.resizeState === SelectionResize.Bottom) {
-      const topMostPoint = pen.path.reduce((acc, point) => {
-        return point.y < acc.y ? point : acc;
-      }, pen.path[0]);
-      pen.path.forEach((point) => {
-        const distance = Math.abs(topMostPoint.y - point.y);
+          pen.path.forEach((point) => {
+            const distanceX = rightMostPoint.x - point.x;
+            const distanceY = point.y - bottomMostPoint.y;
+            let deltaX = distanceX * (dx / (width + 0.001)); // Prevent division by zero
+            let deltaY = distanceY * (dy / (height + 0.001)); // Prevent division by zero
+            point.x += deltaX;
+            point.y += deltaY;
+          });
+        }
+        break;
+      case SelectionResize.TopRight:
+        {
+          const width = rightMostPoint.x - leftMostPoint.x;
+          const height = topMostPoint.y - bottomMostPoint.y;
 
-        const moveFactorY = distance / Math.abs(topMostPoint.y - mouseRef.current.y);
+          pen.path.forEach((point) => {
+            const distanceX = point.x - leftMostPoint.x;
+            const distanceY = point.y - bottomMostPoint.y;
+            let deltaX = distanceX * (dx / (width + 0.001)); // Prevent division by zero
+            let deltaY = distanceY * (dy / (height + 0.001)); // Prevent division by zero
+            point.x += deltaX;
+            point.y += deltaY;
+          });
+        }
+        break;
+      case SelectionResize.BottomLeft:
+        {
+          const width = rightMostPoint.x - leftMostPoint.x;
+          const height = topMostPoint.y - bottomMostPoint.y;
 
-        point.y += dy * moveFactorY;
-      });
-    } else if (mouseRef.current.resizeState === SelectionResize.TopLeft) {
-      const bottomMostPoint = pen.path.reduce((acc, point) => {
-        return point.y > acc.y ? point : acc;
-      }, pen.path[0]);
-      const rightMostPoint = pen.path.reduce((acc, point) => {
-        return point.x > acc.x ? point : acc;
-      }, pen.path[0]);
+          pen.path.forEach((point) => {
+            const distanceX = rightMostPoint.x - point.x;
+            const distanceY = topMostPoint.y - point.y;
+            let deltaX = distanceX * (dx / (width + 0.001)); // Prevent division by zero
+            let deltaY = distanceY * (dy / (height + 0.001)); // Prevent division by zero
+            point.x += deltaX;
+            point.y += deltaY;
+          });
+        }
+        break;
+      case SelectionResize.BottomRight:
+        {
+          const width = rightMostPoint.x - leftMostPoint.x;
+          const height = topMostPoint.y - bottomMostPoint.y;
 
-      pen.path.forEach((point) => {
-        const distanceX = Math.abs(rightMostPoint.x - point.x);
-        const distanceY = Math.abs(bottomMostPoint.y - point.y);
-
-        const moveFactorX = distanceX / Math.abs(rightMostPoint.x - mouseRef.current.x);
-        const moveFactorY = distanceY / Math.abs(bottomMostPoint.y - mouseRef.current.y);
-
-        point.x += dx * moveFactorX;
-        point.y += dy * moveFactorY;
-      });
-    } else if (mouseRef.current.resizeState === SelectionResize.TopRight) {
-      const bottomMostPoint = pen.path.reduce((acc, point) => {
-        return point.y > acc.y ? point : acc;
-      }, pen.path[0]);
-      const leftMostPoint = pen.path.reduce((acc, point) => {
-        return point.x < acc.x ? point : acc;
-      }, pen.path[0]);
-
-      pen.path.forEach((point) => {
-        const distanceX = Math.abs(leftMostPoint.x - point.x);
-        const distanceY = Math.abs(bottomMostPoint.y - point.y);
-
-        const moveFactorX = distanceX / Math.abs(leftMostPoint.x - mouseRef.current.x);
-        const moveFactorY = distanceY / Math.abs(bottomMostPoint.y - mouseRef.current.y);
-
-        point.x += dx * moveFactorX;
-        point.y += dy * moveFactorY;
-      });
-    } else if (mouseRef.current.resizeState === SelectionResize.BottomLeft) {
-      const topMostPoint = pen.path.reduce((acc, point) => {
-        return point.y < acc.y ? point : acc;
-      }, pen.path[0]);
-      const rightMostPoint = pen.path.reduce((acc, point) => {
-        return point.x > acc.x ? point : acc;
-      }, pen.path[0]);
-
-      pen.path.forEach((point) => {
-        const distanceX = Math.abs(rightMostPoint.x - point.x);
-        const distanceY = Math.abs(topMostPoint.y - point.y);
-
-        const moveFactorX = distanceX / Math.abs(rightMostPoint.x - mouseRef.current.x);
-        const moveFactorY = distanceY / Math.abs(topMostPoint.y - mouseRef.current.y);
-
-        point.x += dx * moveFactorX;
-        point.y += dy * moveFactorY;
-      });
-    } else if (mouseRef.current.resizeState === SelectionResize.BottomRight) {
-      const topMostPoint = pen.path.reduce((acc, point) => {
-        return point.y < acc.y ? point : acc;
-      }, pen.path[0]);
-      const leftMostPoint = pen.path.reduce((acc, point) => {
-        return point.x < acc.x ? point : acc;
-      }, pen.path[0]);
-
-      pen.path.forEach((point) => {
-        const distanceX = Math.abs(leftMostPoint.x - point.x);
-        const distanceY = Math.abs(topMostPoint.y - point.y);
-
-        const moveFactorX = distanceX / Math.abs(leftMostPoint.x - mouseRef.current.x);
-        const moveFactorY = distanceY / Math.abs(topMostPoint.y - mouseRef.current.y);
-
-        point.x += dx * moveFactorX;
-        point.y += dy * moveFactorY;
-      });
+          pen.path.forEach((point) => {
+            const distanceX = point.x - leftMostPoint.x;
+            const distanceY = topMostPoint.y - point.y;
+            let deltaX = distanceX * (dx / (width + 0.001)); // Prevent division by zero
+            let deltaY = distanceY * (dy / (height + 0.001)); // Prevent division by zero
+            point.x += deltaX;
+            point.y += deltaY;
+          });
+        }
+        break;
+      default:
+        break;
     }
   }
 

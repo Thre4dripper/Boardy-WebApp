@@ -18,6 +18,11 @@ export class Point {
 }
 
 class PenService extends BaseShapeService {
+  //for storing bounding box
+  x1: number = 0;
+  y1: number = 0;
+  x2: number = 0;
+  y2: number = 0;
   path: Point[] = [];
 
   constructor(path: Point[], color: StrokeColor, size: number, variant: StrokeVariant) {
@@ -34,6 +39,23 @@ class PenService extends BaseShapeService {
     const allPens = Store.allShapes.filter((shape) => shape instanceof PenService) as PenService[];
     if (mouseRef.current.down) {
       const lastPen = allPens[allPens.length - 1];
+      //bounding box corresponding to the max and min points of the path in x and y direction
+      lastPen.x1 = lastPen.path.reduce(
+        (minIndex, point, index, array) => (point.x < array[minIndex].x ? index : minIndex),
+        0
+      );
+      lastPen.y1 = lastPen.path.reduce(
+        (minIndex, point, index, array) => (point.y < array[minIndex].y ? index : minIndex),
+        0
+      );
+      lastPen.x2 = lastPen.path.reduce(
+        (maxIndex, point, index, array) => (point.x > array[maxIndex].x ? index : maxIndex),
+        0
+      );
+      lastPen.y2 = lastPen.path.reduce(
+        (maxIndex, point, index, array) => (point.y > array[maxIndex].y ? index : maxIndex),
+        0
+      );
       lastPen.path.push({ x: mouseRef.current.x, y: mouseRef.current.y });
     } else {
       if (allPens.length > 0 && allPens[allPens.length - 1].path.length <= 1) {
@@ -129,6 +151,9 @@ class PenService extends BaseShapeService {
 
   static getHoveredEdgeOrCorner(pen: PenService, mouseRef: React.MutableRefObject<Mouse>) {
     // Get selection bounds
+
+    pen.horizontalInverted = pen.path[pen.x1].x > pen.path[pen.x2].x;
+    pen.verticalInverted = pen.path[pen.y1].y > pen.path[pen.y2].y;
     return ResizeService.detectRectangleResizeSelection(mouseRef, pen.path);
   }
 }
