@@ -78,13 +78,21 @@ class SelectionService {
     const radiusX = (Math.abs(polygon.x1 - polygon.x2) / 2) * Math.sqrt(2);
     const radiusY = (Math.abs(polygon.y1 - polygon.y2) / 2) * Math.sqrt(2);
 
-    for (let d = 0; d <= 360; d++) {
-      if (d % (360 / polygon.sides) === 0) {
-        const a = ((d + polygon.rotation + (polygon.y1 > polygon.y2 ? 180 : 0)) * Math.PI) / 180;
-        const x1 = xCenter + radiusX * Math.cos(a);
-        const y1 = yCenter + radiusY * Math.sin(a);
-        vertices.push({ x: x1, y: y1 });
+    const step = (2 * Math.PI) / polygon.sides;
+    for (let i = 0; i < polygon.sides; i++) {
+      let angle = i * step + polygon.rotation * (Math.PI / 180);
+      let x1 = xCenter + radiusX * Math.cos(angle);
+      let y1 = yCenter + radiusY * Math.sin(angle);
+
+      // Reflect the point if needed for inversion
+      if (polygon.x1 > polygon.x2) {
+        x1 = xCenter - (x1 - xCenter);
       }
+      if (polygon.y1 > polygon.y2) {
+        y1 = yCenter - (y1 - yCenter);
+      }
+
+      vertices.push({ x: x1, y: y1 });
     }
 
     const minX = Math.min(...vertices.map((v) => v.x));

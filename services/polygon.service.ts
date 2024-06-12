@@ -76,26 +76,36 @@ class PolygonService extends BaseShapeService {
     if (polygon.x1 === polygon.x2 && polygon.y1 === polygon.y2) {
       return;
     }
+
     BaseShapeService.draw(polygon, ctx);
     ctx.fillStyle = polygon.fillColor;
 
     ctx.beginPath();
-    const x = (polygon.x1 + polygon.x2) / 2;
-    const y = (polygon.y1 + polygon.y2) / 2;
+    const centerX = (polygon.x1 + polygon.x2) / 2;
+    const centerY = (polygon.y1 + polygon.y2) / 2;
     const radiusX = (Math.abs(polygon.x1 - polygon.x2) / 2) * Math.sqrt(2);
     const radiusY = (Math.abs(polygon.y1 - polygon.y2) / 2) * Math.sqrt(2);
 
     const path = new Path2D();
-    for (let d = 0; d <= 360; d++) {
-      if (d % (360 / polygon.sides) === 0) {
-        const a = ((d + polygon.rotation + (polygon.y1 > polygon.y2 ? 180 : 0)) * Math.PI) / 180;
-        const x1 = x + radiusX * Math.cos(a);
-        const y1 = y + radiusY * Math.sin(a);
-        if (d === 0) {
-          path.moveTo(x1, y1);
-        } else {
-          path.lineTo(x1, y1);
-        }
+    const step = (2 * Math.PI) / polygon.sides;
+
+    for (let i = 0; i < polygon.sides; i++) {
+      let angle = i * step + polygon.rotation * (Math.PI / 180);
+      let x = centerX + radiusX * Math.cos(angle);
+      let y = centerY + radiusY * Math.sin(angle);
+
+      // Reflect the point if needed for inversion
+      if (polygon.x1 > polygon.x2) {
+        x = centerX - (x - centerX);
+      }
+      if (polygon.y1 > polygon.y2) {
+        y = centerY - (y - centerY);
+      }
+
+      if (i === 0) {
+        path.moveTo(x, y);
+      } else {
+        path.lineTo(x, y);
       }
     }
     path.closePath();
@@ -118,13 +128,21 @@ class PolygonService extends BaseShapeService {
     const radiusX = (Math.abs(polygon.x1 - polygon.x2) / 2) * Math.sqrt(2);
     const radiusY = (Math.abs(polygon.y1 - polygon.y2) / 2) * Math.sqrt(2);
 
-    for (let d = 0; d <= 360; d++) {
-      if (d % (360 / polygon.sides) === 0) {
-        const a = ((d + polygon.rotation + (polygon.y1 > polygon.y2 ? 180 : 0)) * Math.PI) / 180;
-        const x1 = xCenter + radiusX * Math.cos(a);
-        const y1 = yCenter + radiusY * Math.sin(a);
-        vertices.push({ x: x1, y: y1 });
+    const step = (2 * Math.PI) / polygon.sides;
+    for (let i = 0; i < polygon.sides; i++) {
+      let angle = i * step + polygon.rotation * (Math.PI / 180);
+      let x1 = xCenter + radiusX * Math.cos(angle);
+      let y1 = yCenter + radiusY * Math.sin(angle);
+
+      // Reflect the point if needed for inversion
+      if (polygon.x1 > polygon.x2) {
+        x1 = xCenter - (x1 - xCenter);
       }
+      if (polygon.y1 > polygon.y2) {
+        y1 = yCenter - (y1 - yCenter);
+      }
+
+      vertices.push({ x: x1, y: y1 });
     }
 
     if (polygon.fillColor === FillColor.Transparent) {
@@ -180,15 +198,22 @@ class PolygonService extends BaseShapeService {
     const radiusX = (Math.abs(polygon.x1 - polygon.x2) / 2) * Math.sqrt(2);
     const radiusY = (Math.abs(polygon.y1 - polygon.y2) / 2) * Math.sqrt(2);
 
-    //TODO memoize polygon vertices
     const vertices = [];
-    for (let d = 0; d <= 360; d++) {
-      if (d % (360 / polygon.sides) === 0) {
-        const a = ((d + polygon.rotation + (polygon.y1 > polygon.y2 ? 180 : 0)) * Math.PI) / 180;
-        const x1 = xCenter + radiusX * Math.cos(a);
-        const y1 = yCenter + radiusY * Math.sin(a);
-        vertices.push({ x: x1, y: y1 });
+    const step = (2 * Math.PI) / polygon.sides;
+    for (let i = 0; i < polygon.sides; i++) {
+      let angle = i * step + polygon.rotation * (Math.PI / 180);
+      let x1 = xCenter + radiusX * Math.cos(angle);
+      let y1 = yCenter + radiusY * Math.sin(angle);
+
+      // Reflect the point if needed for inversion
+      if (polygon.x1 > polygon.x2) {
+        x1 = xCenter - (x1 - xCenter);
       }
+      if (polygon.y1 > polygon.y2) {
+        y1 = yCenter - (y1 - yCenter);
+      }
+
+      vertices.push({ x: x1, y: y1 });
     }
 
     const minX = Math.min(...vertices.map((point) => point.x));
@@ -214,13 +239,21 @@ class PolygonService extends BaseShapeService {
     const radiusY = (Math.abs(polygon.y1 - polygon.y2) / 2) * Math.sqrt(2);
 
     const vertices = [];
-    for (let d = 0; d <= 360; d++) {
-      if (d % (360 / polygon.sides) === 0) {
-        const a = ((d + polygon.rotation + (polygon.y1 > polygon.y2 ? 180 : 0)) * Math.PI) / 180;
-        const x1 = xCenter + radiusX * Math.cos(a);
-        const y1 = yCenter + radiusY * Math.sin(a);
-        vertices.push({ x: x1, y: y1 });
+    const step = (2 * Math.PI) / polygon.sides;
+    for (let i = 0; i < polygon.sides; i++) {
+      let angle = i * step + polygon.rotation * (Math.PI / 180);
+      let x1 = xCenter + radiusX * Math.cos(angle);
+      let y1 = yCenter + radiusY * Math.sin(angle);
+
+      // Reflect the point if needed for inversion
+      if (polygon.x1 > polygon.x2) {
+        x1 = xCenter - (x1 - xCenter);
       }
+      if (polygon.y1 > polygon.y2) {
+        y1 = yCenter - (y1 - yCenter);
+      }
+
+      vertices.push({ x: x1, y: y1 });
     }
 
     const points = [
