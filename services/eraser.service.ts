@@ -16,6 +16,9 @@ class EraserService {
     ctx.beginPath();
     ctx.lineWidth = 1;
     ctx.strokeStyle = 'gray';
+    ctx.setLineDash([]);
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
     ctx.arc(x, y, 5, 0, 2 * Math.PI);
     ctx.closePath();
     ctx.stroke();
@@ -36,6 +39,9 @@ class EraserService {
     ctx.beginPath();
     ctx.strokeStyle = 'lightgray';
     ctx.lineWidth = 8;
+    ctx.setLineDash([]);
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
 
     ctx.moveTo(EraserService.eraserTrail[0].x, EraserService.eraserTrail[0].y);
 
