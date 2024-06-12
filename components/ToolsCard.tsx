@@ -3,6 +3,7 @@ import {
   Baseline,
   Circle,
   Eraser,
+  ImageIcon,
   Minus,
   MousePointer,
   MoveRight,
@@ -41,6 +42,10 @@ const ToolsArray = [
   {
     name: Tools.Text,
     icon: <Baseline />,
+  },
+  {
+    name: Tools.Image,
+    icon: <ImageIcon />,
   },
   {
     name: Tools.Eraser,

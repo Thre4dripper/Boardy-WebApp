@@ -6,14 +6,16 @@ import PolygonService from '@/services/polygon.service';
 import TextService from '@/services/text.service';
 import { Tools } from '@/enums/Tools';
 import BaseShapeService from '@/services/baseShape.service';
+import ImageService from '@/services/image.service';
 
-type Shape =
+export type Shape =
   | PenService
   | LineService
   | EllipseService
   | ArrowService
   | PolygonService
-  | TextService;
+  | TextService
+  | ImageService;
 
 class Store {
   static allShapes: Shape[] = [];
@@ -33,6 +35,10 @@ class Store {
       (shape: Shape) => {
         const text = shape as TextService;
         return text.text.length > 0;
+      },
+      (shape: Shape) => {
+        const image = shape as ImageService;
+        return image.x1 !== image.x2 || image.y1 !== image.y2;
       },
     ];
 
@@ -58,6 +64,9 @@ class Store {
           break;
         case TextService:
           condition = selectedTool === Tools.Text || allFilters[2](shape);
+          break;
+        case ImageService:
+          condition = selectedTool === Tools.Image || allFilters[3](shape);
           break;
         default:
           condition = false;
@@ -90,6 +99,9 @@ class Store {
           break;
         case TextService:
           TextService.drawStoredText(ctx, shape as TextService);
+          break;
+        case ImageService:
+          ImageService.drawStoredImage(ctx, shape as ImageService);
           break;
         default:
           break;

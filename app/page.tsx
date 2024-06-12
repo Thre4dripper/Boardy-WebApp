@@ -20,6 +20,7 @@ import EraserService from '@/services/eraser.service';
 import MoveService from '@/services/move.service';
 import { SelectionResize } from '@/enums/SelectionResize';
 import ResizeService from '@/services/resize.service';
+import ImageService from '@/services/image.service';
 
 export type Mouse = {
   x: number;
@@ -236,6 +237,13 @@ export default function Home() {
           );
           mouseRef.current.cursor = Cursors.TEXT;
           break;
+        case Tools.Image:
+          draw(
+            canvas,
+            offscreenCtx,
+            ImageService.drawCurrentImage.bind(null, setSelectedTool, parentRef)
+          );
+          break;
         case Tools.Eraser:
           draw(canvas, offscreenCtx, EraserService.drawEraser.bind(null, mouseRef, offscreenCtx));
           mouseRef.current.cursor = Cursors.NONE;
@@ -316,7 +324,7 @@ export default function Home() {
 
   return (
     <div className={'h-full bg-white relative overflow-hidden'} ref={parentRef}>
-      {selectedTool !== Tools.Select && selectedTool !== Tools.Eraser && (
+      {![Tools.Select, Tools.Eraser, Tools.Image].includes(selectedTool) && (
         <PropertiesCard
           selectedTool={selectedTool}
           selectedStrokeColor={selectedStrokeColor}

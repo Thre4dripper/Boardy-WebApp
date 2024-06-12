@@ -6,5 +6,6 @@ export enum Tools {
   Ellipse = 'Ellipse',
   Arrow = 'Arrow',
   Text = 'Text',
+  Image = 'Image',
   Eraser = 'Eraser',
 }
