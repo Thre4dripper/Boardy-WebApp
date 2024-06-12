@@ -80,7 +80,7 @@ class SelectionService {
 
     for (let d = 0; d <= 360; d++) {
       if (d % (360 / polygon.sides) === 0) {
-        const a = ((d + polygon.rotation) * Math.PI) / 180;
+        const a = ((d + polygon.rotation + (polygon.y1 > polygon.y2 ? 180 : 0)) * Math.PI) / 180;
         const x1 = xCenter + radiusX * Math.cos(a);
         const y1 = yCenter + radiusY * Math.sin(a);
         vertices.push({ x: x1, y: y1 });

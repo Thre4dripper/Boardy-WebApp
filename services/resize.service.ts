@@ -374,11 +374,11 @@ class ResizeService {
     const topMostPoint = pen.verticalInverted ? pen.path[pen.y2] : pen.path[pen.y1];
     const bottomMostPoint = pen.verticalInverted ? pen.path[pen.y1] : pen.path[pen.y2];
 
+    let width = rightMostPoint.x - leftMostPoint.x;
+    let height = topMostPoint.y - bottomMostPoint.y;
     switch (resizeState) {
       case SelectionResize.Right:
         {
-          const width = rightMostPoint.x - leftMostPoint.x;
-
           pen.path.forEach((point) => {
             const distance = point.x - leftMostPoint.x;
             let delta = distance * (dx / (width + 0.001)); // Prevent division by zero
@@ -388,8 +388,6 @@ class ResizeService {
         break;
       case SelectionResize.Left:
         {
-          const width = rightMostPoint.x - leftMostPoint.x;
-
           pen.path.forEach((point) => {
             const distance = rightMostPoint.x - point.x;
             let delta = distance * (dx / (width + 0.001)); // Prevent division by zero
@@ -399,8 +397,6 @@ class ResizeService {
         break;
       case SelectionResize.Top:
         {
-          const height = topMostPoint.y - bottomMostPoint.y;
-
           pen.path.forEach((point) => {
             const distance = point.y - bottomMostPoint.y;
             let delta = distance * (dy / (height + 0.001)); // Prevent division by zero
@@ -410,8 +406,6 @@ class ResizeService {
         break;
       case SelectionResize.Bottom:
         {
-          const height = topMostPoint.y - bottomMostPoint.y;
-
           pen.path.forEach((point) => {
             const distance = topMostPoint.y - point.y;
             let delta = distance * (dy / (height + 0.001)); // Prevent division by zero
@@ -421,9 +415,6 @@ class ResizeService {
         break;
       case SelectionResize.TopLeft:
         {
-          const width = rightMostPoint.x - leftMostPoint.x;
-          const height = topMostPoint.y - bottomMostPoint.y;
-
           pen.path.forEach((point) => {
             const distanceX = rightMostPoint.x - point.x;
             const distanceY = point.y - bottomMostPoint.y;
@@ -436,9 +427,6 @@ class ResizeService {
         break;
       case SelectionResize.TopRight:
         {
-          const width = rightMostPoint.x - leftMostPoint.x;
-          const height = topMostPoint.y - bottomMostPoint.y;
-
           pen.path.forEach((point) => {
             const distanceX = point.x - leftMostPoint.x;
             const distanceY = point.y - bottomMostPoint.y;
@@ -451,9 +439,6 @@ class ResizeService {
         break;
       case SelectionResize.BottomLeft:
         {
-          const width = rightMostPoint.x - leftMostPoint.x;
-          const height = topMostPoint.y - bottomMostPoint.y;
-
           pen.path.forEach((point) => {
             const distanceX = rightMostPoint.x - point.x;
             const distanceY = topMostPoint.y - point.y;
@@ -466,9 +451,6 @@ class ResizeService {
         break;
       case SelectionResize.BottomRight:
         {
-          const width = rightMostPoint.x - leftMostPoint.x;
-          const height = topMostPoint.y - bottomMostPoint.y;
-
           pen.path.forEach((point) => {
             const distanceX = point.x - leftMostPoint.x;
             const distanceY = topMostPoint.y - point.y;
