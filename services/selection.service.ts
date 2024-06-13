@@ -9,6 +9,7 @@ import PolygonService from '@/services/polygon.service';
 import TextService from '@/services/text.service';
 import Cursors from '@/enums/Cursors';
 import ResizeService from '@/services/resize.service';
+import ImageService from '@/services/image.service';
 
 let flag = false;
 let isMouseUp = false;
@@ -172,6 +173,34 @@ class SelectionService {
     const maxX = text.x + Math.max(...lines.map((line) => ctx.measureText(line).width));
     const maxY = text.y + text.fontSize * 1.5 * lines.length - text.fontSize / 6;
 
+    ctx.strokeRect(minX - 5, minY - 5, maxX - minX + 10, maxY - minY + 10);
+
+    if (!fullSelect) return;
+    //four dots in each corner
+    this.drawDots(ctx, minX - 5, minY - 5);
+    this.drawDots(ctx, minX - 5, maxY + 5);
+    this.drawDots(ctx, maxX + 5, minY - 5);
+    this.drawDots(ctx, maxX + 5, maxY + 5);
+  }
+
+  static drawImageSelectionBox(
+    ctx: CanvasRenderingContext2D,
+    image: ImageService,
+    fullSelect: boolean
+  ) {
+    const minX = Math.min(image.x1, image.x1 + image.x2);
+    const maxX = Math.max(image.x1, image.x1 + image.x2);
+    const minY = Math.min(image.y1, image.y1 + image.y2);
+    const maxY = Math.max(image.y1, image.y1 + image.y2);
+
+    ctx.strokeStyle = this.SELECTION_COLOR;
+    if (fullSelect) {
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 5]);
+    } else {
+      ctx.lineWidth = 0.8;
+      ctx.setLineDash([]);
+    }
     ctx.strokeRect(minX - 5, minY - 5, maxX - minX + 10, maxY - minY + 10);
 
     if (!fullSelect) return;
@@ -401,6 +430,40 @@ class SelectionService {
             //remove all selections
             SelectionService.clearAllSelections();
             text.setIsSelected(true);
+          }
+          break;
+        case ImageService:
+          const image = shape as ImageService;
+
+          //change cursor to move if image bounding box is hovered
+          if (image.isSelected && ImageService.isImageSelectionHovered(image, mouseRef)) {
+            mouseRef.current.cursor = Cursors.MOVE;
+          }
+
+          //clear selection if mouse is clicked outside image bounding box
+          if (
+            isMouseUp &&
+            !isMouseMoved &&
+            !ImageService.isImageSelectionHovered(image, mouseRef)
+          ) {
+            image.setIsSelected(false);
+          }
+
+          //draw selection box when image is not selected and hovered and mouse should be in upstate
+          if (
+            !image.isSelected &&
+            !mouseRef.current.down &&
+            ImageService.isImageHovered(image, mouseRef)
+          ) {
+            SelectionService.drawImageSelectionBox(ctx, image, false);
+            mouseRef.current.cursor = Cursors.MOVE;
+          }
+
+          //select image if hovered and mouse is clicked and no other shape is selected
+          if (isMouseUp && !isMouseMoved && ImageService.isImageHovered(image, mouseRef)) {
+            //remove all selections
+            SelectionService.clearAllSelections();
+            image.setIsSelected(true);
           }
           break;
         default:

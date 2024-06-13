@@ -7,6 +7,7 @@ import PolygonService from '@/services/polygon.service';
 import EllipseService from '@/services/ellipse.service';
 import ArrowService from '@/services/arrow.service';
 import TextService from '@/services/text.service';
+import ImageService from '@/services/image.service';
 
 class MoveService {
   static moveSelectedShape(mouseRef: React.MutableRefObject<Mouse>) {
@@ -59,6 +60,11 @@ class MoveService {
         const text = selectedShape as TextService;
         text.x += dx;
         text.y += dy;
+        break;
+      case ImageService:
+        const image = selectedShape as ImageService;
+        image.x1 += dx;
+        image.y1 += dy;
         break;
       default:
         break;

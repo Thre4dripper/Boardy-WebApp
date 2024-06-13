@@ -9,6 +9,7 @@ import ArrowService from '@/services/arrow.service';
 import TextService from '@/services/text.service';
 import { SelectionResize } from '@/enums/SelectionResize';
 import Cursors from '@/enums/Cursors';
+import ImageService from '@/services/image.service';
 
 class ResizeService {
   /**
@@ -208,6 +209,11 @@ class ResizeService {
         ResizeService.renderResizeCursor(cursor, mouseRef);
         break;
 
+      case ImageService:
+        const image = selectedShape as ImageService;
+        cursor = ImageService.getHoveredEdgeOrCorner(image, mouseRef);
+        ResizeService.renderResizeCursor(cursor, mouseRef);
+        break;
       default:
         break;
     }
@@ -299,6 +305,12 @@ class ResizeService {
         {
           const text = selectedShape as TextService;
           this.resizeText(text, mouseRef, dx, dy);
+        }
+        break;
+      case ImageService:
+        {
+          const image = selectedShape as ImageService;
+          this.resizeImage(image, mouseRef, dx, dy);
         }
         break;
       default:
@@ -602,6 +614,117 @@ class ResizeService {
         return;
       }
       text.x += dx;
+    }
+  }
+
+  static resizeImage(
+    image: ImageService,
+    mouseRef: React.MutableRefObject<Mouse>,
+    dx: number,
+    dy: number
+  ) {
+    const resizeState = mouseRef.current.resizeState;
+    const aspect = image.image.width / image.image.height;
+    if (resizeState === SelectionResize.Right) {
+      if (image.horizontalInverted) {
+        image.x1 += dx;
+        image.x2 -= dx;
+        // Adjust the y-coordinate based on the aspect ratio
+        if (image.x1 > image.x1 + image.x2) image.y1 -= dx / aspect / 2;
+        else image.y1 += dx / aspect / 2;
+      } else {
+        image.x2 += dx;
+        // Adjust the y-coordinate based on the aspect ratio
+        if (image.x1 > image.x1 + image.x2) image.y1 += dx / aspect / 2;
+        else image.y1 -= dx / aspect / 2;
+      }
+      // Adjust the height based on the aspect ratio
+      if (image.x1 > image.x1 + image.x2) image.y2 = -image.x2 / aspect;
+      else image.y2 = image.x2 / aspect;
+    } else if (resizeState === SelectionResize.Left) {
+      if (image.horizontalInverted) {
+        image.x2 += dx;
+        // Adjust the y-coordinate based on the aspect ratio
+        if (image.x1 > image.x1 + image.x2) image.y1 += dx / aspect / 2;
+        else image.y1 -= dx / aspect / 2;
+      } else {
+        image.x1 += dx;
+        image.x2 -= dx;
+        // Adjust the y-coordinate based on the aspect ratio
+        if (image.x1 > image.x1 + image.x2) image.y1 -= dx / aspect / 2;
+        else image.y1 += dx / aspect / 2;
+      }
+      // Adjust the height based on the aspect ratio
+      if (image.x1 > image.x1 + image.x2) image.y2 = -image.x2 / aspect;
+      else image.y2 = image.x2 / aspect;
+    } else if (resizeState === SelectionResize.Top) {
+      if (image.verticalInverted) {
+        image.y2 += dy;
+        // Adjust the x-coordinate based on the aspect ratio
+        if (image.y1 > image.y1 + image.y2) image.x1 += (dy * aspect) / 2;
+        else image.x1 -= (dy * aspect) / 2;
+      } else {
+        image.y1 += dy;
+        image.y2 -= dy;
+        // Adjust the x-coordinate based on the aspect ratio
+        if (image.y1 > image.y1 + image.y2) image.x1 -= (dy * aspect) / 2;
+        else image.x1 += (dy * aspect) / 2;
+      }
+      // Adjust the width based on the aspect ratio
+      if (image.y1 > image.y1 + image.y2) image.x2 = -image.y2 * aspect;
+      else image.x2 = image.y2 * aspect;
+    } else if (resizeState === SelectionResize.Bottom) {
+      if (image.verticalInverted) {
+        image.y1 += dy;
+        image.y2 -= dy;
+        // Adjust the x-coordinate based on the aspect ratio
+        if (image.y1 > image.y1 + image.y2) image.x1 -= (dy * aspect) / 2;
+        else image.x1 += (dy * aspect) / 2;
+      } else {
+        image.y2 += dy;
+        // Adjust the x-coordinate based on the aspect ratio
+        if (image.y1 > image.y1 + image.y2) image.x1 += (dy * aspect) / 2;
+        else image.x1 -= (dy * aspect) / 2;
+      }
+      // Adjust the width based on the aspect ratio
+      if (image.y1 > image.y1 + image.y2) image.x2 = -image.y2 * aspect;
+      else image.x2 = image.y2 * aspect;
+    } else if (resizeState === SelectionResize.TopRight) {
+      if (image.horizontalInverted) {
+        image.x1 += dx;
+        image.x2 -= dx;
+      } else {
+        image.x2 += dx;
+        image.y1 -= dx / aspect;
+      }
+      image.y2 = image.x2 / aspect;
+    } else if (resizeState === SelectionResize.TopLeft) {
+      if (image.horizontalInverted) {
+        image.x2 += dx;
+      } else {
+        image.x1 += dx;
+        image.x2 -= dx;
+        image.y1 += dx / aspect;
+      }
+      image.y2 = image.x2 / aspect;
+    } else if (resizeState === SelectionResize.BottomRight) {
+      if (image.horizontalInverted) {
+        image.x1 += dx;
+        image.x2 -= dx;
+        image.y1 += dx / aspect;
+      } else {
+        image.x2 += dx;
+      }
+      image.y2 = image.x2 / aspect;
+    } else if (resizeState === SelectionResize.BottomLeft) {
+      if (image.horizontalInverted) {
+        image.x2 += dx;
+        image.y1 -= dx / aspect;
+      } else {
+        image.x1 += dx;
+        image.x2 -= dx;
+      }
+      image.y2 = image.x2 / aspect;
     }
   }
 }

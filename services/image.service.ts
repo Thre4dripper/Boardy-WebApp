@@ -1,6 +1,9 @@
 import Store from '@/store/Store';
 import { Tools } from '@/enums/Tools';
 import React from 'react';
+import { Mouse } from '@/app/page';
+import SelectionService from '@/services/selection.service';
+import ResizeService from '@/services/resize.service';
 
 let dialogOpened = false;
 
@@ -10,6 +13,8 @@ class ImageService {
   x2: number;
   y2: number;
   image: HTMLImageElement;
+  horizontalInverted: boolean = false;
+  verticalInverted: boolean = false;
   isSelected: boolean = false;
 
   setIsSelected(isSelected: boolean) {
@@ -97,7 +102,72 @@ class ImageService {
       return;
     }
 
-    ctx.drawImage(image.image, image.x1, image.y1, image.x2, image.y2);
+    // Save the current context state
+    ctx.save();
+
+    // Translate to the center of the image
+    ctx.translate(image.x1 + image.x2 / 2, image.y1 + image.y2 / 2);
+
+    // Scale the context to invert the image
+    ctx.scale(image.x1 > image.x1 + image.x2 ? -1 : 1, image.y1 > image.y1 + image.y2 ? -1 : 1);
+
+    // Draw the image
+    ctx.drawImage(
+      image.image,
+      -image.x2 / 2, // Adjust the x and y coordinates to account for the translation
+      -image.y2 / 2,
+      image.x2,
+      image.y2
+    );
+
+    // Restore the context state to its original state
+    ctx.restore();
+
+    if (image.isSelected) {
+      SelectionService.drawImageSelectionBox(ctx, image, true);
+    }
+  }
+
+  static isImageHovered(image: ImageService, mouseRef: React.MutableRefObject<Mouse>) {
+    const minX = Math.min(image.x1, image.x1 + image.x2);
+    const maxX = Math.max(image.x1, image.x1 + image.x2);
+    const minY = Math.min(image.y1, image.y1 + image.y2);
+    const maxY = Math.max(image.y1, image.y1 + image.y2);
+
+    return (
+      mouseRef.current.x >= minX &&
+      mouseRef.current.x <= maxX &&
+      mouseRef.current.y >= minY &&
+      mouseRef.current.y <= maxY
+    );
+  }
+
+  static isImageSelectionHovered(image: ImageService, mouseRef: React.MutableRefObject<Mouse>) {
+    const tolerance = 5;
+
+    const minX = Math.min(image.x1, image.x1 + image.x2);
+    const maxX = Math.max(image.x1, image.x1 + image.x2);
+    const minY = Math.min(image.y1, image.y1 + image.y2);
+    const maxY = Math.max(image.y1, image.y1 + image.y2);
+
+    return (
+      mouseRef.current.x >= minX - tolerance &&
+      mouseRef.current.x <= maxX + tolerance &&
+      mouseRef.current.y >= minY - tolerance &&
+      mouseRef.current.y <= maxY + tolerance
+    );
+  }
+
+  static getHoveredEdgeOrCorner(image: ImageService, mouseRef: React.MutableRefObject<Mouse>) {
+    const points = [
+      { x: image.x1, y: image.y1 },
+      { x: image.x1 + image.x2, y: image.y1 + image.y2 },
+    ];
+
+    image.horizontalInverted = image.x1 > image.x1 + image.x2;
+    image.verticalInverted = image.y1 > image.y1 + image.y2;
+
+    return ResizeService.detectRectangleResizeSelection(mouseRef, points);
   }
 }
 
