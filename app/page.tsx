@@ -241,7 +241,7 @@ export default function Home() {
           draw(
             canvas,
             offscreenCtx,
-            ImageService.drawCurrentImage.bind(null, setSelectedTool, parentRef)
+            ImageService.openFileChooser.bind(ImageService, setSelectedTool, parentRef)
           );
           break;
         case Tools.Eraser:
@@ -258,13 +258,12 @@ export default function Home() {
 
     animate();
 
-    document.addEventListener('keydown', (e) => {
-      Object.values(Tools).forEach((tool, index) => {
-        if (e.key === (index + 1).toString()) setSelectedTool(tool);
-      });
-    });
+    document.addEventListener('keydown', keyDownHandler);
+    document.addEventListener('paste', pasteImageHandler);
     return () => {
       window.cancelAnimationFrame(animateId);
+      document.removeEventListener('keydown', keyDownHandler);
+      document.removeEventListener('paste', pasteImageHandler);
     };
   }, [
     draw,
@@ -281,6 +280,15 @@ export default function Home() {
     selectedFontSize,
     selectedFontFamily,
   ]);
+
+  const keyDownHandler = (e: KeyboardEvent) =>
+    Object.values(Tools).forEach((tool, index) => {
+      if (e.key === (index + 1).toString()) setSelectedTool(tool);
+    });
+
+  const pasteImageHandler = (e: ClipboardEvent) => {
+    ImageService.pasteImage(setSelectedTool, parentRef, e);
+  }
 
   const throttle = (callback: Function, delay: number) => {
     let previousCall = new Date().getTime();

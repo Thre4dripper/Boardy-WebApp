@@ -5,7 +5,7 @@ import { Mouse } from '@/app/page';
 import SelectionService from '@/services/selection.service';
 import ResizeService from '@/services/resize.service';
 
-let dialogOpened = false;
+let browsed = false;
 
 class ImageService {
   x1: number;
@@ -29,14 +29,34 @@ class ImageService {
     this.image = image;
   }
 
-  static drawCurrentImage(
+  static pasteImage(
+    setSelectedTool: React.Dispatch<React.SetStateAction<Tools>>,
+    parentRef: React.MutableRefObject<HTMLElement | null>,
+    event: ClipboardEvent
+  ) {
+    const items = event?.clipboardData?.items;
+
+    if (!items) return;
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type.indexOf('image') === -1) {
+        continue;
+      }
+      const blob = items[i].getAsFile();
+      if (!blob) continue;
+      this.getImageFromUrl(blob, parentRef);
+      setSelectedTool(Tools.Select);
+      break;
+    }
+  }
+
+  static openFileChooser(
     setSelectedTool: React.Dispatch<React.SetStateAction<Tools>>,
     parentRef: React.MutableRefObject<HTMLElement | null>
   ) {
-    if (dialogOpened) {
+    if (browsed) {
       return;
     }
-    dialogOpened = true;
+    browsed = true;
 
     //open file dialog'
     const input = document.createElement('input');
@@ -47,54 +67,62 @@ class ImageService {
     // Listen for the change event to get the selected file
     input.addEventListener('change', (event) => {
       setSelectedTool(Tools.Select);
-      dialogOpened = false;
+      browsed = false;
       const file = (event.target as HTMLInputElement).files?.[0];
       if (file) {
-        // Read the file as a data URL
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          // Create a new ImageService instance with the image data
-          const imageElement = new Image();
-          imageElement.onload = () => {
-            let imageWidth = imageElement.width;
-            let imageHeight = imageElement.height;
-            const parentWidth = parentRef.current?.clientWidth as number;
-            const parentHeight = parentRef.current?.clientHeight as number;
-
-            if (imageWidth > parentWidth || imageHeight > parentHeight) {
-              const aspectRatio = imageWidth / imageHeight;
-              if (imageWidth > imageHeight) {
-                imageWidth = parentWidth / 2;
-                imageHeight = imageWidth / aspectRatio;
-              } else {
-                imageHeight = parentHeight / 2;
-                imageWidth = imageHeight * aspectRatio;
-              }
-            }
-
-            const image = new ImageService(
-              (parentWidth - imageWidth) / 2,
-              (parentHeight - imageHeight) / 2,
-              imageWidth,
-              imageHeight,
-              imageElement
-            );
-
-            // Add the image to the Store
-            Store.allShapes.push(image);
-          };
-          imageElement.src = e.target?.result as string;
-        };
-        reader.readAsDataURL(file);
+        this.getImageFromUrl(file, parentRef);
       }
     });
 
     input.addEventListener('cancel', () => {
       setSelectedTool(Tools.Select);
-      dialogOpened = false;
+      browsed = false;
     });
 
     input.click();
+  }
+
+  private static getImageFromUrl(
+    blob: Blob,
+    parentRef: React.MutableRefObject<HTMLElement | null>
+  ) {
+    // Read the file as a data URL
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      // Create a new ImageService instance with the image data
+      const imageElement = new Image();
+      imageElement.onload = () => {
+        let imageWidth = imageElement.width;
+        let imageHeight = imageElement.height;
+        const parentWidth = parentRef.current?.clientWidth as number;
+        const parentHeight = parentRef.current?.clientHeight as number;
+
+        if (imageWidth > parentWidth || imageHeight > parentHeight) {
+          const aspectRatio = imageWidth / imageHeight;
+          if (imageWidth > imageHeight) {
+            imageWidth = parentWidth / 2;
+            imageHeight = imageWidth / aspectRatio;
+          } else {
+            imageHeight = parentHeight / 2;
+            imageWidth = imageHeight * aspectRatio;
+          }
+        }
+
+        const image = new ImageService(
+          (parentWidth - imageWidth) / 2,
+          (parentHeight - imageHeight) / 2,
+          imageWidth,
+          imageHeight,
+          imageElement
+        );
+        image.setIsSelected(true);
+
+        // Add the image to the Store
+        Store.allShapes.push(image);
+      };
+      imageElement.src = e.target?.result as string;
+    };
+    reader.readAsDataURL(blob);
   }
 
   static drawStoredImage(ctx: CanvasRenderingContext2D, image: ImageService) {

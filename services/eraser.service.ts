@@ -7,6 +7,7 @@ import EllipseService from '@/services/ellipse.service';
 import ArrowService from '@/services/arrow.service';
 import PolygonService from '@/services/polygon.service';
 import TextService from '@/services/text.service';
+import ImageService from '@/services/image.service';
 
 class EraserService {
   static eraserTrail: { x: number; y: number }[] = [];
@@ -107,6 +108,11 @@ class EraserService {
           break;
         case TextService:
           if (TextService.isTextHovered(shape as TextService, mouseRef, ctx)) {
+            allShapes.splice(i, 1);
+          }
+          break;
+        case ImageService:
+          if (ImageService.isImageHovered(shape as ImageService, mouseRef)) {
             allShapes.splice(i, 1);
           }
           break;
