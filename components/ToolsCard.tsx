@@ -13,6 +13,7 @@ import {
 import { Button } from '@nextui-org/button';
 import { Tools } from '@/enums/Tools';
 import { Badge } from '@nextui-org/badge';
+import { Tooltip } from '@nextui-org/tooltip';
 
 const ToolsArray = [
   {
@@ -72,16 +73,24 @@ export default function ToolsCard({ onToolSelect, selectedTool }: ToolsProps) {
             placement={'bottom-right'}
             variant={'faded'}
           >
-            <Button
-              isIconOnly
-              size="sm"
-              className={'cursor-pointer p-2'}
-              variant={selectedTool === tool.name ? 'solid' : 'light'}
-              color={selectedTool === tool.name ? 'secondary' : 'default'}
-              onClick={() => onToolSelect(tool.name)}
+            <Tooltip
+              content={tool.name}
+              placement={'top'}
+              color={'secondary'}
+              delay={0}
+              closeDelay={0}
             >
-              {tool.icon}
-            </Button>
+              <Button
+                isIconOnly
+                size="sm"
+                className={'cursor-pointer p-2'}
+                variant={selectedTool === tool.name ? 'solid' : 'light'}
+                color={selectedTool === tool.name ? 'secondary' : 'default'}
+                onClick={() => onToolSelect(tool.name)}
+              >
+                {tool.icon}
+              </Button>
+            </Tooltip>
           </Badge>
         ))}
       </CardBody>

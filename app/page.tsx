@@ -21,6 +21,7 @@ import MoveService from '@/services/move.service';
 import { SelectionResize } from '@/enums/SelectionResize';
 import ResizeService from '@/services/resize.service';
 import ImageService from '@/services/image.service';
+import UndoRedoCard from '@/components/UndoRedoCard';
 
 export type Mouse = {
   x: number;
@@ -367,6 +368,7 @@ export default function Home() {
           setSelectedFontFamily={setSelectedFontFamily}
         />
       )}
+      <UndoRedoCard />
       <ToolsCard onToolSelect={setSelectedTool} selectedTool={selectedTool} />
 
       <canvas
