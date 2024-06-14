@@ -1,14 +1,14 @@
-import BaseShapeService from '@/services/baseShape.service';
+import BaseModel from '@/models/base.model';
 import { Mouse } from '@/app/page';
 import React from 'react';
 import { FillColor, StrokeColor } from '@/enums/Colors';
 import { StrokeVariant } from '@/enums/StrokeVariant';
 import SelectionService from '@/services/selection.service';
-import LineService from '@/services/line.service';
+import LineModel from '@/models/line.model';
 import Store from '@/store/Store';
 import ResizeService from '@/services/resize.service';
 
-class PolygonService extends BaseShapeService {
+class PolygonModel extends BaseModel {
   sides: number;
   rotation: number;
   fillColor: FillColor;
@@ -41,8 +41,8 @@ class PolygonService extends BaseShapeService {
     selectedFillColor: FillColor
   ) {
     const polygons = Store.allShapes.filter(
-      (shape) => shape instanceof PolygonService
-    ) as PolygonService[];
+      (shape) => shape instanceof PolygonModel
+    ) as PolygonModel[];
     if (mouseRef.current.down) {
       const lastPolygon = polygons[polygons.length - 1];
       lastPolygon.x2 = mouseRef.current.x;
@@ -56,7 +56,7 @@ class PolygonService extends BaseShapeService {
         Store.allShapes.pop();
       }
       Store.allShapes.push(
-        new PolygonService(
+        new PolygonModel(
           mouseRef.current.x,
           mouseRef.current.y,
           mouseRef.current.x,
@@ -72,12 +72,12 @@ class PolygonService extends BaseShapeService {
     }
   }
 
-  static drawStoredPolygon(ctx: CanvasRenderingContext2D, polygon: PolygonService) {
+  static drawStoredPolygon(ctx: CanvasRenderingContext2D, polygon: PolygonModel) {
     if (polygon.x1 === polygon.x2 && polygon.y1 === polygon.y2) {
       return;
     }
 
-    BaseShapeService.draw(polygon, ctx);
+    BaseModel.draw(polygon, ctx);
     ctx.fillStyle = polygon.fillColor;
 
     ctx.beginPath();
@@ -118,7 +118,7 @@ class PolygonService extends BaseShapeService {
     }
   }
 
-  static isPolygonHovered(polygon: PolygonService, mouseRef: React.MutableRefObject<Mouse>) {
+  static isPolygonHovered(polygon: PolygonModel, mouseRef: React.MutableRefObject<Mouse>) {
     const x = mouseRef.current.x;
     const y = mouseRef.current.y;
     const vertices = [];
@@ -152,7 +152,7 @@ class PolygonService extends BaseShapeService {
         const p1 = vertices[i];
         const p2 = vertices[(i + 1) % vertices.length];
 
-        const line = new LineService(
+        const line = new LineModel(
           p1.x,
           p1.y,
           p2.x,
@@ -163,7 +163,7 @@ class PolygonService extends BaseShapeService {
         );
 
         // Check if the mouse is hovering over the line
-        if (LineService.isLineHovered(line, mouseRef)) {
+        if (LineModel.isLineHovered(line, mouseRef)) {
           isOnBoundary = true;
           break;
         }
@@ -188,7 +188,7 @@ class PolygonService extends BaseShapeService {
   }
 
   static isPolygonSelectionHovered(
-    polygon: PolygonService,
+    polygon: PolygonModel,
     mouseRef: React.MutableRefObject<Mouse>
   ) {
     // Get rectangular selection bounds
@@ -232,7 +232,7 @@ class PolygonService extends BaseShapeService {
     );
   }
 
-  static getHoveredEdgeOrCorner(polygon: PolygonService, mouseRef: React.MutableRefObject<Mouse>) {
+  static getHoveredEdgeOrCorner(polygon: PolygonModel, mouseRef: React.MutableRefObject<Mouse>) {
     const xCenter = (polygon.x1 + polygon.x2) / 2;
     const yCenter = (polygon.y1 + polygon.y2) / 2;
     const radiusX = (Math.abs(polygon.x1 - polygon.x2) / 2) * Math.sqrt(2);
@@ -274,4 +274,4 @@ class PolygonService extends BaseShapeService {
   }
 }
 
-export default PolygonService;
+export default PolygonModel;

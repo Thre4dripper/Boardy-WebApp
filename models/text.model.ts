@@ -6,7 +6,7 @@ import SelectionService from '@/services/selection.service';
 import Store from '@/store/Store';
 import ResizeService from '@/services/resize.service';
 
-class TextService {
+class TextModel {
   x: number;
   y: number;
   text: string;
@@ -50,8 +50,8 @@ class TextService {
   ) {
     if (mouseRef.current.down) {
       //get input elements count for stack index
-      const inputElements = parentRef.current?.querySelectorAll(`.${TextService.TEXT_DIV_TAG}`);
-      const inputElement = TextService.createInput(
+      const inputElements = parentRef.current?.querySelectorAll(`.${TextModel.TEXT_DIV_TAG}`);
+      const inputElement = TextModel.createInput(
         mouseRef.current.x,
         mouseRef.current.y,
         selectedFontSize,
@@ -69,7 +69,7 @@ class TextService {
     }
   }
 
-  static drawStoredText(ctx: CanvasRenderingContext2D, text: TextService) {
+  static drawStoredText(ctx: CanvasRenderingContext2D, text: TextModel) {
     ctx.font = `${text.fontSize}px ${text.fontFamily}`;
     ctx.fillStyle = text.fontColor;
 
@@ -119,7 +119,7 @@ class TextService {
   }
 
   static isTextHovered(
-    text: TextService,
+    text: TextModel,
     mouseRef: React.MutableRefObject<Mouse>,
     ctx: CanvasRenderingContext2D
   ) {
@@ -136,7 +136,7 @@ class TextService {
   }
 
   static getHoveredEdgeOrCorner(
-    text: TextService,
+    text: TextModel,
     mouseRef: React.MutableRefObject<Mouse>,
     ctx: CanvasRenderingContext2D
   ) {
@@ -170,7 +170,7 @@ class TextService {
     stackIndex: number
   ) {
     const inputElement = document.createElement('div');
-    inputElement.className = TextService.TEXT_DIV_TAG;
+    inputElement.className = TextModel.TEXT_DIV_TAG;
     inputElement.contentEditable = 'true';
     inputElement.style.position = 'absolute';
     inputElement.style.top = `${y}px`;
@@ -205,13 +205,13 @@ class TextService {
     const allChildren = Array.from(parentDiv.children);
 
     const inputElements = allChildren.filter((child) => {
-      return child.className === TextService.TEXT_DIV_TAG;
+      return child.className === TextModel.TEXT_DIV_TAG;
     });
 
     //convert input elements to canvas elements
     inputElements.forEach((inputElement) => {
       const input = inputElement as HTMLDivElement;
-      const text = new TextService(
+      const text = new TextModel(
         parseInt(input.style.left),
         parseInt(input.style.top),
         input.innerText,
@@ -229,9 +229,9 @@ class TextService {
 
   static convertToHtml(parentDiv: HTMLElement) {
     //convert canvas elements to input elements
-    const texts = Store.allShapes.filter((shape) => shape instanceof TextService) as TextService[];
+    const texts = Store.allShapes.filter((shape) => shape instanceof TextModel) as TextModel[];
     texts.forEach((text) => {
-      const input = TextService.createInput(
+      const input = TextModel.createInput(
         text.x,
         text.y,
         text.fontSize,
@@ -246,8 +246,8 @@ class TextService {
     });
 
     //clear all texts
-    Store.allShapes = Store.allShapes.filter((shape) => !(shape instanceof TextService));
+    Store.allShapes = Store.allShapes.filter((shape) => !(shape instanceof TextModel));
   }
 }
 
-export default TextService;
+export default TextModel;

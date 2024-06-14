@@ -1,4 +1,4 @@
-import BaseShapeService from '@/services/baseShape.service';
+import BaseModel from '@/models/base.model';
 import { Mouse } from '@/app/page';
 import React from 'react';
 import { StrokeColor } from '@/enums/Colors';
@@ -7,14 +7,14 @@ import SelectionService from '@/services/selection.service';
 import Store from '@/store/Store';
 import ResizeService from '@/services/resize.service';
 
-class LineService extends BaseShapeService {
+class LineModel extends BaseModel {
   static drawCurrentLine(
     mouseRef: React.MutableRefObject<Mouse>,
     selectedStrokeColor: StrokeColor,
     selectedStrokeWidth: number,
     selectedStrokeVariant: StrokeVariant
   ) {
-    const lines = Store.allShapes.filter((shape) => shape instanceof LineService) as LineService[];
+    const lines = Store.allShapes.filter((shape) => shape instanceof LineModel) as LineModel[];
     if (mouseRef.current.down) {
       const lastLine = lines[lines.length - 1];
       lastLine.x2 = mouseRef.current.x;
@@ -28,7 +28,7 @@ class LineService extends BaseShapeService {
         Store.allShapes.pop();
       }
       Store.allShapes.push(
-        new LineService(
+        new LineModel(
           mouseRef.current.x,
           mouseRef.current.y,
           mouseRef.current.x,
@@ -41,11 +41,11 @@ class LineService extends BaseShapeService {
     }
   }
 
-  static drawStoredLine(ctx: CanvasRenderingContext2D, line: LineService) {
+  static drawStoredLine(ctx: CanvasRenderingContext2D, line: LineModel) {
     if (line.x1 === line.x2 && line.y1 === line.y2) {
       return;
     }
-    BaseShapeService.draw(line, ctx);
+    BaseModel.draw(line, ctx);
     ctx.beginPath();
     ctx.moveTo(line.x1, line.y1);
     ctx.lineTo(line.x2, line.y2);
@@ -56,7 +56,7 @@ class LineService extends BaseShapeService {
     }
   }
 
-  static isLineHovered(line: LineService, mouseRef: React.MutableRefObject<Mouse>) {
+  static isLineHovered(line: LineModel, mouseRef: React.MutableRefObject<Mouse>) {
     const { x1, y1, x2, y2 } = line;
     const { x, y } = mouseRef.current;
 
@@ -91,7 +91,7 @@ class LineService extends BaseShapeService {
     );
   }
 
-  static getHoveredEnds(line: LineService, mouseRef: React.MutableRefObject<Mouse>) {
+  static getHoveredEnds(line: LineModel, mouseRef: React.MutableRefObject<Mouse>) {
     const { x1, y1, x2, y2 } = line;
     const tolerance = line.strokeWidth / 2 + 5;
 
@@ -99,4 +99,4 @@ class LineService extends BaseShapeService {
   }
 }
 
-export default LineService;
+export default LineModel;

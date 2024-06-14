@@ -1,4 +1,4 @@
-import BaseShapeService from '@/services/baseShape.service';
+import BaseModel from '@/models/base.model';
 import { Mouse } from '@/app/page';
 import React from 'react';
 import { StrokeColor } from '@/enums/Colors';
@@ -8,7 +8,7 @@ import SelectionService from '@/services/selection.service';
 import Store from '@/store/Store';
 import ResizeService from '@/services/resize.service';
 
-class ArrowService extends BaseShapeService {
+class ArrowModel extends BaseModel {
   leftArrowHead: ArrowHeads;
   rightArrowHead: ArrowHeads;
 
@@ -37,8 +37,8 @@ class ArrowService extends BaseShapeService {
     selectedRightArrowHead: ArrowHeads
   ) {
     const arrows = Store.allShapes.filter(
-      (shape) => shape instanceof ArrowService
-    ) as ArrowService[];
+      (shape) => shape instanceof ArrowModel
+    ) as ArrowModel[];
     if (mouseRef.current.down) {
       const lastArrow = arrows[arrows.length - 1];
       lastArrow.x2 = mouseRef.current.x;
@@ -52,7 +52,7 @@ class ArrowService extends BaseShapeService {
         Store.allShapes.pop();
       }
       Store.allShapes.push(
-        new ArrowService(
+        new ArrowModel(
           mouseRef.current.x,
           mouseRef.current.y,
           mouseRef.current.x,
@@ -83,11 +83,11 @@ class ArrowService extends BaseShapeService {
     return { x4, y4, x5, y5 };
   }
 
-  static drawStoredArrow(ctx: CanvasRenderingContext2D, arrow: ArrowService) {
+  static drawStoredArrow(ctx: CanvasRenderingContext2D, arrow: ArrowModel) {
     if (arrow.x1 === arrow.x2 && arrow.y1 === arrow.y2) {
       return;
     }
-    BaseShapeService.draw(arrow, ctx);
+    BaseModel.draw(arrow, ctx);
     ctx.beginPath();
     ctx.moveTo(arrow.x1, arrow.y1);
     ctx.lineTo(arrow.x2, arrow.y2);
@@ -100,7 +100,7 @@ class ArrowService extends BaseShapeService {
 
     // Calculate the positions of the arrowhead points
     if (arrow.leftArrowHead === ArrowHeads.Arrow) {
-      const { x4, y4, x5, y5 } = ArrowService.calculateArrowheadPoints(
+      const { x4, y4, x5, y5 } = ArrowModel.calculateArrowheadPoints(
         arrow.x1,
         arrow.y1,
         angle,
@@ -117,7 +117,7 @@ class ArrowService extends BaseShapeService {
       ctx.lineTo(x5, y5);
       ctx.stroke();
     } else if (arrow.leftArrowHead === ArrowHeads.Triangle) {
-      const { x4, y4, x5, y5 } = ArrowService.calculateArrowheadPoints(
+      const { x4, y4, x5, y5 } = ArrowModel.calculateArrowheadPoints(
         arrow.x1,
         arrow.y1,
         angle,
@@ -140,7 +140,7 @@ class ArrowService extends BaseShapeService {
     }
 
     if (arrow.rightArrowHead === ArrowHeads.Arrow) {
-      const { x4, y4, x5, y5 } = ArrowService.calculateArrowheadPoints(
+      const { x4, y4, x5, y5 } = ArrowModel.calculateArrowheadPoints(
         arrow.x2,
         arrow.y2,
         angle + Math.PI,
@@ -157,7 +157,7 @@ class ArrowService extends BaseShapeService {
       ctx.lineTo(x5, y5);
       ctx.stroke();
     } else if (arrow.rightArrowHead === ArrowHeads.Triangle) {
-      const { x4, y4, x5, y5 } = ArrowService.calculateArrowheadPoints(
+      const { x4, y4, x5, y5 } = ArrowModel.calculateArrowheadPoints(
         arrow.x2,
         arrow.y2,
         angle + Math.PI,
@@ -183,7 +183,7 @@ class ArrowService extends BaseShapeService {
     }
   }
 
-  static isArrowHovered(arrow: ArrowService, mouseRef: React.MutableRefObject<Mouse>) {
+  static isArrowHovered(arrow: ArrowModel, mouseRef: React.MutableRefObject<Mouse>) {
     const { x1, y1, x2, y2 } = arrow;
     const { x, y } = mouseRef.current;
     const dist =
@@ -198,7 +198,7 @@ class ArrowService extends BaseShapeService {
     );
   }
 
-  static getHoveredEnds(arrow: ArrowService, mouseRef: React.MutableRefObject<Mouse>) {
+  static getHoveredEnds(arrow: ArrowModel, mouseRef: React.MutableRefObject<Mouse>) {
     const { x1, y1, x2, y2 } = arrow;
     const tolerance = arrow.strokeWidth / 2 + 5;
 
@@ -206,4 +206,4 @@ class ArrowService extends BaseShapeService {
   }
 }
 
-export default ArrowService;
+export default ArrowModel;

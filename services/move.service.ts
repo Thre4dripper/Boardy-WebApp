@@ -1,13 +1,13 @@
 import React from 'react';
 import { Mouse } from '@/app/page';
 import Store from '@/store/Store';
-import PenService from '@/services/pen.service';
-import LineService from '@/services/line.service';
-import PolygonService from '@/services/polygon.service';
-import EllipseService from '@/services/ellipse.service';
-import ArrowService from '@/services/arrow.service';
-import TextService from '@/services/text.service';
-import ImageService from '@/services/image.service';
+import PenModel from '@/models/pen.model';
+import LineModel from '@/models/line.model';
+import PolygonModel from '@/models/polygon.model';
+import EllipseModel from '@/models/ellipse.model';
+import ArrowModel from '@/models/arrow.model';
+import TextModel from '@/models/text.model';
+import ImageModel from '@/models/image.model';
 
 class MoveService {
   static moveSelectedShape(mouseRef: React.MutableRefObject<Mouse>) {
@@ -21,48 +21,48 @@ class MoveService {
     const dy = mouseRef.current.y - mouseRef.current.prevY;
 
     switch (selectedShape.constructor) {
-      case PenService:
-        const pen = selectedShape as PenService;
+      case PenModel:
+        const pen = selectedShape as PenModel;
         pen.path.forEach((point) => {
           point.x += dx;
           point.y += dy;
         });
         break;
-      case LineService:
-        const line = selectedShape as LineService;
+      case LineModel:
+        const line = selectedShape as LineModel;
         line.x1 += dx;
         line.y1 += dy;
         line.x2 += dx;
         line.y2 += dy;
         break;
-      case PolygonService:
-        const polygon = selectedShape as PolygonService;
+      case PolygonModel:
+        const polygon = selectedShape as PolygonModel;
         polygon.x1 += dx;
         polygon.y1 += dy;
         polygon.x2 += dx;
         polygon.y2 += dy;
         break;
-      case EllipseService:
-        const ellipse = selectedShape as EllipseService;
+      case EllipseModel:
+        const ellipse = selectedShape as EllipseModel;
         ellipse.x1 += dx;
         ellipse.y1 += dy;
         ellipse.x2 += dx;
         ellipse.y2 += dy;
         break;
-      case ArrowService:
-        const arrow = selectedShape as ArrowService;
+      case ArrowModel:
+        const arrow = selectedShape as ArrowModel;
         arrow.x1 += dx;
         arrow.y1 += dy;
         arrow.x2 += dx;
         arrow.y2 += dy;
         break;
-      case TextService:
-        const text = selectedShape as TextService;
+      case TextModel:
+        const text = selectedShape as TextModel;
         text.x += dx;
         text.y += dy;
         break;
-      case ImageService:
-        const image = selectedShape as ImageService;
+      case ImageModel:
+        const image = selectedShape as ImageModel;
         image.x1 += dx;
         image.y1 += dy;
         break;

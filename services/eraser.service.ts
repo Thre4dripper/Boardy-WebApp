@@ -1,13 +1,13 @@
 import React from 'react';
 import { Mouse } from '@/app/page';
 import Store from '@/store/Store';
-import PenService from '@/services/pen.service';
-import LineService from '@/services/line.service';
-import EllipseService from '@/services/ellipse.service';
-import ArrowService from '@/services/arrow.service';
-import PolygonService from '@/services/polygon.service';
-import TextService from '@/services/text.service';
-import ImageService from '@/services/image.service';
+import PenModel from '@/models/pen.model';
+import LineModel from '@/models/line.model';
+import EllipseModel from '@/models/ellipse.model';
+import ArrowModel from '@/models/arrow.model';
+import PolygonModel from '@/models/polygon.model';
+import TextModel from '@/models/text.model';
+import ImageModel from '@/models/image.model';
 
 class EraserService {
   static eraserTrail: { x: number; y: number }[] = [];
@@ -81,38 +81,38 @@ class EraserService {
       const shape = allShapes[i];
 
       switch (shape.constructor) {
-        case PenService:
-          if (PenService.isPenHovered(shape as PenService, mouseRef)) {
+        case PenModel:
+          if (PenModel.isPenHovered(shape as PenModel, mouseRef)) {
             allShapes.splice(i, 1);
           }
           break;
-        case LineService:
-          if (LineService.isLineHovered(shape as LineService, mouseRef)) {
+        case LineModel:
+          if (LineModel.isLineHovered(shape as LineModel, mouseRef)) {
             allShapes.splice(i, 1);
           }
           break;
-        case EllipseService:
-          if (EllipseService.isEllipseHovered(shape as EllipseService, mouseRef)) {
+        case EllipseModel:
+          if (EllipseModel.isEllipseHovered(shape as EllipseModel, mouseRef)) {
             allShapes.splice(i, 1);
           }
           break;
-        case ArrowService:
-          if (ArrowService.isArrowHovered(shape as ArrowService, mouseRef)) {
+        case ArrowModel:
+          if (ArrowModel.isArrowHovered(shape as ArrowModel, mouseRef)) {
             allShapes.splice(i, 1);
           }
           break;
-        case PolygonService:
-          if (PolygonService.isPolygonHovered(shape as PolygonService, mouseRef)) {
+        case PolygonModel:
+          if (PolygonModel.isPolygonHovered(shape as PolygonModel, mouseRef)) {
             allShapes.splice(i, 1);
           }
           break;
-        case TextService:
-          if (TextService.isTextHovered(shape as TextService, mouseRef, ctx)) {
+        case TextModel:
+          if (TextModel.isTextHovered(shape as TextModel, mouseRef, ctx)) {
             allShapes.splice(i, 1);
           }
           break;
-        case ImageService:
-          if (ImageService.isImageHovered(shape as ImageService, mouseRef)) {
+        case ImageModel:
+          if (ImageModel.isImageHovered(shape as ImageModel, mouseRef)) {
             allShapes.splice(i, 1);
           }
           break;

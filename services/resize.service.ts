@@ -1,15 +1,16 @@
 import React from 'react';
 import { Mouse } from '@/app/page';
 import Store from '@/store/Store';
-import PenService, { Point } from '@/services/pen.service';
-import LineService from '@/services/line.service';
-import PolygonService from '@/services/polygon.service';
-import EllipseService from '@/services/ellipse.service';
-import ArrowService from '@/services/arrow.service';
-import TextService from '@/services/text.service';
+import PenModel from '@/models/pen.model';
+import LineModel from '@/models/line.model';
+import PolygonModel from '@/models/polygon.model';
+import EllipseModel from '@/models/ellipse.model';
+import ArrowModel from '@/models/arrow.model';
+import TextModel from '@/models/text.model';
 import { SelectionResize } from '@/enums/SelectionResize';
 import Cursors from '@/enums/Cursors';
-import ImageService from '@/services/image.service';
+import ImageModel from '@/models/image.model';
+import { Point } from '@/models/point.model';
 
 class ResizeService {
   /**
@@ -173,45 +174,45 @@ class ResizeService {
     let cursor: SelectionResize;
 
     switch (selectedShape.constructor) {
-      case PenService:
-        const pen = selectedShape as PenService;
-        cursor = PenService.getHoveredEdgeOrCorner(pen, mouseRef);
+      case PenModel:
+        const pen = selectedShape as PenModel;
+        cursor = PenModel.getHoveredEdgeOrCorner(pen, mouseRef);
         ResizeService.renderResizeCursor(cursor, mouseRef);
         break;
 
-      case LineService:
-        const line = selectedShape as LineService;
-        cursor = LineService.getHoveredEnds(line, mouseRef);
+      case LineModel:
+        const line = selectedShape as LineModel;
+        cursor = LineModel.getHoveredEnds(line, mouseRef);
         ResizeService.renderResizeCursor(cursor, mouseRef);
         break;
 
-      case PolygonService:
-        const polygon = selectedShape as PolygonService;
-        cursor = PolygonService.getHoveredEdgeOrCorner(polygon, mouseRef);
+      case PolygonModel:
+        const polygon = selectedShape as PolygonModel;
+        cursor = PolygonModel.getHoveredEdgeOrCorner(polygon, mouseRef);
         ResizeService.renderResizeCursor(cursor, mouseRef);
         break;
 
-      case EllipseService:
-        const ellipse = selectedShape as EllipseService;
-        cursor = EllipseService.getHoveredEdgeOrCorner(ellipse, mouseRef);
+      case EllipseModel:
+        const ellipse = selectedShape as EllipseModel;
+        cursor = EllipseModel.getHoveredEdgeOrCorner(ellipse, mouseRef);
         ResizeService.renderResizeCursor(cursor, mouseRef);
         break;
 
-      case ArrowService:
-        const arrow = selectedShape as ArrowService;
-        cursor = ArrowService.getHoveredEnds(arrow, mouseRef);
+      case ArrowModel:
+        const arrow = selectedShape as ArrowModel;
+        cursor = ArrowModel.getHoveredEnds(arrow, mouseRef);
         ResizeService.renderResizeCursor(cursor, mouseRef);
         break;
 
-      case TextService:
-        const text = selectedShape as TextService;
-        cursor = TextService.getHoveredEdgeOrCorner(text, mouseRef, ctx);
+      case TextModel:
+        const text = selectedShape as TextModel;
+        cursor = TextModel.getHoveredEdgeOrCorner(text, mouseRef, ctx);
         ResizeService.renderResizeCursor(cursor, mouseRef);
         break;
 
-      case ImageService:
-        const image = selectedShape as ImageService;
-        cursor = ImageService.getHoveredEdgeOrCorner(image, mouseRef);
+      case ImageModel:
+        const image = selectedShape as ImageModel;
+        cursor = ImageModel.getHoveredEdgeOrCorner(image, mouseRef);
         ResizeService.renderResizeCursor(cursor, mouseRef);
         break;
       default:
@@ -236,15 +237,15 @@ class ResizeService {
     const dy = mouseRef.current.y - mouseRef.current.prevY;
 
     switch (selectedShape.constructor) {
-      case PenService:
+      case PenModel:
         {
-          const pen = selectedShape as PenService;
+          const pen = selectedShape as PenModel;
           this.resizePen(pen, mouseRef, dx, dy);
         }
         break;
-      case LineService:
+      case LineModel:
         {
-          const line = selectedShape as LineService;
+          const line = selectedShape as LineModel;
           if (resizeState === SelectionResize.Start) {
             line.x1 += dx;
             line.y1 += dy;
@@ -254,9 +255,9 @@ class ResizeService {
           }
         }
         break;
-      case PolygonService:
+      case PolygonModel:
         {
-          const polygon = selectedShape as PolygonService;
+          const polygon = selectedShape as PolygonModel;
 
           const resizeProps = this.getResizeMappings(
             resizeState,
@@ -271,9 +272,9 @@ class ResizeService {
           }
         }
         break;
-      case EllipseService:
+      case EllipseModel:
         {
-          const ellipse = selectedShape as EllipseService;
+          const ellipse = selectedShape as EllipseModel;
 
           const resizeProps = this.getResizeMappings(
             resizeState,
@@ -289,9 +290,9 @@ class ResizeService {
           }
         }
         break;
-      case ArrowService:
+      case ArrowModel:
         {
-          const arrow = selectedShape as ArrowService;
+          const arrow = selectedShape as ArrowModel;
           if (resizeState === SelectionResize.Start) {
             arrow.x1 += dx;
             arrow.y1 += dy;
@@ -301,15 +302,15 @@ class ResizeService {
           }
         }
         break;
-      case TextService:
+      case TextModel:
         {
-          const text = selectedShape as TextService;
+          const text = selectedShape as TextModel;
           this.resizeText(text, mouseRef, dx, dy);
         }
         break;
-      case ImageService:
+      case ImageModel:
         {
-          const image = selectedShape as ImageService;
+          const image = selectedShape as ImageModel;
           this.resizeImage(image, mouseRef, dx, dy);
         }
         break;
@@ -375,7 +376,7 @@ class ResizeService {
    * @param dy The change in y-coordinate
    */
   static resizePen(
-    pen: PenService,
+    pen: PenModel,
     mouseRef: React.MutableRefObject<Mouse>,
     dx: number,
     dy: number
@@ -487,7 +488,7 @@ class ResizeService {
    * @private
    */
   private static resizeText(
-    text: TextService,
+    text: TextModel,
     mouseRef: React.MutableRefObject<Mouse>,
     dx: number,
     dy: number
@@ -618,7 +619,7 @@ class ResizeService {
   }
 
   static resizeImage(
-    image: ImageService,
+    image: ImageModel,
     mouseRef: React.MutableRefObject<Mouse>,
     dx: number,
     dy: number

@@ -1,21 +1,21 @@
-import PenService from '@/services/pen.service';
-import LineService from '@/services/line.service';
-import EllipseService from '@/services/ellipse.service';
-import ArrowService from '@/services/arrow.service';
-import PolygonService from '@/services/polygon.service';
-import TextService from '@/services/text.service';
+import PenModel from '@/models/pen.model';
+import LineModel from '@/models/line.model';
+import EllipseModel from '@/models/ellipse.model';
+import ArrowModel from '@/models/arrow.model';
+import PolygonModel from '@/models/polygon.model';
+import TextModel from '@/models/text.model';
 import { Tools } from '@/enums/Tools';
-import BaseShapeService from '@/services/baseShape.service';
-import ImageService from '@/services/image.service';
+import BaseModel from '@/models/base.model';
+import ImageModel from '@/models/image.model';
 
 export type Shape =
-  | PenService
-  | LineService
-  | EllipseService
-  | ArrowService
-  | PolygonService
-  | TextService
-  | ImageService;
+  | PenModel
+  | LineModel
+  | EllipseModel
+  | ArrowModel
+  | PolygonModel
+  | TextModel
+  | ImageModel;
 
 class Store {
   static allShapes: Shape[] = [];
@@ -25,19 +25,19 @@ class Store {
 
     const allFilters = [
       (shape: Shape) => {
-        const pen = shape as PenService;
+        const pen = shape as PenModel;
         return pen.path.length > 1;
       },
       (shape: Shape) => {
-        const line = shape as BaseShapeService;
+        const line = shape as BaseModel;
         return line.x1 !== line.x2 || line.y1 !== line.y2;
       },
       (shape: Shape) => {
-        const text = shape as TextService;
+        const text = shape as TextModel;
         return text.text.length > 0;
       },
       (shape: Shape) => {
-        const image = shape as ImageService;
+        const image = shape as ImageModel;
         return image.x1 !== image.x2 || image.y1 !== image.y2;
       },
     ];
@@ -47,25 +47,25 @@ class Store {
       let condition = false;
 
       switch (shape.constructor) {
-        case PenService:
+        case PenModel:
           condition = selectedTool === Tools.Pen || allFilters[0](shape);
           break;
-        case LineService:
+        case LineModel:
           condition = selectedTool === Tools.Line || allFilters[1](shape);
           break;
-        case EllipseService:
+        case EllipseModel:
           condition = selectedTool === Tools.Ellipse || allFilters[1](shape);
           break;
-        case ArrowService:
+        case ArrowModel:
           condition = selectedTool === Tools.Arrow || allFilters[1](shape);
           break;
-        case PolygonService:
+        case PolygonModel:
           condition = selectedTool === Tools.Polygon || allFilters[1](shape);
           break;
-        case TextService:
+        case TextModel:
           condition = selectedTool === Tools.Text || allFilters[2](shape);
           break;
-        case ImageService:
+        case ImageModel:
           condition = selectedTool === Tools.Image || allFilters[3](shape);
           break;
         default:
@@ -82,26 +82,26 @@ class Store {
     //draw all shapes
     this.allShapes.forEach((shape) => {
       switch (shape.constructor) {
-        case PenService:
-          PenService.drawStoredPen(ctx, shape as PenService);
+        case PenModel:
+          PenModel.drawStoredPen(ctx, shape as PenModel);
           break;
-        case LineService:
-          LineService.drawStoredLine(ctx, shape as LineService);
+        case LineModel:
+          LineModel.drawStoredLine(ctx, shape as LineModel);
           break;
-        case EllipseService:
-          EllipseService.drawStoredEllipse(ctx, shape as EllipseService);
+        case EllipseModel:
+          EllipseModel.drawStoredEllipse(ctx, shape as EllipseModel);
           break;
-        case ArrowService:
-          ArrowService.drawStoredArrow(ctx, shape as ArrowService);
+        case ArrowModel:
+          ArrowModel.drawStoredArrow(ctx, shape as ArrowModel);
           break;
-        case PolygonService:
-          PolygonService.drawStoredPolygon(ctx, shape as PolygonService);
+        case PolygonModel:
+          PolygonModel.drawStoredPolygon(ctx, shape as PolygonModel);
           break;
-        case TextService:
-          TextService.drawStoredText(ctx, shape as TextService);
+        case TextModel:
+          TextModel.drawStoredText(ctx, shape as TextModel);
           break;
-        case ImageService:
-          ImageService.drawStoredImage(ctx, shape as ImageService);
+        case ImageModel:
+          ImageModel.drawStoredImage(ctx, shape as ImageModel);
           break;
         default:
           break;

@@ -7,7 +7,7 @@ import ResizeService from '@/services/resize.service';
 
 let browsed = false;
 
-class ImageService {
+class ImageModel {
   x1: number;
   y1: number;
   x2: number;
@@ -89,7 +89,7 @@ class ImageService {
     // Read the file as a data URL
     const reader = new FileReader();
     reader.onload = (e) => {
-      // Create a new ImageService instance with the image data
+      // Create a new ImageModel instance with the image data
       const imageElement = new Image();
       imageElement.onload = () => {
         let imageWidth = imageElement.width;
@@ -108,7 +108,7 @@ class ImageService {
           }
         }
 
-        const image = new ImageService(
+        const image = new ImageModel(
           (parentWidth - imageWidth) / 2,
           (parentHeight - imageHeight) / 2,
           imageWidth,
@@ -125,7 +125,7 @@ class ImageService {
     reader.readAsDataURL(blob);
   }
 
-  static drawStoredImage(ctx: CanvasRenderingContext2D, image: ImageService) {
+  static drawStoredImage(ctx: CanvasRenderingContext2D, image: ImageModel) {
     if (image.x1 === image.x2 && image.y1 === image.y2) {
       return;
     }
@@ -156,7 +156,7 @@ class ImageService {
     }
   }
 
-  static isImageHovered(image: ImageService, mouseRef: React.MutableRefObject<Mouse>) {
+  static isImageHovered(image: ImageModel, mouseRef: React.MutableRefObject<Mouse>) {
     const minX = Math.min(image.x1, image.x1 + image.x2);
     const maxX = Math.max(image.x1, image.x1 + image.x2);
     const minY = Math.min(image.y1, image.y1 + image.y2);
@@ -170,7 +170,7 @@ class ImageService {
     );
   }
 
-  static isImageSelectionHovered(image: ImageService, mouseRef: React.MutableRefObject<Mouse>) {
+  static isImageSelectionHovered(image: ImageModel, mouseRef: React.MutableRefObject<Mouse>) {
     const tolerance = 5;
 
     const minX = Math.min(image.x1, image.x1 + image.x2);
@@ -186,7 +186,7 @@ class ImageService {
     );
   }
 
-  static getHoveredEdgeOrCorner(image: ImageService, mouseRef: React.MutableRefObject<Mouse>) {
+  static getHoveredEdgeOrCorner(image: ImageModel, mouseRef: React.MutableRefObject<Mouse>) {
     const points = [
       { x: image.x1, y: image.y1 },
       { x: image.x1 + image.x2, y: image.y1 + image.y2 },
@@ -199,4 +199,4 @@ class ImageService {
   }
 }
 
-export default ImageService;
+export default ImageModel;

@@ -1,13 +1,13 @@
 'use client';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import PenService from '@/services/pen.service';
-import LineService from '@/services/line.service';
+import PenModel from '@/models/pen.model';
+import LineModel from '@/models/line.model';
 import ToolsCard from '@/components/ToolsCard';
 import { Tools } from '@/enums/Tools';
-import EllipseService from '@/services/ellipse.service';
-import ArrowService from '@/services/arrow.service';
-import PolygonService from '@/services/polygon.service';
-import TextService from '@/services/text.service';
+import EllipseModel from '@/models/ellipse.model';
+import ArrowModel from '@/models/arrow.model';
+import PolygonModel from '@/models/polygon.model';
+import TextModel from '@/models/text.model';
 import PropertiesCard from '@/components/properties-card';
 import { StrokeVariant } from '@/enums/StrokeVariant';
 import { FillColor, StrokeColor } from '@/enums/Colors';
@@ -20,7 +20,7 @@ import EraserService from '@/services/eraser.service';
 import MoveService from '@/services/move.service';
 import { SelectionResize } from '@/enums/SelectionResize';
 import ResizeService from '@/services/resize.service';
-import ImageService from '@/services/image.service';
+import ImageModel from '@/models/image.model';
 import UndoRedoCard from '@/components/UndoRedoCard';
 
 export type Mouse = {
@@ -125,9 +125,9 @@ export default function Home() {
 
       //conversion to html or canvas happen before drawing anything else
       if (selectedTool === Tools.Text) {
-        TextService.convertToHtml(parentRef.current as HTMLElement);
+        TextModel.convertToHtml(parentRef.current as HTMLElement);
       } else {
-        TextService.convertToCanvas(parentRef.current as HTMLElement);
+        TextModel.convertToCanvas(parentRef.current as HTMLElement);
       }
 
       //clear all selections if the selected tool is not select before drawing anything
@@ -150,7 +150,7 @@ export default function Home() {
           draw(
             canvas,
             offscreenCtx,
-            PenService.drawCurrentPen.bind(
+            PenModel.drawCurrentPen.bind(
               null,
               mouseRef,
               selectedStrokeColor,
@@ -164,7 +164,7 @@ export default function Home() {
           draw(
             canvas,
             offscreenCtx,
-            LineService.drawCurrentLine.bind(
+            LineModel.drawCurrentLine.bind(
               null,
               mouseRef,
               selectedStrokeColor,
@@ -178,7 +178,7 @@ export default function Home() {
           draw(
             canvas,
             offscreenCtx,
-            EllipseService.drawCurrentEllipse.bind(
+            EllipseModel.drawCurrentEllipse.bind(
               null,
               mouseRef,
               selectedStrokeColor,
@@ -193,7 +193,7 @@ export default function Home() {
           draw(
             canvas,
             offscreenCtx,
-            PolygonService.drawCurrentPolygon.bind(
+            PolygonModel.drawCurrentPolygon.bind(
               null,
               mouseRef,
               selectedStrokeColor,
@@ -210,7 +210,7 @@ export default function Home() {
           draw(
             canvas,
             offscreenCtx,
-            ArrowService.drawCurrentArrow.bind(
+            ArrowModel.drawCurrentArrow.bind(
               null,
               mouseRef,
               selectedStrokeColor,
@@ -226,7 +226,7 @@ export default function Home() {
           draw(
             canvas,
             offscreenCtx,
-            TextService.drawCurrentText.bind(
+            TextModel.drawCurrentText.bind(
               null,
               mouseRef,
               parentRef,
@@ -242,7 +242,7 @@ export default function Home() {
           draw(
             canvas,
             offscreenCtx,
-            ImageService.openFileChooser.bind(ImageService, setSelectedTool, parentRef)
+            ImageModel.openFileChooser.bind(ImageModel, setSelectedTool, parentRef)
           );
           break;
         case Tools.Eraser:
@@ -288,7 +288,7 @@ export default function Home() {
     });
 
   const pasteImageHandler = (e: ClipboardEvent) => {
-    ImageService.pasteImage(setSelectedTool, parentRef, e);
+    ImageModel.pasteImage(setSelectedTool, parentRef, e);
   }
 
   const throttle = (callback: Function, delay: number) => {

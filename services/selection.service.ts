@@ -1,15 +1,15 @@
-import LineService from '@/services/line.service';
+import LineModel from '@/models/line.model';
 import React from 'react';
 import { Mouse } from '@/app/page';
 import Store from '@/store/Store';
-import PenService from '@/services/pen.service';
-import ArrowService from '@/services/arrow.service';
-import EllipseService from '@/services/ellipse.service';
-import PolygonService from '@/services/polygon.service';
-import TextService from '@/services/text.service';
+import PenModel from '@/models/pen.model';
+import ArrowModel from '@/models/arrow.model';
+import EllipseModel from '@/models/ellipse.model';
+import PolygonModel from '@/models/polygon.model';
+import TextModel from '@/models/text.model';
 import Cursors from '@/enums/Cursors';
 import ResizeService from '@/services/resize.service';
-import ImageService from '@/services/image.service';
+import ImageModel from '@/models/image.model';
 
 let flag = false;
 let isMouseUp = false;
@@ -32,7 +32,7 @@ class SelectionService {
     ctx.stroke();
   }
 
-  static drawPenSelectionBox(ctx: CanvasRenderingContext2D, pen: PenService, fullSelect: boolean) {
+  static drawPenSelectionBox(ctx: CanvasRenderingContext2D, pen: PenModel, fullSelect: boolean) {
     const path = pen.path;
     const minX = Math.min(...path.map((point) => point.x));
     const minY = Math.min(...path.map((point) => point.y));
@@ -59,7 +59,7 @@ class SelectionService {
 
   static drawLineSelectionBox(
     ctx: CanvasRenderingContext2D,
-    line: LineService,
+    line: LineModel,
     fullSelect: boolean
   ) {
     if (!fullSelect) return;
@@ -69,7 +69,7 @@ class SelectionService {
 
   static drawPolygonSelectionBox(
     ctx: CanvasRenderingContext2D,
-    polygon: PolygonService,
+    polygon: PolygonModel,
     fullSelect: boolean
   ) {
     const vertices = [];
@@ -121,7 +121,7 @@ class SelectionService {
 
   static drawEllipseSelectionBox(
     ctx: CanvasRenderingContext2D,
-    ellipse: EllipseService,
+    ellipse: EllipseModel,
     fullSelect: boolean
   ) {
     const xCenter = (ellipse.x1 + ellipse.x2) / 2;
@@ -154,7 +154,7 @@ class SelectionService {
 
   static drawTextSelectionBox(
     ctx: CanvasRenderingContext2D,
-    text: TextService,
+    text: TextModel,
     fullSelect: boolean
   ) {
     ctx.strokeStyle = this.SELECTION_COLOR;
@@ -185,7 +185,7 @@ class SelectionService {
 
   static drawImageSelectionBox(
     ctx: CanvasRenderingContext2D,
-    image: ImageService,
+    image: ImageModel,
     fullSelect: boolean
   ) {
     const minX = Math.min(image.x1, image.x1 + image.x2);
@@ -248,42 +248,42 @@ class SelectionService {
 
     allData.forEach((shape) => {
       switch (shape.constructor) {
-        case PenService:
-          const pen = shape as PenService;
+        case PenModel:
+          const pen = shape as PenModel;
 
           //change cursor to move if pen bounding box is hovered
-          if (pen.isSelected && PenService.isPenSelectionHovered(pen, mouseRef)) {
+          if (pen.isSelected && PenModel.isPenSelectionHovered(pen, mouseRef)) {
             mouseRef.current.cursor = Cursors.MOVE;
           }
 
           //clear selection if mouse is clicked outside pen bounding box
-          if (isMouseUp && !isMouseMoved && !PenService.isPenSelectionHovered(pen, mouseRef)) {
+          if (isMouseUp && !isMouseMoved && !PenModel.isPenSelectionHovered(pen, mouseRef)) {
             pen.setIsSelected(false);
           }
 
           //draw selection box when pen is not selected and hovered and mouse should be in upstate
-          if (!pen.isSelected && !mouseRef.current.down && PenService.isPenHovered(pen, mouseRef)) {
+          if (!pen.isSelected && !mouseRef.current.down && PenModel.isPenHovered(pen, mouseRef)) {
             SelectionService.drawPenSelectionBox(ctx, pen, false);
             mouseRef.current.cursor = Cursors.MOVE;
           }
 
           //select pen if hovered and mouse is clicked and no other shape is selected
-          if (isMouseUp && !isMouseMoved && PenService.isPenHovered(pen, mouseRef)) {
+          if (isMouseUp && !isMouseMoved && PenModel.isPenHovered(pen, mouseRef)) {
             //remove all selections
             SelectionService.clearAllSelections();
             pen.setIsSelected(true);
           }
           break;
-        case LineService:
-          const line = shape as LineService;
+        case LineModel:
+          const line = shape as LineModel;
 
           //change cursor to move if line bounding box is hovered
-          if (line.isSelected && LineService.isLineHovered(line, mouseRef)) {
+          if (line.isSelected && LineModel.isLineHovered(line, mouseRef)) {
             mouseRef.current.cursor = Cursors.MOVE;
           }
 
           //clear selection if mouse is clicked outside line bounding box
-          if (isMouseUp && !isMouseMoved && !LineService.isLineHovered(line, mouseRef)) {
+          if (isMouseUp && !isMouseMoved && !LineModel.isLineHovered(line, mouseRef)) {
             line.setIsSelected(false);
           }
 
@@ -291,24 +291,24 @@ class SelectionService {
           if (
             !line.isSelected &&
             !mouseRef.current.down &&
-            LineService.isLineHovered(line, mouseRef)
+            LineModel.isLineHovered(line, mouseRef)
           ) {
             SelectionService.drawLineSelectionBox(ctx, line, false);
             mouseRef.current.cursor = Cursors.MOVE;
           }
 
           //select line if hovered and mouse is clicked and no other shape is selected
-          if (isMouseUp && !isMouseMoved && LineService.isLineHovered(line, mouseRef)) {
+          if (isMouseUp && !isMouseMoved && LineModel.isLineHovered(line, mouseRef)) {
             //remove all selections
             SelectionService.clearAllSelections();
             line.setIsSelected(true);
           }
           break;
-        case PolygonService:
-          const polygon = shape as PolygonService;
+        case PolygonModel:
+          const polygon = shape as PolygonModel;
 
           //change cursor to move if polygon bounding box is hovered
-          if (polygon.isSelected && PolygonService.isPolygonSelectionHovered(polygon, mouseRef)) {
+          if (polygon.isSelected && PolygonModel.isPolygonSelectionHovered(polygon, mouseRef)) {
             mouseRef.current.cursor = Cursors.MOVE;
           }
 
@@ -316,7 +316,7 @@ class SelectionService {
           if (
             isMouseUp &&
             !isMouseMoved &&
-            !PolygonService.isPolygonSelectionHovered(polygon, mouseRef)
+            !PolygonModel.isPolygonSelectionHovered(polygon, mouseRef)
           ) {
             polygon.setIsSelected(false);
           }
@@ -325,24 +325,24 @@ class SelectionService {
           if (
             !polygon.isSelected &&
             !mouseRef.current.down &&
-            PolygonService.isPolygonHovered(polygon, mouseRef)
+            PolygonModel.isPolygonHovered(polygon, mouseRef)
           ) {
             SelectionService.drawPolygonSelectionBox(ctx, polygon, false);
             mouseRef.current.cursor = Cursors.MOVE;
           }
 
           //select polygon if hovered and mouse is clicked and no other shape is selected
-          if (isMouseUp && !isMouseMoved && PolygonService.isPolygonHovered(polygon, mouseRef)) {
+          if (isMouseUp && !isMouseMoved && PolygonModel.isPolygonHovered(polygon, mouseRef)) {
             //remove all selections
             SelectionService.clearAllSelections();
             polygon.setIsSelected(true);
           }
           break;
-        case EllipseService:
-          const ellipse = shape as EllipseService;
+        case EllipseModel:
+          const ellipse = shape as EllipseModel;
 
           //change cursor to move if ellipse bounding box is hovered
-          if (ellipse.isSelected && EllipseService.isEllipseSelectionHovered(ellipse, mouseRef)) {
+          if (ellipse.isSelected && EllipseModel.isEllipseSelectionHovered(ellipse, mouseRef)) {
             mouseRef.current.cursor = Cursors.MOVE;
           }
 
@@ -350,7 +350,7 @@ class SelectionService {
           if (
             isMouseUp &&
             !isMouseMoved &&
-            !EllipseService.isEllipseSelectionHovered(ellipse, mouseRef)
+            !EllipseModel.isEllipseSelectionHovered(ellipse, mouseRef)
           ) {
             ellipse.setIsSelected(false);
           }
@@ -359,29 +359,29 @@ class SelectionService {
           if (
             !ellipse.isSelected &&
             !mouseRef.current.down &&
-            EllipseService.isEllipseHovered(ellipse, mouseRef)
+            EllipseModel.isEllipseHovered(ellipse, mouseRef)
           ) {
             SelectionService.drawEllipseSelectionBox(ctx, ellipse, false);
             mouseRef.current.cursor = Cursors.MOVE;
           }
 
           //select ellipse if hovered and mouse is clicked and no other shape is selected
-          if (isMouseUp && !isMouseMoved && EllipseService.isEllipseHovered(ellipse, mouseRef)) {
+          if (isMouseUp && !isMouseMoved && EllipseModel.isEllipseHovered(ellipse, mouseRef)) {
             //remove all selections
             SelectionService.clearAllSelections();
             ellipse.setIsSelected(true);
           }
           break;
-        case ArrowService:
-          const arrow = shape as ArrowService;
+        case ArrowModel:
+          const arrow = shape as ArrowModel;
 
           //change cursor to move if arrow bounding box is hovered
-          if (arrow.isSelected && ArrowService.isArrowHovered(arrow, mouseRef)) {
+          if (arrow.isSelected && ArrowModel.isArrowHovered(arrow, mouseRef)) {
             mouseRef.current.cursor = Cursors.MOVE;
           }
 
           //clear selection if mouse is clicked outside arrow bounding box
-          if (isMouseUp && !isMouseMoved && !ArrowService.isArrowHovered(arrow, mouseRef)) {
+          if (isMouseUp && !isMouseMoved && !ArrowModel.isArrowHovered(arrow, mouseRef)) {
             arrow.setIsSelected(false);
           }
 
@@ -389,29 +389,29 @@ class SelectionService {
           if (
             !arrow.isSelected &&
             !mouseRef.current.down &&
-            ArrowService.isArrowHovered(arrow, mouseRef)
+            ArrowModel.isArrowHovered(arrow, mouseRef)
           ) {
             SelectionService.drawLineSelectionBox(ctx, arrow, false);
             mouseRef.current.cursor = Cursors.MOVE;
           }
 
           //select arrow if hovered and mouse is clicked and no other shape is selected
-          if (isMouseUp && !isMouseMoved && ArrowService.isArrowHovered(arrow, mouseRef)) {
+          if (isMouseUp && !isMouseMoved && ArrowModel.isArrowHovered(arrow, mouseRef)) {
             //remove all selections
             SelectionService.clearAllSelections();
             arrow.setIsSelected(true);
           }
           break;
-        case TextService:
-          const text = shape as TextService;
+        case TextModel:
+          const text = shape as TextModel;
 
           //change cursor to move if text bounding box is hovered
-          if (text.isSelected && TextService.isTextHovered(text, mouseRef, ctx)) {
+          if (text.isSelected && TextModel.isTextHovered(text, mouseRef, ctx)) {
             mouseRef.current.cursor = Cursors.MOVE;
           }
 
           //clear selection if mouse is clicked outside text bounding box
-          if (isMouseUp && !isMouseMoved && !TextService.isTextHovered(text, mouseRef, ctx)) {
+          if (isMouseUp && !isMouseMoved && !TextModel.isTextHovered(text, mouseRef, ctx)) {
             text.setIsSelected(false);
           }
 
@@ -419,24 +419,24 @@ class SelectionService {
           if (
             !text.isSelected &&
             !mouseRef.current.down &&
-            TextService.isTextHovered(text, mouseRef, ctx)
+            TextModel.isTextHovered(text, mouseRef, ctx)
           ) {
             SelectionService.drawTextSelectionBox(ctx, text, false);
             mouseRef.current.cursor = Cursors.MOVE;
           }
 
           //select text if hovered and mouse is clicked and no other shape is selected
-          if (isMouseUp && !isMouseMoved && TextService.isTextHovered(text, mouseRef, ctx)) {
+          if (isMouseUp && !isMouseMoved && TextModel.isTextHovered(text, mouseRef, ctx)) {
             //remove all selections
             SelectionService.clearAllSelections();
             text.setIsSelected(true);
           }
           break;
-        case ImageService:
-          const image = shape as ImageService;
+        case ImageModel:
+          const image = shape as ImageModel;
 
           //change cursor to move if image bounding box is hovered
-          if (image.isSelected && ImageService.isImageSelectionHovered(image, mouseRef)) {
+          if (image.isSelected && ImageModel.isImageSelectionHovered(image, mouseRef)) {
             mouseRef.current.cursor = Cursors.MOVE;
           }
 
@@ -444,7 +444,7 @@ class SelectionService {
           if (
             isMouseUp &&
             !isMouseMoved &&
-            !ImageService.isImageSelectionHovered(image, mouseRef)
+            !ImageModel.isImageSelectionHovered(image, mouseRef)
           ) {
             image.setIsSelected(false);
           }
@@ -453,14 +453,14 @@ class SelectionService {
           if (
             !image.isSelected &&
             !mouseRef.current.down &&
-            ImageService.isImageHovered(image, mouseRef)
+            ImageModel.isImageHovered(image, mouseRef)
           ) {
             SelectionService.drawImageSelectionBox(ctx, image, false);
             mouseRef.current.cursor = Cursors.MOVE;
           }
 
           //select image if hovered and mouse is clicked and no other shape is selected
-          if (isMouseUp && !isMouseMoved && ImageService.isImageHovered(image, mouseRef)) {
+          if (isMouseUp && !isMouseMoved && ImageModel.isImageHovered(image, mouseRef)) {
             //remove all selections
             SelectionService.clearAllSelections();
             image.setIsSelected(true);

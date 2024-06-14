@@ -1,4 +1,4 @@
-import BaseShapeService from '@/services/baseShape.service';
+import BaseModel from '@/models/base.model';
 import React from 'react';
 import { Mouse } from '@/app/page';
 import { StrokeColor } from '@/enums/Colors';
@@ -6,18 +6,9 @@ import { StrokeVariant } from '@/enums/StrokeVariant';
 import SelectionService from '@/services/selection.service';
 import Store from '@/store/Store';
 import ResizeService from '@/services/resize.service';
+import { Point } from '@/models/point.model';
 
-export class Point {
-  x: number;
-  y: number;
-
-  constructor(x: number, y: number) {
-    this.x = x;
-    this.y = y;
-  }
-}
-
-class PenService extends BaseShapeService {
+class PenModel extends BaseModel {
   //for storing bounding box
   x1: number = 0;
   y1: number = 0;
@@ -36,7 +27,7 @@ class PenService extends BaseShapeService {
     selectedStrokeWidth: number,
     selectedStrokeVariant: StrokeVariant
   ) {
-    const allPens = Store.allShapes.filter((shape) => shape instanceof PenService) as PenService[];
+    const allPens = Store.allShapes.filter((shape) => shape instanceof PenModel) as PenModel[];
     if (mouseRef.current.down) {
       const lastPen = allPens[allPens.length - 1];
       //bounding box corresponding to the max and min points of the path in x and y direction
@@ -62,7 +53,7 @@ class PenService extends BaseShapeService {
         Store.allShapes.pop();
       }
       Store.allShapes.push(
-        new PenService(
+        new PenModel(
           [{ x: mouseRef.current.x, y: mouseRef.current.y }],
           selectedStrokeColor,
           selectedStrokeWidth,
@@ -72,8 +63,8 @@ class PenService extends BaseShapeService {
     }
   }
 
-  static drawStoredPen(ctx: CanvasRenderingContext2D, pen: PenService) {
-    BaseShapeService.draw(pen, ctx);
+  static drawStoredPen(ctx: CanvasRenderingContext2D, pen: PenModel) {
+    BaseModel.draw(pen, ctx);
     ctx.beginPath();
     if (pen.path.length > 3) {
       ctx.moveTo(pen.path[0].x, pen.path[0].y);
@@ -105,7 +96,7 @@ class PenService extends BaseShapeService {
     }
   }
 
-  static isPenHovered(pen: PenService, mouseRef: React.MutableRefObject<Mouse>) {
+  static isPenHovered(pen: PenModel, mouseRef: React.MutableRefObject<Mouse>) {
     const path = pen.path;
     const threshold = pen.strokeWidth + 2; // distance threshold
 
@@ -131,7 +122,7 @@ class PenService extends BaseShapeService {
     return false;
   }
 
-  static isPenSelectionHovered(pen: PenService, mouseRef: React.MutableRefObject<Mouse>) {
+  static isPenSelectionHovered(pen: PenModel, mouseRef: React.MutableRefObject<Mouse>) {
     // Get selection bounds
     const minX = Math.min(...pen.path.map((point) => point.x));
     const minY = Math.min(...pen.path.map((point) => point.y));
@@ -149,7 +140,7 @@ class PenService extends BaseShapeService {
     );
   }
 
-  static getHoveredEdgeOrCorner(pen: PenService, mouseRef: React.MutableRefObject<Mouse>) {
+  static getHoveredEdgeOrCorner(pen: PenModel, mouseRef: React.MutableRefObject<Mouse>) {
     // Get selection bounds
 
     pen.horizontalInverted = pen.path[pen.x1].x > pen.path[pen.x2].x;
@@ -158,4 +149,4 @@ class PenService extends BaseShapeService {
   }
 }
 
-export default PenService;
+export default PenModel;
