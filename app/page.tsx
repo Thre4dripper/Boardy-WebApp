@@ -107,9 +107,18 @@ export default function Home() {
 
   const keyDownHandler = useCallback(
     (e: KeyboardEvent) => {
-      Object.values(Tools).forEach((tool, index) => {
-        if (e.key === (index + 1).toString()) setSelectedTool(tool);
-      });
+      //handle tool selection from 1 to 9
+      if (
+        //do not change tool if any text input is focused
+        !(
+          selectedTool === Tools.Text &&
+          TextModel.isAnyTextFocused(parentRef.current as HTMLElement)
+        )
+      ) {
+        Object.values(Tools).forEach((tool, index) => {
+          if (e.key === (index + 1).toString()) setSelectedTool(tool);
+        });
+      }
 
       //handle undo redo
       if (e.key === 'z' && e.ctrlKey) {
