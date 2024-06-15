@@ -20,53 +20,59 @@ export type Shape =
 class Store {
   static allShapes: Shape[] = [];
 
-  static filterEmptyShapes(selectedTool: Tools) {
-    //filter all empty shapes except that is selected
-
-    const allFilters = [
-      (shape: Shape) => {
+  static getFilter(shape: Shape) {
+    //get all filters for shapes
+    switch (shape.constructor) {
+      case PenModel:
         const pen = shape as PenModel;
         return pen.path.length > 1;
-      },
-      (shape: Shape) => {
+      case LineModel:
+      case EllipseModel:
+      case ArrowModel:
+      case PolygonModel:
         const line = shape as BaseModel;
         return line.x1 !== line.x2 || line.y1 !== line.y2;
-      },
-      (shape: Shape) => {
+      case TextModel:
         const text = shape as TextModel;
         return text.text.length > 0;
-      },
-      (shape: Shape) => {
+      case ImageModel:
         const image = shape as ImageModel;
         return image.x1 !== image.x2 || image.y1 !== image.y2;
-      },
-    ];
+      default:
+        return false;
+    }
+  }
+
+  static filterEmptyShapes(selectedTool: Tools) {
+    //filter all empty shapes except that is selected
 
     for (let i = this.allShapes.length - 1; i >= 0; i--) {
       const shape = this.allShapes[i];
       let condition = false;
 
+      const filter = this.getFilter(shape);
+
       switch (shape.constructor) {
         case PenModel:
-          condition = selectedTool === Tools.Pen || allFilters[0](shape);
+          condition = selectedTool === Tools.Pen || filter;
           break;
         case LineModel:
-          condition = selectedTool === Tools.Line || allFilters[1](shape);
+          condition = selectedTool === Tools.Line || filter;
           break;
         case EllipseModel:
-          condition = selectedTool === Tools.Ellipse || allFilters[1](shape);
+          condition = selectedTool === Tools.Ellipse || filter;
           break;
         case ArrowModel:
-          condition = selectedTool === Tools.Arrow || allFilters[1](shape);
+          condition = selectedTool === Tools.Arrow || filter;
           break;
         case PolygonModel:
-          condition = selectedTool === Tools.Polygon || allFilters[1](shape);
+          condition = selectedTool === Tools.Polygon || filter;
           break;
         case TextModel:
-          condition = selectedTool === Tools.Text || allFilters[2](shape);
+          condition = selectedTool === Tools.Text || filter;
           break;
         case ImageModel:
-          condition = selectedTool === Tools.Image || allFilters[3](shape);
+          condition = selectedTool === Tools.Image || filter;
           break;
         default:
           condition = false;

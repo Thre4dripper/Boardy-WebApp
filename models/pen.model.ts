@@ -66,28 +66,9 @@ class PenModel extends BaseModel {
   static drawStoredPen(ctx: CanvasRenderingContext2D, pen: PenModel) {
     BaseModel.draw(pen, ctx);
     ctx.beginPath();
-    if (pen.path.length > 3) {
-      ctx.moveTo(pen.path[0].x, pen.path[0].y);
-      for (let i = 1; i < pen.path.length - 2; i++) {
-        const cp1x = (pen.path[i].x + pen.path[i + 1].x) / 2;
-        const cp1y = (pen.path[i].y + pen.path[i + 1].y) / 2;
-        const cp2x = (pen.path[i + 1].x + pen.path[i + 2].x) / 2;
-        const cp2y = (pen.path[i + 1].y + pen.path[i + 2].y) / 2;
-        ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, pen.path[i + 1].x, pen.path[i + 1].y);
-      }
-      // curve through the last two points
-      ctx.quadraticCurveTo(
-        pen.path[pen.path.length - 2].x,
-        pen.path[pen.path.length - 2].y,
-        pen.path[pen.path.length - 1].x,
-        pen.path[pen.path.length - 1].y
-      );
-    } else if (pen.path.length === 3) {
-      ctx.moveTo(pen.path[0].x, pen.path[0].y);
-      ctx.quadraticCurveTo(pen.path[1].x, pen.path[1].y, pen.path[2].x, pen.path[2].y);
-    } else if (pen.path.length === 2) {
-      ctx.moveTo(pen.path[0].x, pen.path[0].y);
-      ctx.lineTo(pen.path[1].x, pen.path[1].y);
+    for (let i = 0; i < pen.path.length - 1; i++) {
+      ctx.moveTo(pen.path[i].x, pen.path[i].y);
+      ctx.lineTo(pen.path[i + 1].x, pen.path[i + 1].y);
     }
     ctx.stroke();
 
