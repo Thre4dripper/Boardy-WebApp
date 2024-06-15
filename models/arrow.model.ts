@@ -7,6 +7,7 @@ import { ArrowHeads } from '@/enums/ArrowHeads';
 import SelectionService from '@/services/selection.service';
 import Store from '@/store/Store';
 import ResizeService from '@/services/resize.service';
+import UndoRedoService, { Events } from '@/services/undo.redo.service';
 
 class ArrowModel extends BaseModel {
   leftArrowHead: ArrowHeads;
@@ -50,6 +51,7 @@ class ArrowModel extends BaseModel {
         arrows[arrows.length - 1].y1 === arrows[arrows.length - 1].y2
       ) {
         Store.allShapes.pop();
+        UndoRedoService.pop();
       }
       Store.allShapes.push(
         new ArrowModel(
@@ -64,6 +66,11 @@ class ArrowModel extends BaseModel {
           selectedRightArrowHead
         )
       );
+      UndoRedoService.push({
+        type: Events.CREATE,
+        index: Store.allShapes.length - 1,
+        shape: Store.allShapes[Store.allShapes.length - 1],
+      });
     }
   }
 

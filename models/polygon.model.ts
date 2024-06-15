@@ -7,6 +7,7 @@ import SelectionService from '@/services/selection.service';
 import LineModel from '@/models/line.model';
 import Store from '@/store/Store';
 import ResizeService from '@/services/resize.service';
+import UndoRedoService, { Events } from '@/services/undo.redo.service';
 
 class PolygonModel extends BaseModel {
   sides: number;
@@ -54,6 +55,7 @@ class PolygonModel extends BaseModel {
         polygons[polygons.length - 1].y1 === polygons[polygons.length - 1].y2
       ) {
         Store.allShapes.pop();
+        UndoRedoService.pop();
       }
       Store.allShapes.push(
         new PolygonModel(
@@ -69,6 +71,11 @@ class PolygonModel extends BaseModel {
           selectedFillColor
         )
       );
+      UndoRedoService.push({
+        type: Events.CREATE,
+        index: Store.allShapes.length - 1,
+        shape: Store.allShapes[Store.allShapes.length - 1],
+      });
     }
   }
 

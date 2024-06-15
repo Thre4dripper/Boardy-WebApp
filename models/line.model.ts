@@ -6,6 +6,8 @@ import { StrokeVariant } from '@/enums/StrokeVariant';
 import SelectionService from '@/services/selection.service';
 import Store from '@/store/Store';
 import ResizeService from '@/services/resize.service';
+import UndoRedoService, { Events } from '@/services/undo.redo.service';
+import { Undo } from 'lucide-react';
 
 class LineModel extends BaseModel {
   static drawCurrentLine(
@@ -26,6 +28,7 @@ class LineModel extends BaseModel {
         lines[lines.length - 1].y1 === lines[lines.length - 1].y2
       ) {
         Store.allShapes.pop();
+        UndoRedoService.pop();
       }
       Store.allShapes.push(
         new LineModel(
@@ -38,6 +41,11 @@ class LineModel extends BaseModel {
           selectedStrokeVariant
         )
       );
+      UndoRedoService.push({
+        type: Events.CREATE,
+        index: Store.allShapes.length - 1,
+        shape: Store.allShapes[Store.allShapes.length - 1],
+      });
     }
   }
 

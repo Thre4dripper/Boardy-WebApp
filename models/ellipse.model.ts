@@ -6,6 +6,7 @@ import { StrokeVariant } from '@/enums/StrokeVariant';
 import SelectionService from '@/services/selection.service';
 import Store from '@/store/Store';
 import ResizeService from '@/services/resize.service';
+import UndoRedoService, { Events } from '@/services/undo.redo.service';
 
 class EllipseModel extends BaseModel {
   fillColor: FillColor;
@@ -45,6 +46,7 @@ class EllipseModel extends BaseModel {
         ellipses[ellipses.length - 1].y1 === ellipses[ellipses.length - 1].y2
       ) {
         Store.allShapes.pop();
+        UndoRedoService.pop();
       }
       Store.allShapes.push(
         new EllipseModel(
@@ -58,6 +60,11 @@ class EllipseModel extends BaseModel {
           selectedFillColor
         )
       );
+      UndoRedoService.push({
+        type: Events.CREATE,
+        index: Store.allShapes.length - 1,
+        shape: Store.allShapes[Store.allShapes.length - 1],
+      });
     }
   }
 
