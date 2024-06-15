@@ -105,6 +105,26 @@ export default function Home() {
     [selectedTool]
   );
 
+  const keyDownHandler = useCallback(
+    (e: KeyboardEvent) => {
+      Object.values(Tools).forEach((tool, index) => {
+        if (e.key === (index + 1).toString()) setSelectedTool(tool);
+      });
+
+      //handle undo redo
+      if (e.key === 'z' && e.ctrlKey) {
+        UndoRedoService.undo(selectedTool);
+      } else if (e.key === 'y' && e.ctrlKey) {
+        UndoRedoService.redo(selectedTool);
+      }
+    },
+    [selectedTool]
+  );
+
+  const pasteImageHandler = useCallback((e: ClipboardEvent) => {
+    ImageModel.pasteImage(setSelectedTool, parentRef, e);
+  }, []);
+
   useEffect(() => {
     initCanvas();
 
@@ -282,16 +302,9 @@ export default function Home() {
     selectedRightArrowHead,
     selectedFontSize,
     selectedFontFamily,
+    keyDownHandler,
+    pasteImageHandler,
   ]);
-
-  const keyDownHandler = (e: KeyboardEvent) =>
-    Object.values(Tools).forEach((tool, index) => {
-      if (e.key === (index + 1).toString()) setSelectedTool(tool);
-    });
-
-  const pasteImageHandler = (e: ClipboardEvent) => {
-    ImageModel.pasteImage(setSelectedTool, parentRef, e);
-  };
 
   const throttle = (callback: Function, delay: number) => {
     let previousCall = new Date().getTime();

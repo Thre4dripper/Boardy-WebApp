@@ -324,6 +324,16 @@
     "@nextui-org/system" "2.1.2"
     "@nextui-org/use-measure" "2.0.1"
 
+"@nextui-org/kbd@^2.0.29":
+  version "2.0.29"
+  resolved "https://registry.yarnpkg.com/@nextui-org/kbd/-/kbd-2.0.29.tgz#c8c791a4bcaf33c602dad19b23b3689080878d2f"
+  integrity sha512-vApGKSFGJFenTowlyLNcOvK+D3UzvyPEQyDOuZryqTayWMkZiNdPzjg9TsqBJF7B1ELJn0ErYTQexFLEPkcXbg==
+  dependencies:
+    "@nextui-org/react-utils" "2.0.13"
+    "@nextui-org/shared-utils" "2.0.5"
+    "@nextui-org/system-rsc" "2.1.2"
+    "@react-aria/utils" "3.23.2"
+
 "@nextui-org/popover@^2.1.21":
   version "2.1.21"
   resolved "https://registry.yarnpkg.com/@nextui-org/popover/-/popover-2.1.21.tgz#db63b5b16ce6df410af01a1e1b8b5b4227278d4a"
@@ -401,6 +411,13 @@
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/@nextui-org/system-rsc/-/system-rsc-2.1.1.tgz#175de9637cff1fd91b115ea6910718a3a446c92e"
   integrity sha512-gkTKNAbTZVl81SVJsaLHp4iqyd956y40UIGUXPeq0pwOGLM0xGWSkLbkNT8WtdPUt3bSD9y0xuKbiV3tpSBGOA==
+  dependencies:
+    clsx "^1.2.1"
+
+"@nextui-org/system-rsc@2.1.2":
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/@nextui-org/system-rsc/-/system-rsc-2.1.2.tgz#42b6568617018ec108cb60d22cb7bff96f6117b3"
+  integrity sha512-3F7pG68Ikh1JsMtRQqmyXAojAV4lMPCKCy0n8RiIxJkEJg11RGTXhnABHF2jP6uxMH/0q5zVzuFubQJfW++ISQ==
   dependencies:
     clsx "^1.2.1"
 
@@ -599,6 +616,13 @@
     "@react-types/slider" "^3.7.2"
     "@swc/helpers" "^0.5.0"
 
+"@react-aria/ssr@^3.9.2":
+  version "3.9.4"
+  resolved "https://registry.yarnpkg.com/@react-aria/ssr/-/ssr-3.9.4.tgz#9da8b10342c156e816dbfa4c9e713b21f274d7ab"
+  integrity sha512-4jmAigVq409qcJvQyuorsmBR4+9r3+JEC60wC+Y0MZV0HCtTmm8D9guYXlJMdx0SSkgj0hHAyFm/HvPNFofCoQ==
+  dependencies:
+    "@swc/helpers" "^0.5.0"
+
 "@react-aria/ssr@^3.9.3":
   version "3.9.3"
   resolved "https://registry.yarnpkg.com/@react-aria/ssr/-/ssr-3.9.3.tgz#9e7d4e019965aaf86cec3da2411a392be49ac2b3"
@@ -618,6 +642,17 @@
     "@react-types/shared" "^3.23.0"
     "@react-types/tooltip" "^3.4.8"
     "@swc/helpers" "^0.5.0"
+
+"@react-aria/utils@3.23.2":
+  version "3.23.2"
+  resolved "https://registry.yarnpkg.com/@react-aria/utils/-/utils-3.23.2.tgz#23fd55b165a799ecf72c1c66508574f67de20162"
+  integrity sha512-yznR9jJ0GG+YJvTMZxijQwVp+ahP66DY0apZf7X+dllyN+ByEDW+yaL1ewYPIpugxVzH5P8jhnBXsIyHKN411g==
+  dependencies:
+    "@react-aria/ssr" "^3.9.2"
+    "@react-stately/utils" "^3.9.1"
+    "@react-types/shared" "^3.22.1"
+    "@swc/helpers" "^0.5.0"
+    clsx "^2.0.0"
 
 "@react-aria/utils@^3.23.2", "@react-aria/utils@^3.24.0":
   version "3.24.0"
