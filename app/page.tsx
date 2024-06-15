@@ -22,6 +22,7 @@ import { SelectionResize } from '@/enums/SelectionResize';
 import ResizeService from '@/services/resize.service';
 import ImageModel from '@/models/image.model';
 import UndoRedoCard from '@/components/UndoRedoCard';
+import UndoRedoService from '@/services/undo.redo.service';
 
 export type Mouse = {
   x: number;
@@ -50,7 +51,7 @@ export default function Home() {
   const [selectedTool, setSelectedTool] = useState<Tools>(Tools.Pen);
 
   const [selectedStrokeColor, setSelectedStrokeColor] = useState<StrokeColor>(StrokeColor.Black);
-  const [selectedStrokeWidth, setSelectedStrokeWidth] = useState<number>(5);
+  const [selectedStrokeWidth, setSelectedStrokeWidth] = useState<number>(3);
   const [selectedStrokeVariant, setSelectedStrokeVariant] = useState<StrokeVariant>(
     StrokeVariant.Solid
   );
@@ -94,6 +95,7 @@ export default function Home() {
 
       //filter all empty shapes except that is selected
       Store.filterEmptyShapes(selectedTool);
+      UndoRedoService.filterEmptyShapes(selectedTool);
 
       //draw all shapes
       Store.drawAllShapes(ctx);
@@ -289,7 +291,7 @@ export default function Home() {
 
   const pasteImageHandler = (e: ClipboardEvent) => {
     ImageModel.pasteImage(setSelectedTool, parentRef, e);
-  }
+  };
 
   const throttle = (callback: Function, delay: number) => {
     let previousCall = new Date().getTime();
@@ -368,7 +370,7 @@ export default function Home() {
           setSelectedFontFamily={setSelectedFontFamily}
         />
       )}
-      <UndoRedoCard />
+      <UndoRedoCard selectedTool={selectedTool} />
       <ToolsCard onToolSelect={setSelectedTool} selectedTool={selectedTool} />
 
       <canvas

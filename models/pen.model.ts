@@ -7,6 +7,7 @@ import SelectionService from '@/services/selection.service';
 import Store from '@/store/Store';
 import ResizeService from '@/services/resize.service';
 import { Point } from '@/models/point.model';
+import UndoRedoService, { Events } from '@/services/undo.redo.service';
 
 class PenModel extends BaseModel {
   //for storing bounding box
@@ -51,6 +52,7 @@ class PenModel extends BaseModel {
     } else {
       if (allPens.length > 0 && allPens[allPens.length - 1].path.length <= 1) {
         Store.allShapes.pop();
+        UndoRedoService.pop();
       }
       Store.allShapes.push(
         new PenModel(
@@ -60,6 +62,11 @@ class PenModel extends BaseModel {
           selectedStrokeVariant
         )
       );
+      UndoRedoService.push({
+        type: Events.CREATE,
+        index: Store.allShapes.length - 1,
+        shape: Store.allShapes[Store.allShapes.length - 1],
+      });
     }
   }
 
