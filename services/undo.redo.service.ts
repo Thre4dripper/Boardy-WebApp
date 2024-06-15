@@ -21,15 +21,25 @@ type UndoRedoEvent = {
   shape: Shape;
 };
 
+let pushFlag = 0;
+
 class UndoRedoService {
   private static undoStack: UndoRedoEvent[] = [];
   private static redoStack: UndoRedoEvent[] = [];
 
-  public static push(event: UndoRedoEvent) {
+  public static push(event: UndoRedoEvent, flag: boolean) {
     this.undoStack.push(event);
+
+    pushFlag++;
+    if (flag && pushFlag > 1) {
+      //for resetting redo stack when new shape is created and push is constantly called
+      this.redoStack = [];
+      pushFlag = 1;
+    }
   }
 
   public static pop() {
+    pushFlag--;
     return this.undoStack.pop();
   }
 
@@ -45,6 +55,8 @@ class UndoRedoService {
     this.undoStack.splice(popIndex, 1);
 
     if (!event) return;
+    //remove selection from the shape before pushing it to redo stack
+    event.shape.setIsSelected(false);
     this.redoStack.push(event);
     switch (event.type) {
       case Events.CREATE:
