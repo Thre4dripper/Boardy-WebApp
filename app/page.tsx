@@ -113,6 +113,10 @@ export default function Home() {
 
       //handle undo redo
       if (e.key === 'z' && e.ctrlKey) {
+        //do not undo if any text input is focused
+        if (TextModel.isAnyTextFocused(parentRef.current as HTMLElement)) {
+          return;
+        }
         UndoRedoService.undo(selectedTool);
       } else if (e.key === 'y' && e.ctrlKey) {
         UndoRedoService.redo(selectedTool);
@@ -383,7 +387,7 @@ export default function Home() {
           setSelectedFontFamily={setSelectedFontFamily}
         />
       )}
-      <UndoRedoCard selectedTool={selectedTool} />
+      <UndoRedoCard />
       <ToolsCard onToolSelect={setSelectedTool} selectedTool={selectedTool} />
 
       <canvas

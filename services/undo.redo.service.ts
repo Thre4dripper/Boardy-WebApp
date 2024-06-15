@@ -27,20 +27,34 @@ class UndoRedoService {
   private static undoStack: UndoRedoEvent[] = [];
   private static redoStack: UndoRedoEvent[] = [];
 
-  public static push(event: UndoRedoEvent, flag: boolean) {
-    this.undoStack.push(event);
+  public static push(event: UndoRedoEvent, flag: boolean, index?: number) {
+    if (index !== undefined) {
+      this.undoStack.splice(index, 0, event);
+    } else {
+      this.undoStack.push(event);
+    }
 
     pushFlag++;
-    if (flag && pushFlag > 1) {
+    if (flag) {
       //for resetting redo stack when new shape is created and push is constantly called
+      if (pushFlag > 1) {
+        this.redoStack = [];
+        pushFlag = 1;
+      }
+    } else {
       this.redoStack = [];
-      pushFlag = 1;
     }
   }
 
   public static pop() {
     pushFlag--;
     return this.undoStack.pop();
+  }
+
+  public static removeAllTexts() {
+    this.undoStack = this.undoStack.filter((event) => {
+      return !(event.shape instanceof TextModel);
+    });
   }
 
   public static undo(selectedTool: Tools) {

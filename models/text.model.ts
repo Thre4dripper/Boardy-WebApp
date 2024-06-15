@@ -5,6 +5,7 @@ import { Fonts } from '@/enums/Fonts';
 import SelectionService from '@/services/selection.service';
 import Store from '@/store/Store';
 import ResizeService from '@/services/resize.service';
+import UndoRedoService, { Events } from '@/services/undo.redo.service';
 
 class TextModel {
   x: number;
@@ -223,6 +224,15 @@ class TextModel {
 
       const stackIndex = parseInt(input.dataset.stackIndex!);
       Store.allShapes.splice(stackIndex, 0, text);
+      UndoRedoService.push(
+        {
+          type: Events.CREATE,
+          index: stackIndex,
+          shape: text,
+        },
+        false,
+        stackIndex
+      );
       parentDiv.removeChild(inputElement);
     });
   }
@@ -247,6 +257,19 @@ class TextModel {
 
     //clear all texts
     Store.allShapes = Store.allShapes.filter((shape) => !(shape instanceof TextModel));
+    UndoRedoService.removeAllTexts();
+  }
+
+  static isAnyTextFocused(parentDiv: HTMLElement) {
+    const allChildren = Array.from(parentDiv.children);
+
+    const inputElements = allChildren.filter((child) => {
+      return child.className === TextModel.TEXT_DIV_TAG;
+    });
+
+    return inputElements.some((inputElement) => {
+      return document.activeElement === inputElement;
+    });
   }
 }
 

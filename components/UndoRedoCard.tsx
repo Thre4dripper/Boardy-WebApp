@@ -2,20 +2,24 @@ import { Card, CardBody } from '@nextui-org/card';
 import { Button } from '@nextui-org/button';
 import { Redo2, Undo2 } from 'lucide-react';
 import { Tooltip } from '@nextui-org/tooltip';
-import UndoRedoService from '@/services/undo.redo.service';
-import { Tools } from '@/enums/Tools';
 import { Kbd } from '@nextui-org/kbd';
 
-interface UndoRedoCardProps {
-  selectedTool: Tools;
-}
-
-export default function UndoRedoCard({ selectedTool }: UndoRedoCardProps) {
+export default function UndoRedoCard() {
   const handleUndo = () => {
-    UndoRedoService.undo(selectedTool);
+    //fire keydown event for undo
+    const event = new KeyboardEvent('keydown', {
+      key: 'z',
+      ctrlKey: true,
+    });
+    document.dispatchEvent(event);
   };
   const handleRedo = () => {
-    UndoRedoService.redo(selectedTool);
+    //fire keydown event for redo
+    const event = new KeyboardEvent('keydown', {
+      key: 'y',
+      ctrlKey: true,
+    });
+    document.dispatchEvent(event);
   };
 
   return (
