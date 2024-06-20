@@ -124,9 +124,6 @@ export default function Home() {
       if (e.key === 'z' && e.ctrlKey) {
         //do not undo if any text input is focused
         e.preventDefault()
-        if (TextModel.isAnyTextFocused(parentRef.current as HTMLElement)) {
-          return;
-        }
         TextModel.convertToCanvas(parentRef.current as HTMLElement)
         UndoRedoService.undo(selectedTool);
         TextModel.convertToHtml(parentRef.current as HTMLElement)

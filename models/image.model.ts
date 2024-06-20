@@ -4,7 +4,7 @@ import React from 'react';
 import { Mouse } from '@/app/page';
 import SelectionService from '@/services/selection.service';
 import ResizeService from '@/services/resize.service';
-import UndoRedoService, { Events } from '@/services/undo.redo.service';
+import UndoRedoService, { UndoRedoEventType } from '@/services/undo.redo.service';
 
 let browsed = false;
 
@@ -121,7 +121,7 @@ class ImageModel {
         // Add the image to the Store
         Store.allShapes.push(image);
         UndoRedoService.push({
-          type: Events.CREATE,
+          type: UndoRedoEventType.CREATE,
           index: Store.allShapes.length - 1,
           shape: Store.allShapes[Store.allShapes.length - 1],
         });

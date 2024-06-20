@@ -6,7 +6,7 @@ import { StrokeVariant } from '@/enums/StrokeVariant';
 import SelectionService from '@/services/selection.service';
 import Store from '@/store/Store';
 import ResizeService from '@/services/resize.service';
-import UndoRedoService, { Events } from '@/services/undo.redo.service';
+import UndoRedoService, { UndoRedoEventType } from '@/services/undo.redo.service';
 import { Undo } from 'lucide-react';
 
 class LineModel extends BaseModel {
@@ -42,7 +42,7 @@ class LineModel extends BaseModel {
         )
       );
       UndoRedoService.push({
-        type: Events.CREATE,
+        type: UndoRedoEventType.CREATE,
         index: Store.allShapes.length - 1,
         shape: Store.allShapes[Store.allShapes.length - 1],
       });

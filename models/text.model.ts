@@ -5,7 +5,7 @@ import { Fonts } from '@/enums/Fonts';
 import SelectionService from '@/services/selection.service';
 import Store from '@/store/Store';
 import ResizeService from '@/services/resize.service';
-import UndoRedoService, { Events } from '@/services/undo.redo.service';
+import UndoRedoService, { UndoRedoEventType } from '@/services/undo.redo.service';
 
 class TextModel {
   x: number;
@@ -226,7 +226,7 @@ class TextModel {
       Store.allShapes.splice(stackIndex, 0, text);
       UndoRedoService.push(
         {
-          type: Events.CREATE,
+          type: UndoRedoEventType.CREATE,
           index: stackIndex,
           shape: text,
         },

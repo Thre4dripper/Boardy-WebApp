@@ -7,7 +7,7 @@ import SelectionService from '@/services/selection.service';
 import LineModel from '@/models/line.model';
 import Store from '@/store/Store';
 import ResizeService from '@/services/resize.service';
-import UndoRedoService, { Events } from '@/services/undo.redo.service';
+import UndoRedoService, { UndoRedoEventType } from '@/services/undo.redo.service';
 
 class PolygonModel extends BaseModel {
   sides: number;
@@ -72,7 +72,7 @@ class PolygonModel extends BaseModel {
         )
       );
       UndoRedoService.push({
-        type: Events.CREATE,
+        type: UndoRedoEventType.CREATE,
         index: Store.allShapes.length - 1,
         shape: Store.allShapes[Store.allShapes.length - 1],
       });
