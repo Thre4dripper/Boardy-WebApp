@@ -126,7 +126,9 @@ export default function Home() {
         if (TextModel.isAnyTextFocused(parentRef.current as HTMLElement)) {
           return;
         }
+        TextModel.convertToCanvas(parentRef.current as HTMLElement)
         UndoRedoService.undo(selectedTool);
+        TextModel.convertToHtml(parentRef.current as HTMLElement)
       } else if (e.key === 'y' && e.ctrlKey) {
         UndoRedoService.redo(selectedTool);
       }

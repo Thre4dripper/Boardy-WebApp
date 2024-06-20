@@ -70,7 +70,7 @@ class ArrowModel extends BaseModel {
         type: Events.CREATE,
         index: Store.allShapes.length - 1,
         shape: Store.allShapes[Store.allShapes.length - 1],
-      }, true);
+      });
     }
   }
 

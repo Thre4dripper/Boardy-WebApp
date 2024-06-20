@@ -230,7 +230,6 @@ class TextModel {
           index: stackIndex,
           shape: text,
         },
-        false,
         stackIndex
       );
       parentDiv.removeChild(inputElement);
@@ -268,7 +267,7 @@ class TextModel {
     });
 
     return inputElements.some((inputElement) => {
-      return document.activeElement === inputElement;
+      return document.activeElement === inputElement
     });
   }
 }

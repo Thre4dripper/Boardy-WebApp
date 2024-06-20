@@ -27,21 +27,28 @@ class UndoRedoService {
   private static undoStack: UndoRedoEvent[] = [];
   private static redoStack: UndoRedoEvent[] = [];
 
-  public static push(event: UndoRedoEvent, flag: boolean, index?: number) {
+  public static push(event: UndoRedoEvent, index?: number) {
     if (index !== undefined) {
       this.undoStack.splice(index, 0, event);
     } else {
       this.undoStack.push(event);
     }
 
-    pushFlag++;
-    if (flag) {
+    const shape = event.shape;
+    if (
+      shape instanceof PenModel ||
+      shape instanceof LineModel ||
+      shape instanceof PolygonModel ||
+      shape instanceof EllipseModel ||
+      shape instanceof ArrowModel
+    ) {
+      pushFlag++;
       //for resetting redo stack when new shape is created and push is constantly called
       if (pushFlag > 1) {
         this.redoStack = [];
         pushFlag = 1;
       }
-    } else {
+    } else if (shape instanceof ImageModel) {
       this.redoStack = [];
     }
   }
