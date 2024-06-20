@@ -8,7 +8,7 @@ import PolygonModel from '@/models/polygon.model';
 import TextModel from '@/models/text.model';
 import ImageModel from '@/models/image.model';
 
-export enum Events {
+export enum UndoRedoEventType {
   CREATE = 'CREATE',
   DELETE = 'DELETE',
   MOVE = 'MOVE',
@@ -16,7 +16,7 @@ export enum Events {
 }
 
 type UndoRedoEvent = {
-  type: Events;
+  type: UndoRedoEventType;
   index: number;
   shape: Shape;
 };
@@ -27,14 +27,14 @@ class UndoRedoService {
   private static undoStack: UndoRedoEvent[] = [];
   private static redoStack: UndoRedoEvent[] = [];
 
-  public static push(event: UndoRedoEvent, index?: number) {
+  public static push(undoRedoEvent: UndoRedoEvent, index?: number) {
     if (index !== undefined) {
-      this.undoStack.splice(index, 0, event);
+      this.undoStack.splice(index, 0, undoRedoEvent);
     } else {
-      this.undoStack.push(event);
+      this.undoStack.push(undoRedoEvent);
     }
 
-    const shape = event.shape;
+    const shape = undoRedoEvent.shape;
     if (
       shape instanceof PenModel ||
       shape instanceof LineModel ||
@@ -80,11 +80,11 @@ class UndoRedoService {
     event.shape.setIsSelected(false);
     this.redoStack.push(event);
     switch (event.type) {
-      case Events.CREATE:
+      case UndoRedoEventType.CREATE:
         //remove the last shape
         Store.allShapes.splice(event.index, 1);
         break;
-      case Events.DELETE:
+      case UndoRedoEventType.DELETE:
         //add the shape back
         Store.allShapes.splice(event.index, 0, event.shape);
         break;
@@ -95,13 +95,19 @@ class UndoRedoService {
     const event = this.redoStack.pop();
     if (!event) return;
 
-    this.undoStack.splice(event.index, 0, event);
+    if ([Tools.Pen, Tools.Line, Tools.Polygon, Tools.Ellipse, Tools.Arrow].includes(selectedTool)) {
+      this.undoStack.splice(this.undoStack.length - 1, 0, event);
+    } else if (selectedTool === Tools.Text) {
+      this.undoStack.splice(event.index, 0, event);
+    } else {
+      this.undoStack.push(event);
+    }
     switch (event.type) {
-      case Events.CREATE:
+      case UndoRedoEventType.CREATE:
         //add the shape back
         Store.allShapes.splice(event.index, 0, event.shape);
         break;
-      case Events.DELETE:
+      case UndoRedoEventType.DELETE:
         //remove the last shape
         Store.allShapes.splice(event.index, 1);
         break;

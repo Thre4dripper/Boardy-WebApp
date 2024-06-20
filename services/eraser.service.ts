@@ -1,6 +1,6 @@
 import React from 'react';
 import { Mouse } from '@/app/page';
-import Store from '@/store/Store';
+import Store, { Shape } from '@/store/Store';
 import PenModel from '@/models/pen.model';
 import LineModel from '@/models/line.model';
 import EllipseModel from '@/models/ellipse.model';
@@ -8,6 +8,7 @@ import ArrowModel from '@/models/arrow.model';
 import PolygonModel from '@/models/polygon.model';
 import TextModel from '@/models/text.model';
 import ImageModel from '@/models/image.model';
+import UndoRedoService, { UndoRedoEventType } from '@/services/undo.redo.service';
 
 class EraserService {
   static eraserTrail: { x: number; y: number }[] = [];
@@ -84,42 +85,57 @@ class EraserService {
         case PenModel:
           if (PenModel.isPenHovered(shape as PenModel, mouseRef)) {
             allShapes.splice(i, 1);
+            this.pushToUndoRedoService(i, shape);
           }
           break;
         case LineModel:
           if (LineModel.isLineHovered(shape as LineModel, mouseRef)) {
             allShapes.splice(i, 1);
+            this.pushToUndoRedoService(i, shape);
           }
           break;
         case EllipseModel:
           if (EllipseModel.isEllipseHovered(shape as EllipseModel, mouseRef)) {
             allShapes.splice(i, 1);
+            this.pushToUndoRedoService(i, shape);
           }
           break;
         case ArrowModel:
           if (ArrowModel.isArrowHovered(shape as ArrowModel, mouseRef)) {
             allShapes.splice(i, 1);
+            this.pushToUndoRedoService(i, shape);
           }
           break;
         case PolygonModel:
           if (PolygonModel.isPolygonHovered(shape as PolygonModel, mouseRef)) {
             allShapes.splice(i, 1);
+            this.pushToUndoRedoService(i, shape);
           }
           break;
         case TextModel:
           if (TextModel.isTextHovered(shape as TextModel, mouseRef, ctx)) {
             allShapes.splice(i, 1);
+            this.pushToUndoRedoService(i, shape);
           }
           break;
         case ImageModel:
           if (ImageModel.isImageHovered(shape as ImageModel, mouseRef)) {
             allShapes.splice(i, 1);
+            this.pushToUndoRedoService(i, shape);
           }
           break;
         default:
           break;
       }
     }
+  }
+
+  private static pushToUndoRedoService(index: number, shape: Shape) {
+    UndoRedoService.push({
+      type: UndoRedoEventType.DELETE,
+      index,
+      shape,
+    });
   }
 }
 
