@@ -123,6 +123,7 @@ export default function Home() {
       //handle undo redo
       if (e.key === 'z' && e.ctrlKey) {
         //do not undo if any text input is focused
+        e.preventDefault()
         if (TextModel.isAnyTextFocused(parentRef.current as HTMLElement)) {
           return;
         }
