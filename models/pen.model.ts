@@ -65,7 +65,10 @@ class PenModel extends BaseModel {
       UndoRedoService.push({
         type: UndoRedoEventType.CREATE,
         index: Store.allShapes.length - 1,
-        shape: Store.allShapes[Store.allShapes.length - 1],
+        shape: {
+          from: null,
+          to: Store.allShapes[Store.allShapes.length - 1],
+        },
       });
     }
   }

@@ -18,7 +18,10 @@ export enum UndoRedoEventType {
 type UndoRedoEvent = {
   type: UndoRedoEventType;
   index: number;
-  shape: Shape;
+  shape: {
+    from: Shape | null;
+    to: Shape | null;
+  };
 };
 
 let pushFlag = 0;
@@ -34,7 +37,7 @@ class UndoRedoService {
       this.undoStack.push(undoRedoEvent);
     }
 
-    const shape = undoRedoEvent.shape;
+    const shape = undoRedoEvent.shape.to;
     if (
       shape instanceof PenModel ||
       shape instanceof LineModel ||
@@ -60,7 +63,7 @@ class UndoRedoService {
 
   public static removeAllTexts() {
     this.undoStack = this.undoStack.filter((event) => {
-      return !(event.shape instanceof TextModel);
+      return !(event.shape.from instanceof TextModel || event.shape.to instanceof TextModel);
     });
   }
 
@@ -76,9 +79,13 @@ class UndoRedoService {
     this.undoStack.splice(popIndex, 1);
 
     if (!event) return;
-    //remove selection from the shape before pushing it to redo stack
-    event.shape.setIsSelected(false);
+
+    //remove selection from the shape before undo
+    event.shape.from?.setIsSelected(false);
+    event.shape.to?.setIsSelected(false);
+
     this.redoStack.push(event);
+
     switch (event.type) {
       case UndoRedoEventType.CREATE:
         //remove the last shape
@@ -86,7 +93,7 @@ class UndoRedoService {
         break;
       case UndoRedoEventType.DELETE:
         //add the shape back
-        Store.allShapes.splice(event.index, 0, event.shape);
+        Store.allShapes.splice(event.index, 0, event.shape.from!);
         break;
     }
   }
@@ -105,7 +112,7 @@ class UndoRedoService {
     switch (event.type) {
       case UndoRedoEventType.CREATE:
         //add the shape back
-        Store.allShapes.splice(event.index, 0, event.shape);
+        Store.allShapes.splice(event.index, 0, event.shape.to!);
         break;
       case UndoRedoEventType.DELETE:
         //remove the last shape
@@ -121,7 +128,14 @@ class UndoRedoService {
       const event = this.undoStack[i];
       let condition = false;
 
-      const shape = event.shape;
+      let shape;
+      if (event.type === UndoRedoEventType.CREATE) {
+        shape = event.shape.to!;
+      } else if (event.type === UndoRedoEventType.DELETE) {
+        shape = event.shape.from!;
+      } else {
+        shape = event.shape.to!;
+      }
       const filter = Store.getFilter(shape);
 
       switch (shape.constructor) {

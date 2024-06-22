@@ -134,7 +134,10 @@ class EraserService {
     UndoRedoService.push({
       type: UndoRedoEventType.DELETE,
       index,
-      shape,
+      shape: {
+        from: shape,
+        to: null,
+      },
     });
   }
 }

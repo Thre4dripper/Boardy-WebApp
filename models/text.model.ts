@@ -228,7 +228,10 @@ class TextModel {
         {
           type: UndoRedoEventType.CREATE,
           index: stackIndex,
-          shape: text,
+          shape: {
+            from: null,
+            to: text,
+          },
         },
         stackIndex
       );
