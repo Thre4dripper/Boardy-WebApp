@@ -7,6 +7,7 @@ import ArrowModel from '@/models/arrow.model';
 import PolygonModel from '@/models/polygon.model';
 import TextModel from '@/models/text.model';
 import ImageModel from '@/models/image.model';
+import { deepCopy } from '@/utils/Utils';
 
 export enum UndoRedoEventType {
   CREATE = 'CREATE',
@@ -50,6 +51,13 @@ class UndoRedoService {
       if (pushFlag > 1) {
         this.redoStack = [];
         pushFlag = 1;
+
+        //decouple the last shape from the current shape
+        const lastShapeIndex = this.undoStack.length - 2;
+        if (lastShapeIndex >= 0) {
+          const lastShape = this.undoStack[lastShapeIndex].shape;
+          this.undoStack[lastShapeIndex].shape = deepCopy(lastShape);
+        }
       }
     } else if (shape instanceof ImageModel) {
       this.redoStack = [];
@@ -95,6 +103,11 @@ class UndoRedoService {
         //add the shape back
         Store.allShapes.splice(event.index, 0, event.shape.from!);
         break;
+      case UndoRedoEventType.MOVE:
+        //move the shape back to its previous position by deleting the current shape and adding the previous shape
+        Store.allShapes.splice(event.index, 1);
+        Store.allShapes.splice(event.index, 0, event.shape.from!);
+        break;
     }
   }
 
@@ -118,6 +131,10 @@ class UndoRedoService {
         //remove the last shape
         Store.allShapes.splice(event.index, 1);
         break;
+      case UndoRedoEventType.MOVE:
+        //move the shape back to its previous position by deleting the current shape and adding the previous shape
+        Store.allShapes.splice(event.index, 1);
+        Store.allShapes.splice(event.index, 0, event.shape.to!);
     }
   }
 
