@@ -108,6 +108,11 @@ class UndoRedoService {
         Store.allShapes.splice(event.index, 1);
         Store.allShapes.splice(event.index, 0, event.shape.from!);
         break;
+      case UndoRedoEventType.RESIZE:
+        //resize the shape back to its previous size by deleting the current shape and adding the previous shape
+        Store.allShapes.splice(event.index, 1);
+        Store.allShapes.splice(event.index, 0, event.shape.from!);
+        break;
     }
   }
 
@@ -135,6 +140,12 @@ class UndoRedoService {
         //move the shape back to its previous position by deleting the current shape and adding the previous shape
         Store.allShapes.splice(event.index, 1);
         Store.allShapes.splice(event.index, 0, event.shape.to!);
+        break;
+      case UndoRedoEventType.RESIZE:
+        //resize the shape back to its previous size by deleting the current shape and adding the previous shape
+        Store.allShapes.splice(event.index, 1);
+        Store.allShapes.splice(event.index, 0, event.shape.to!);
+        break;
     }
   }
 
