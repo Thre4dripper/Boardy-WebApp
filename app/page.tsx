@@ -49,6 +49,16 @@ export default function Home() {
   });
 
   const [selectedTool, setSelectedTool] = useState<Tools>(Tools.Pen);
+  const [selectedShapeType, setSelectedShapeType] = useState<
+    | Tools.Pen
+    | Tools.Line
+    | Tools.Polygon
+    | Tools.Ellipse
+    | Tools.Arrow
+    | Tools.Text
+    | Tools.Image
+    | null
+  >(null);
 
   const [selectedStrokeColor, setSelectedStrokeColor] = useState<StrokeColor>(StrokeColor.Black);
   const [selectedStrokeWidth, setSelectedStrokeWidth] = useState<number>(3);
@@ -87,6 +97,42 @@ export default function Home() {
     ctx.imageSmoothingQuality = 'high';
   }, []);
 
+  const detectSelectedShape = useCallback(() => {
+    const allShapes = Store.allShapes;
+    const selectedShape = allShapes.find((shape) => shape.isSelected);
+
+    if (!selectedShape) {
+      setSelectedShapeType(null);
+      return;
+    }
+
+    switch (selectedShape.constructor) {
+      case PenModel:
+        setSelectedShapeType(Tools.Pen);
+        break;
+      case LineModel:
+        setSelectedShapeType(Tools.Line);
+        break;
+      case EllipseModel:
+        setSelectedShapeType(Tools.Ellipse);
+        break;
+      case ArrowModel:
+        setSelectedShapeType(Tools.Arrow);
+        break;
+      case PolygonModel:
+        setSelectedShapeType(Tools.Polygon);
+        break;
+      case TextModel:
+        setSelectedShapeType(Tools.Text);
+        break;
+      case ImageModel:
+        setSelectedShapeType(Tools.Image);
+        break;
+      default:
+        setSelectedShapeType(null);
+    }
+  }, []);
+
   const draw = useCallback(
     (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, drawFn: () => void) => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -100,9 +146,11 @@ export default function Home() {
       //draw all shapes
       Store.drawAllShapes(ctx);
 
+      detectSelectedShape();
+
       drawFn();
     },
-    [selectedTool]
+    [detectSelectedShape, selectedTool]
   );
 
   const keyDownHandler = useCallback(
@@ -123,10 +171,10 @@ export default function Home() {
       //handle undo redo
       if (e.key === 'z' && e.ctrlKey) {
         //do not undo if any text input is focused
-        e.preventDefault()
-        TextModel.convertToCanvas(parentRef.current as HTMLElement)
+        e.preventDefault();
+        TextModel.convertToCanvas(parentRef.current as HTMLElement);
         UndoRedoService.undo(selectedTool);
-        TextModel.convertToHtml(parentRef.current as HTMLElement)
+        TextModel.convertToHtml(parentRef.current as HTMLElement);
       } else if (e.key === 'y' && e.ctrlKey) {
         UndoRedoService.redo(selectedTool);
       }
@@ -308,6 +356,7 @@ export default function Home() {
     selectedStrokeVariant,
     selectedStrokeWidth,
     selectedTool,
+    selectedShapeType,
     selectedFillColor,
     selectedShapeSides,
     selectedShapeRotation,
@@ -361,9 +410,10 @@ export default function Home() {
 
   return (
     <div className={'h-full bg-white relative overflow-hidden'} ref={parentRef}>
-      {![Tools.Select, Tools.Eraser, Tools.Image].includes(selectedTool) && (
+      {![Tools.Eraser, Tools.Image].includes(selectedTool) && (
         <PropertiesCard
           selectedTool={selectedTool}
+          selectedShapeType={selectedShapeType}
           selectedStrokeColor={selectedStrokeColor}
           setSelectedStrokeColor={(color) => {
             setSelectedStrokeColor(color as StrokeColor);
