@@ -41,6 +41,11 @@ export function deepCopy<T>(source: T): T {
     return mapCopy as any;
   }
 
+  // Handle HTML Elements
+  if (source instanceof HTMLElement) {
+    return source.cloneNode(true) as T;
+  }
+
   // Handle Object and Class instances
   const objectCopy = Object.create(Object.getPrototypeOf(source));
   for (const key in source) {
