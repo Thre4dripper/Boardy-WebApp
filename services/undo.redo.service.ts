@@ -14,6 +14,7 @@ export enum UndoRedoEventType {
   DELETE = 'DELETE',
   MOVE = 'MOVE',
   RESIZE = 'RESIZE',
+  UPDATE = 'UPDATE',
 }
 
 type UndoRedoEvent = {
@@ -113,6 +114,11 @@ class UndoRedoService {
         Store.allShapes.splice(event.index, 1);
         Store.allShapes.splice(event.index, 0, event.shape.from!);
         break;
+      case UndoRedoEventType.UPDATE:
+        //update the shape back to its previous state by deleting the current shape and adding the previous shape
+        Store.allShapes.splice(event.index, 1);
+        Store.allShapes.splice(event.index, 0, event.shape.from!);
+        break;
     }
   }
 
@@ -143,6 +149,11 @@ class UndoRedoService {
         break;
       case UndoRedoEventType.RESIZE:
         //resize the shape back to its previous size by deleting the current shape and adding the previous shape
+        Store.allShapes.splice(event.index, 1);
+        Store.allShapes.splice(event.index, 0, event.shape.to!);
+        break;
+      case UndoRedoEventType.UPDATE:
+        //update the shape back to its previous state by deleting the current shape and adding the previous shape
         Store.allShapes.splice(event.index, 1);
         Store.allShapes.splice(event.index, 0, event.shape.to!);
         break;

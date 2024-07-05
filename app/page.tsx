@@ -410,42 +410,44 @@ export default function Home() {
 
   return (
     <div className={'h-full bg-white relative overflow-hidden'} ref={parentRef}>
-      {![Tools.Eraser, Tools.Image].includes(selectedTool) && (
-        <PropertiesCard
-          selectedTool={selectedTool}
-          selectedShapeType={selectedShapeType}
-          selectedStrokeColor={selectedStrokeColor}
-          setSelectedStrokeColor={(color) => {
-            setSelectedStrokeColor(color as StrokeColor);
-          }}
-          selectedStrokeWidth={selectedStrokeWidth}
-          setSelectedStrokeWidth={setSelectedStrokeWidth}
-          selectedStrokeVariant={selectedStrokeVariant}
-          setSelectedStrokeVariant={(variant) => {
-            setSelectedStrokeVariant(variant as StrokeVariant);
-          }}
-          selectedFillColor={selectedFillColor}
-          setSelectedFillColor={(color) => {
-            setSelectedFillColor(color as FillColor);
-          }}
-          selectedShapeSides={selectedShapeSides}
-          setSelectedShapeSides={setSelectedShapeSides}
-          selectedShapeRotation={selectedShapeRotation}
-          setSelectedShapeRotation={setSelectedShapeRotation}
-          selectedLeftArrowHead={selectedLeftArrowHead}
-          setSelectedLeftArrowHead={(arrowHead) => {
-            setSelectedLeftArrowHead(arrowHead as ArrowHeads);
-          }}
-          selectedRightArrowHead={selectedRightArrowHead}
-          setSelectedRightArrowHead={(arrowHead) => {
-            setSelectedRightArrowHead(arrowHead as ArrowHeads);
-          }}
-          selectedFontSize={selectedFontSize}
-          setSelectedFontSize={setSelectedFontSize}
-          selectedFontFamily={selectedFontFamily}
-          setSelectedFontFamily={setSelectedFontFamily}
-        />
-      )}
+      {![Tools.Eraser, Tools.Image].includes(selectedTool) &&
+        ((selectedTool === Tools.Select && selectedShapeType !== null) ||
+          (selectedTool !== Tools.Select && selectedShapeType === null)) && (
+          <PropertiesCard
+            selectedTool={selectedTool}
+            selectedShapeType={selectedShapeType}
+            selectedStrokeColor={selectedStrokeColor}
+            setSelectedStrokeColor={(color) => {
+              setSelectedStrokeColor(color as StrokeColor);
+            }}
+            selectedStrokeWidth={selectedStrokeWidth}
+            setSelectedStrokeWidth={setSelectedStrokeWidth}
+            selectedStrokeVariant={selectedStrokeVariant}
+            setSelectedStrokeVariant={(variant) => {
+              setSelectedStrokeVariant(variant as StrokeVariant);
+            }}
+            selectedFillColor={selectedFillColor}
+            setSelectedFillColor={(color) => {
+              setSelectedFillColor(color as FillColor);
+            }}
+            selectedShapeSides={selectedShapeSides}
+            setSelectedShapeSides={setSelectedShapeSides}
+            selectedShapeRotation={selectedShapeRotation}
+            setSelectedShapeRotation={setSelectedShapeRotation}
+            selectedLeftArrowHead={selectedLeftArrowHead}
+            setSelectedLeftArrowHead={(arrowHead) => {
+              setSelectedLeftArrowHead(arrowHead as ArrowHeads);
+            }}
+            selectedRightArrowHead={selectedRightArrowHead}
+            setSelectedRightArrowHead={(arrowHead) => {
+              setSelectedRightArrowHead(arrowHead as ArrowHeads);
+            }}
+            selectedFontSize={selectedFontSize}
+            setSelectedFontSize={setSelectedFontSize}
+            selectedFontFamily={selectedFontFamily}
+            setSelectedFontFamily={setSelectedFontFamily}
+          />
+        )}
       <UndoRedoCard />
       <ToolsCard onToolSelect={setSelectedTool} selectedTool={selectedTool} />
 

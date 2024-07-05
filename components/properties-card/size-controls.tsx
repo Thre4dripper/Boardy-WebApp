@@ -1,4 +1,5 @@
 import { Slider } from '@nextui-org/slider';
+import { useState } from 'react';
 
 interface SizeControlsProps {
   header: string;
@@ -19,6 +20,7 @@ export default function SizeControls({
   selectedSize,
   setSelectedSize,
 }: SizeControlsProps) {
+  const [value, setValue] = useState<number>(selectedSize);
   const handleSizeChange = (width: number) => {
     setSelectedSize(width);
   };
@@ -32,9 +34,10 @@ export default function SizeControls({
         showSteps={showSteps}
         maxValue={max}
         minValue={min}
-        value={selectedSize}
-        onChange={(e) => handleSizeChange(e as number)}
+        value={value}
         className="max-w-md"
+        onChange={(e) => setValue(e as number)}
+        onChangeEnd={(e) => handleSizeChange(e as number)}
         endContent={<div className={'text-xs font-semibold'}>{selectedSize}</div>}
       />
     </div>

@@ -17,6 +17,8 @@ import StrokeVariantControls from '@/components/properties-card/stroke-variant-c
 import ArrowHeadControls from '@/components/properties-card/arrow-head-controls';
 import { StrokeVariant } from '@/enums/StrokeVariant';
 import { ArrowHeads } from '@/enums/ArrowHeads';
+import UndoRedoService, { UndoRedoEventType } from '@/services/undo.redo.service';
+import { deepCopy } from '@/utils/Utils';
 
 export default function ShapeBasedCard({
   selectedShapeType,
@@ -52,6 +54,8 @@ export default function ShapeBasedCard({
       return;
     }
 
+    const fromShape = deepCopy(selectedShape);
+
     if (
       selectedShape instanceof PenModel ||
       selectedShape instanceof LineModel ||
@@ -63,6 +67,15 @@ export default function ShapeBasedCard({
     } else if (selectedShape instanceof TextModel) {
       selectedShape.fontColor = color;
     }
+
+    UndoRedoService.push({
+      type: UndoRedoEventType.UPDATE,
+      index: Store.allShapes.indexOf(selectedShape),
+      shape: {
+        from: fromShape,
+        to: deepCopy(selectedShape),
+      },
+    });
   };
 
   const setSelectedShapeFillColor = (color: FillColor) => {
@@ -71,9 +84,20 @@ export default function ShapeBasedCard({
       return;
     }
 
+    const fromShape = deepCopy(selectedShape);
+
     if (selectedShape instanceof PolygonModel || selectedShape instanceof EllipseModel) {
       (selectedShape as PolygonModel | EllipseModel).fillColor = color;
     }
+
+    UndoRedoService.push({
+      type: UndoRedoEventType.UPDATE,
+      index: Store.allShapes.indexOf(selectedShape),
+      shape: {
+        from: fromShape,
+        to: deepCopy(selectedShape),
+      },
+    });
   };
 
   const setSelectedShapeStrokeWidth = (width: number) => {
@@ -81,6 +105,8 @@ export default function ShapeBasedCard({
     if (!selectedShape) {
       return;
     }
+
+    const fromShape = deepCopy(selectedShape);
 
     if (
       selectedShape instanceof PenModel ||
@@ -91,6 +117,15 @@ export default function ShapeBasedCard({
     ) {
       selectedShape.strokeWidth = width;
     }
+
+    UndoRedoService.push({
+      type: UndoRedoEventType.UPDATE,
+      index: Store.allShapes.indexOf(selectedShape),
+      shape: {
+        from: fromShape,
+        to: deepCopy(selectedShape),
+      },
+    });
   };
 
   const setSelectedShapeStrokeVariant = (variant: StrokeVariant) => {
@@ -98,6 +133,8 @@ export default function ShapeBasedCard({
     if (!selectedShape) {
       return;
     }
+
+    const fromShape = deepCopy(selectedShape);
 
     if (
       selectedShape instanceof PenModel ||
@@ -108,6 +145,15 @@ export default function ShapeBasedCard({
     ) {
       selectedShape.strokeVariant = variant;
     }
+
+    UndoRedoService.push({
+      type: UndoRedoEventType.UPDATE,
+      index: Store.allShapes.indexOf(selectedShape),
+      shape: {
+        from: fromShape,
+        to: deepCopy(selectedShape),
+      },
+    });
   };
 
   /* METHODS FOR TEXT SHAPE */
@@ -117,9 +163,20 @@ export default function ShapeBasedCard({
       return;
     }
 
+    const fromShape = deepCopy(selectedShape);
+
     if (selectedShape instanceof TextModel) {
       selectedShape.fontColor = color;
     }
+
+    UndoRedoService.push({
+      type: UndoRedoEventType.UPDATE,
+      index: Store.allShapes.indexOf(selectedShape),
+      shape: {
+        from: fromShape,
+        to: deepCopy(selectedShape),
+      },
+    });
   };
 
   const setSelectedTextFontSize = (size: number) => {
@@ -128,9 +185,20 @@ export default function ShapeBasedCard({
       return;
     }
 
+    const fromShape = deepCopy(selectedShape);
+
     if (selectedShape instanceof TextModel) {
       selectedShape.fontSize = size;
     }
+
+    UndoRedoService.push({
+      type: UndoRedoEventType.UPDATE,
+      index: Store.allShapes.indexOf(selectedShape),
+      shape: {
+        from: fromShape,
+        to: deepCopy(selectedShape),
+      },
+    });
   };
 
   const setSelectedTextFontFamily = (font: string) => {
@@ -139,9 +207,20 @@ export default function ShapeBasedCard({
       return;
     }
 
+    const fromShape = deepCopy(selectedShape);
+
     if (selectedShape instanceof TextModel) {
       selectedShape.fontFamily = font;
     }
+
+    UndoRedoService.push({
+      type: UndoRedoEventType.UPDATE,
+      index: Store.allShapes.indexOf(selectedShape),
+      shape: {
+        from: fromShape,
+        to: deepCopy(selectedShape),
+      },
+    });
   };
 
   /* METHODS FOR POLYGON SHAPE */
@@ -151,9 +230,20 @@ export default function ShapeBasedCard({
       return;
     }
 
+    const fromShape = deepCopy(selectedShape);
+
     if (selectedShape instanceof PolygonModel) {
       selectedShape.sides = sides;
     }
+
+    UndoRedoService.push({
+      type: UndoRedoEventType.UPDATE,
+      index: Store.allShapes.indexOf(selectedShape),
+      shape: {
+        from: fromShape,
+        to: deepCopy(selectedShape),
+      },
+    });
   };
 
   const setSelectedPolygonRotation = (rotation: number) => {
@@ -162,9 +252,20 @@ export default function ShapeBasedCard({
       return;
     }
 
+    const fromShape = deepCopy(selectedShape);
+
     if (selectedShape instanceof PolygonModel) {
       selectedShape.rotation = rotation;
     }
+
+    UndoRedoService.push({
+      type: UndoRedoEventType.UPDATE,
+      index: Store.allShapes.indexOf(selectedShape),
+      shape: {
+        from: fromShape,
+        to: deepCopy(selectedShape),
+      },
+    });
   };
 
   /* METHODS FOR ARROW SHAPE */
@@ -174,9 +275,20 @@ export default function ShapeBasedCard({
       return;
     }
 
+    const fromShape = deepCopy(selectedShape);
+
     if (selectedShape instanceof ArrowModel) {
       selectedShape.leftArrowHead = arrowHead;
     }
+
+    UndoRedoService.push({
+      type: UndoRedoEventType.UPDATE,
+      index: Store.allShapes.indexOf(selectedShape),
+      shape: {
+        from: fromShape,
+        to: deepCopy(selectedShape),
+      },
+    });
   };
 
   const setSelectedArrowRightArrowHead = (arrowHead: ArrowHeads) => {
@@ -185,9 +297,20 @@ export default function ShapeBasedCard({
       return;
     }
 
+    const fromShape = deepCopy(selectedShape);
+
     if (selectedShape instanceof ArrowModel) {
       selectedShape.rightArrowHead = arrowHead;
     }
+
+    UndoRedoService.push({
+      type: UndoRedoEventType.UPDATE,
+      index: Store.allShapes.indexOf(selectedShape),
+      shape: {
+        from: fromShape,
+        to: deepCopy(selectedShape),
+      },
+    });
   };
 
   return (
