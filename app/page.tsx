@@ -23,6 +23,7 @@ import ResizeService from '@/services/resize.service';
 import ImageModel from '@/models/image.model';
 import UndoRedoCard from '@/components/UndoRedoCard';
 import UndoRedoService from '@/services/undo.redo.service';
+import { useSocket } from '@/providers/SocketProvider';
 
 export type Mouse = {
   x: number;
@@ -80,6 +81,8 @@ export default function Home() {
   //text controls
   const [selectedFontSize, setSelectedFontSize] = useState<number>(30);
   const [selectedFontFamily, setSelectedFontFamily] = useState<string>(Fonts.Arial);
+
+  const socket = useSocket();
 
   const initCanvas = useCallback(() => {
     if (!canvasRef.current) return;
@@ -367,6 +370,10 @@ export default function Home() {
     keyDownHandler,
     pasteImageHandler,
   ]);
+
+  if (socket) {
+    socket.send(JSON.stringify({ type: 'message', data: 'Hello from client' }));
+  }
 
   const throttle = (callback: Function, delay: number) => {
     let previousCall = new Date().getTime();
