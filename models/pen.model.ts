@@ -76,10 +76,26 @@ class PenModel extends BaseModel {
   static drawStoredPen(ctx: CanvasRenderingContext2D, pen: PenModel) {
     BaseModel.draw(pen, ctx);
     ctx.beginPath();
+    ctx.moveTo(pen.path[0].x, pen.path[0].y); // Move to the start of the path
+
     for (let i = 0; i < pen.path.length - 1; i++) {
-      ctx.moveTo(pen.path[i].x, pen.path[i].y);
-      ctx.lineTo(pen.path[i + 1].x, pen.path[i + 1].y);
+      const midPoint = {
+        x: (pen.path[i].x + pen.path[i + 1].x) / 2,
+        y: (pen.path[i].y + pen.path[i + 1].y) / 2,
+      };
+      if (i === 0) {
+        ctx.lineTo(midPoint.x, midPoint.y); // Move to the first midpoint
+      } else {
+        ctx.quadraticCurveTo(pen.path[i].x, pen.path[i].y, midPoint.x, midPoint.y);
+      }
     }
+
+    // For the last segment, draw a line to the last point
+    if (pen.path.length > 1) {
+      const lastPoint = pen.path[pen.path.length - 1];
+      ctx.lineTo(lastPoint.x, lastPoint.y);
+    }
+
     ctx.stroke();
 
     if (pen.isSelected) {
