@@ -168,13 +168,13 @@ export default function Home() {
         });
       }
 
+      //do not handle undo redo if any text input is focused
+      if (TextModel.isAnyTextFocused(parentRef.current as HTMLElement)) return;
+
       //handle undo redo
       if (e.key === 'z' && e.ctrlKey) {
-        //do not undo if any text input is focused
         e.preventDefault();
-        TextModel.convertToCanvas(parentRef.current as HTMLElement);
         UndoRedoService.undo(selectedTool);
-        TextModel.convertToHtml(parentRef.current as HTMLElement);
       } else if (e.key === 'y' && e.ctrlKey) {
         UndoRedoService.redo(selectedTool);
       }
