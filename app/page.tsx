@@ -454,6 +454,7 @@ export default function Home() {
       <ToolsCard onToolSelect={setSelectedTool} selectedTool={selectedTool} />
       <IconCard />
       <ShareCard />
+      <DarkSwitch />
 
       <canvas
         className={'h-full w-full'}
