@@ -25,6 +25,9 @@ import UndoRedoCard from '@/components/UndoRedoCard';
 import UndoRedoService from '@/services/undo.redo.service';
 import IconCard from '@/components/IconCard';
 import ShareCard from '@/components/ShareCard';
+import DarkSwitch from '@/components/theme-switch/Switch';
+import { useTheme } from '@/providers/ThemeProvider';
+import { Theme } from '@/enums/Theme';
 
 export type Mouse = {
   x: number;
@@ -37,6 +40,8 @@ export type Mouse = {
   cursorState: 'move' | 'resize' | 'none';
 };
 export default function Home() {
+  const { theme } = useTheme();
+
   const parentRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mouseRef = useRef<Mouse>({
@@ -411,7 +416,7 @@ export default function Home() {
   };
 
   return (
-    <div className={'h-full bg-white relative overflow-hidden'} ref={parentRef}>
+    <div className={`${theme} h-full bg-white relative overflow-hidden`} ref={parentRef}>
       {![Tools.Eraser, Tools.Image].includes(selectedTool) &&
         ((selectedTool === Tools.Select && selectedShapeType !== null) ||
           (selectedTool !== Tools.Select && selectedShapeType === null)) && (
@@ -457,6 +462,9 @@ export default function Home() {
       <DarkSwitch />
 
       <canvas
+        style={{
+          background: theme === Theme.Dark ? '#21242c' : '#f9fafb',
+        }}
         className={'h-full w-full'}
         ref={canvasRef}
         onMouseMove={handleMouseMove}
