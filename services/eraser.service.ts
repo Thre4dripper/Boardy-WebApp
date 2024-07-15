@@ -9,11 +9,16 @@ import PolygonModel from '@/models/polygon.model';
 import TextModel from '@/models/text.model';
 import ImageModel from '@/models/image.model';
 import UndoRedoService, { UndoRedoEventType } from '@/services/undo.redo.service';
+import { Theme } from '@/enums/Theme';
 
 class EraserService {
   static eraserTrail: { x: number; y: number }[] = [];
 
-  static drawEraser(mouseRef: React.MutableRefObject<Mouse>, ctx: CanvasRenderingContext2D) {
+  static drawEraser(
+    mouseRef: React.MutableRefObject<Mouse>,
+    ctx: CanvasRenderingContext2D,
+    theme: Theme
+  ) {
     const { x, y } = mouseRef.current;
     ctx.beginPath();
     ctx.lineWidth = 1;
@@ -27,7 +32,7 @@ class EraserService {
 
     if (mouseRef.current.down) {
       EraserService.eraserTrail.push({ x, y });
-      EraserService.drawEraserTrail(ctx);
+      EraserService.drawEraserTrail(ctx, theme);
       setTimeout(() => {
         EraserService.erase(mouseRef, ctx);
         EraserService.eraserTrail.shift();
@@ -35,11 +40,11 @@ class EraserService {
     }
   }
 
-  private static drawEraserTrail(ctx: CanvasRenderingContext2D) {
+  private static drawEraserTrail(ctx: CanvasRenderingContext2D, theme: Theme) {
     if (EraserService.eraserTrail.length < 3) return;
 
     ctx.beginPath();
-    ctx.strokeStyle = 'lightgray';
+    ctx.strokeStyle = theme === Theme.Dark ? 'gray' : 'lightgray';
     ctx.lineWidth = 8;
     ctx.setLineDash([]);
     ctx.lineJoin = 'round';

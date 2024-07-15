@@ -336,7 +336,11 @@ export default function Home() {
           );
           break;
         case Tools.Eraser:
-          draw(canvas, offscreenCtx, EraserService.drawEraser.bind(null, mouseRef, offscreenCtx));
+          draw(
+            canvas,
+            offscreenCtx,
+            EraserService.drawEraser.bind(null, mouseRef, offscreenCtx, theme)
+          );
           mouseRef.current.cursor = Cursors.NONE;
           break;
       }
@@ -373,6 +377,7 @@ export default function Home() {
     selectedFontFamily,
     keyDownHandler,
     pasteImageHandler,
+    theme
   ]);
 
   const throttle = (callback: Function, delay: number) => {
