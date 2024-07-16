@@ -7,6 +7,8 @@ import TextModel from '@/models/text.model';
 import { Tools } from '@/enums/Tools';
 import BaseModel from '@/models/base.model';
 import ImageModel from '@/models/image.model';
+import { Theme } from '@/enums/Theme';
+import { StrokeColor } from '@/enums/Colors';
 
 export type Shape =
   | PenModel
@@ -113,6 +115,37 @@ class Store {
           break;
       }
     });
+  }
+
+  static changeShapesTheme(theme: Theme, parentDiv: HTMLElement) {
+    //change all shapes themes
+    this.allShapes.forEach((shape) => {
+      switch (shape.constructor) {
+        case PenModel:
+        case LineModel:
+        case EllipseModel:
+        case ArrowModel:
+        case PolygonModel:
+          const base = shape as BaseModel;
+          // for changing the stroke color of the shapes based on the theme,
+          // the stroke color should be either black or white
+          if ([StrokeColor.Black, StrokeColor.White].includes(base.strokeColor)) {
+            base.strokeColor = theme === Theme.Dark ? StrokeColor.White : StrokeColor.Black;
+          }
+          break;
+        case TextModel:
+          const text = shape as TextModel;
+
+          //changing theme for canvas converted text
+          if ([StrokeColor.Black, StrokeColor.White].includes(text.fontColor)) {
+            text.fontColor = theme === Theme.Dark ? StrokeColor.White : StrokeColor.Black;
+          }
+          break;
+        default:
+          break;
+      }
+    });
+    TextModel.changeTextTheme(parentDiv, theme);
   }
 }
 

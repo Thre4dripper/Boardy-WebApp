@@ -67,7 +67,9 @@ export default function Home() {
     | null
   >(null);
 
-  const [selectedStrokeColor, setSelectedStrokeColor] = useState<StrokeColor>(StrokeColor.Black);
+  const [selectedStrokeColor, setSelectedStrokeColor] = useState<StrokeColor>(
+    theme === Theme.Dark ? StrokeColor.White : StrokeColor.Black
+  );
   const [selectedStrokeWidth, setSelectedStrokeWidth] = useState<number>(3);
   const [selectedStrokeVariant, setSelectedStrokeVariant] = useState<StrokeVariant>(
     StrokeVariant.Solid
@@ -353,6 +355,10 @@ export default function Home() {
 
     animate();
 
+    //change theme of existing shapes
+    Store.changeShapesTheme(theme, parentRef.current as HTMLElement);
+    UndoRedoService.changeTheme(theme);
+
     document.addEventListener('keydown', keyDownHandler);
     document.addEventListener('paste', pasteImageHandler);
     return () => {
@@ -377,7 +383,7 @@ export default function Home() {
     selectedFontFamily,
     keyDownHandler,
     pasteImageHandler,
-    theme
+    theme,
   ]);
 
   const throttle = (callback: Function, delay: number) => {

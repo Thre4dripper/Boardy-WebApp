@@ -30,7 +30,7 @@ export default function SizeControls({
       <Slider
         size={size}
         step={1}
-        color="foreground"
+        color="secondary"
         showSteps={showSteps}
         maxValue={max}
         minValue={min}

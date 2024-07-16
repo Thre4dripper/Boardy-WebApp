@@ -1,5 +1,5 @@
 'use client';
-import { createContext, ReactNode, useContext, useState } from 'react';
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { Theme } from '@/enums/Theme';
 
 interface ThemeContext {

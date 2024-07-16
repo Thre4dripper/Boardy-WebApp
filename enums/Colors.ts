@@ -1,9 +1,10 @@
 export enum StrokeColor {
+  Black = 'rgba(45,51,59,1)',
+  White = 'rgba(255,255,255,1)',
   Red = 'rgba(255,31,31,1)',
   Green = 'rgba(29,189,37,1)',
   Blue = 'rgba(94,104,255,1)',
   Purple = 'rgba(236,97,236,1)',
-  Black = 'rgba(45,51,59,1)',
   Orange = 'rgba(255,149,0,1)',
   Yellow = 'rgba(255,255,85,1)',
   Teal = 'rgba(29,207,203,1)',
@@ -20,11 +21,12 @@ export enum StrokeColor {
 
 export enum FillColor {
   Transparent = 'rgba(0,0,0,0)',
+  Black = StrokeColor.Black,
+  White = StrokeColor.White,
   Red = StrokeColor.Red,
   Green = StrokeColor.Green,
   Blue = StrokeColor.Blue,
   Purple = StrokeColor.Purple,
-  Black = StrokeColor.Black,
   Orange = StrokeColor.Orange,
   Yellow = StrokeColor.Yellow,
   Teal = StrokeColor.Teal,

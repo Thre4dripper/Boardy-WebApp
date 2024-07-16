@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { FillColor, StrokeColor } from '@/enums/Colors';
 import { Ban } from 'lucide-react';
 import { ColorControl } from '@/components/properties-card/index';
+import { useTheme } from '@/providers/ThemeProvider';
+import { Theme } from '@/enums/Theme';
 
 interface StrokeColorProps {
   header: string;
@@ -18,15 +20,34 @@ export default function ColorControls({
   selectedColor,
   setSelectedColor,
 }: StrokeColorProps) {
+  const { theme } = useTheme();
+
+  if (selectedColor === StrokeColor.Black || selectedColor === StrokeColor.White) {
+    setSelectedColor(theme === Theme.Dark ? StrokeColor.White : StrokeColor.Black);
+  }
+
   // states for stroke color
-  const allStrokeColors = Object.values(StrokeColor);
+  const allStrokeColors = Object.values(StrokeColor).filter((color) => {
+    if (theme === Theme.Dark) {
+      return color !== StrokeColor.Black;
+    } else {
+      return color !== StrokeColor.White;
+    }
+  });
+
   const [selectedStrokeShade, setSelectedStrokeShade] = useState<number>(3);
   const [baseStrokeColorIndex, setBaseStrokeColorIndex] = useState<number>(
     allStrokeColors.findIndex((color) => color === selectedColor)
   );
 
   // states for fill color
-  const allFillColors = Object.values(FillColor);
+  const allFillColors = Object.values(FillColor).filter((color) => {
+    if (theme === Theme.Dark) {
+      return color !== FillColor.Black;
+    } else {
+      return color !== FillColor.White;
+    }
+  });
   const [selectedFillShade, setSelectedFillShade] = useState<number>(1);
   const [baseFillColorIndex, setBaseFillColorIndex] = useState<number>(
     allFillColors.findIndex((color) => color === selectedColor)
@@ -87,7 +108,7 @@ export default function ColorControls({
           </div>
         )}
         {/*For Both*/}
-        {Object.values(StrokeColor)
+        {allStrokeColors
           .slice(0, type === 'stroke' || type === 'text' ? 6 : 5)
           .map((color, index) => (
             <div
@@ -115,7 +136,11 @@ export default function ColorControls({
         <Divider orientation={'vertical'} className={'h-8 mx-2'} />
         <div className={'flex-1'} />
 
-        <Popover placement="right-end" showArrow={true}>
+        <Popover
+          color={`${theme === Theme.Dark ? 'foreground' : 'default'}`}
+          placement="right-end"
+          showArrow={true}
+        >
           <PopoverTrigger>
             <div className={'flex justify-center items-center'}>
               {/*Separate logic for stroke and fill color*/}
@@ -141,37 +166,41 @@ export default function ColorControls({
           </PopoverTrigger>
           <PopoverContent>
             <div className={'flex flex-col gap-2 p-2'}>
-              <div className={'text-slate-700 text-xs font-semibold '}>Colors</div>
+              <div
+                className={`${theme === Theme.Light ? 'text-slate-700' : ''} text-xs font-semibold`}
+              >
+                Colors
+              </div>
               <div className={'grid grid-cols-4 gap-2'}>
-                {Object.values(StrokeColor)
-                  .slice(5)
-                  .map((color, index) => (
+                {allStrokeColors.slice(5).map((color, index) => (
+                  <div
+                    key={index}
+                    className={'w-8 h-8 rounded-lg cursor-pointer flex justify-center items-center'}
+                    style={{
+                      border: selectedIndex === index + 5 ? `1.5px solid #272e3f` : 'none',
+                    }}
+                    onClick={handleColorChange.bind(null, color)}
+                  >
                     <div
-                      key={index}
-                      className={
-                        'w-8 h-8 rounded-lg cursor-pointer flex justify-center items-center'
-                      }
+                      className={'w-7 h-7 rounded-lg border-2 border-white'}
                       style={{
-                        border: selectedIndex === index + 5 ? `1.5px solid #272e3f` : 'none',
+                        backgroundColor: color,
+                        opacity:
+                          // separate logic for stroke and fill color
+                          type === 'stroke' || type === 'text'
+                            ? (selectedStrokeShade + 1) * 0.25
+                            : (selectedFillShade + 1) * 0.25,
                       }}
-                      onClick={handleColorChange.bind(null, color)}
-                    >
-                      <div
-                        className={'w-7 h-7 rounded-lg border-2 border-white'}
-                        style={{
-                          backgroundColor: color,
-                          opacity:
-                            // separate logic for stroke and fill color
-                            type === 'stroke' || type === 'text'
-                              ? (selectedStrokeShade + 1) * 0.25
-                              : (selectedFillShade + 1) * 0.25,
-                        }}
-                      />
-                    </div>
-                  ))}
+                    />
+                  </div>
+                ))}
               </div>
               <Divider className={'my-2'} />
-              <div className={'text-slate-700 text-xs font-semibold'}>Shades</div>
+              <div
+                className={`${theme === Theme.Light ? 'text-slate-700' : ''} text-xs font-semibold`}
+              >
+                Shades
+              </div>
               <div className={'grid grid-cols-4 gap-1'}>
                 {Array.from({ length: 4 }).map((_, index) => (
                   <div

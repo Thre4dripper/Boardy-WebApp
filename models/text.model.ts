@@ -6,6 +6,7 @@ import SelectionService from '@/services/selection.service';
 import Store from '@/store/Store';
 import ResizeService from '@/services/resize.service';
 import UndoRedoService, { UndoRedoEventType } from '@/services/undo.redo.service';
+import { Theme } from '@/enums/Theme';
 
 class TextModel {
   x: number;
@@ -270,8 +271,13 @@ class TextModel {
     });
 
     return inputElements.some((inputElement) => {
-      return document.activeElement === inputElement
+      return document.activeElement === inputElement;
     });
+  }
+
+  static changeTextTheme(parentDiv: HTMLElement, theme: Theme) {
+    // TODO change input elements color, style cannot be directly changed
+    // because it catch rgba value to only rgb if it has alpha value 1, so we have do some string manipulation
   }
 }
 
