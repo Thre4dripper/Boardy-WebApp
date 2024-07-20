@@ -22,8 +22,15 @@ export default function ColorControls({
 }: StrokeColorProps) {
   const { theme } = useTheme();
 
-  if (selectedColor === StrokeColor.Black || selectedColor === StrokeColor.White) {
-    setSelectedColor(theme === Theme.Dark ? StrokeColor.White : StrokeColor.Black);
+  const shade = selectedColor.split(',')[3].replace(')', '');
+  const baseColor = selectedColor.substring(0, selectedColor.lastIndexOf(','));
+
+  if (StrokeColor.Black.includes(baseColor) || StrokeColor.White.includes(baseColor)) {
+    setSelectedColor(
+      theme === Theme.Dark
+        ? (StrokeColor.White.replace('1)', shade + ')') as StrokeColor)
+        : (StrokeColor.Black.replace('1)', shade + ')') as StrokeColor)
+    );
   }
 
   // states for stroke color

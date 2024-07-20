@@ -275,9 +275,38 @@ class TextModel {
     });
   }
 
-  static changeTextTheme(parentDiv: HTMLElement, theme: Theme) {
+  static changeHtmlTextTheme(parentDiv: HTMLElement, theme: Theme) {
     // TODO change input elements color, style cannot be directly changed
     // because it catch rgba value to only rgb if it has alpha value 1, so we have do some string manipulation
+    const allChildren = Array.from(parentDiv.children);
+
+    const inputElements = allChildren.filter((child) => {
+      return child.className === TextModel.TEXT_DIV_TAG;
+    });
+
+    inputElements.forEach((inputElement) => {
+      const input = inputElement as HTMLDivElement;
+      let shade = input.style.color.split(',')[3];
+      let baseColor = input.style.color as StrokeColor;
+      if (shade === undefined) {
+        shade = '1';
+        baseColor = baseColor.replace('rgb', 'rgba').replace(')', ',1)') as StrokeColor;
+      } else {
+        shade = shade.replace(')', '');
+      }
+
+      //remove white spaces
+      baseColor = baseColor
+        .replaceAll(' ', '')
+        .substring(0, baseColor.lastIndexOf(',') - 1) as StrokeColor;
+
+      if (StrokeColor.Black.includes(baseColor) || StrokeColor.White.includes(baseColor)) {
+        input.style.color =
+          theme === Theme.Dark
+            ? (StrokeColor.White.replace('1)', shade + ')') as StrokeColor)
+            : (StrokeColor.Black.replace('1)', shade + ')') as StrokeColor);
+      }
+    });
   }
 }
 
