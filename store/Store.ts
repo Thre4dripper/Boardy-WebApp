@@ -8,7 +8,7 @@ import { Tools } from '@/enums/Tools';
 import BaseModel from '@/models/base.model';
 import ImageModel from '@/models/image.model';
 import { Theme } from '@/enums/Theme';
-import { StrokeColor } from '@/enums/Colors';
+import ThemeService from '@/services/theme.service';
 
 export type Shape =
   | PenModel
@@ -117,62 +117,10 @@ class Store {
     });
   }
 
-  static changeShapesTheme(theme: Theme, parentDiv: HTMLElement) {
+  static changeTheme(theme: Theme, parentDiv: HTMLElement) {
     //change all shapes themes
     this.allShapes.forEach((shape) => {
-      switch (shape.constructor) {
-        case PenModel:
-        case LineModel:
-        case EllipseModel:
-        case ArrowModel:
-        case PolygonModel:
-          {
-            const base = shape as BaseModel;
-            // for changing the stroke color of the shapes based on the theme,
-            // the stroke color should be either black or white or their shades
-            const shade = base.strokeColor.split(',')[3].replace(')', '');
-            const baseColor = base.strokeColor.substring(0, base.strokeColor.lastIndexOf(','));
-
-            if (StrokeColor.Black.includes(baseColor) || StrokeColor.White.includes(baseColor)) {
-              base.strokeColor =
-                theme === Theme.Dark
-                  ? (StrokeColor.White.replace('1)', shade + ')') as StrokeColor)
-                  : (StrokeColor.Black.replace('1)', shade + ')') as StrokeColor);
-            }
-          }
-          break;
-        case TextModel:
-          {
-            const text = shape as TextModel;
-            //changing theme for canvas converted text
-            let shade = text.fontColor.split(',')[3];
-            let baseColor = text.fontColor;
-            if (shade === undefined) {
-              //it means the color is rgb() not rgba()
-              //convert it to rgba() by adding alpha value 1
-
-              baseColor = baseColor.replace('rgb', 'rgba').replace(')', ',1)') as StrokeColor;
-
-              shade = '1';
-            } else {
-              shade = shade.replace(')', '');
-            }
-
-            baseColor = baseColor
-              .replaceAll(' ', '')
-              .substring(0, baseColor.lastIndexOf(',') - 1) as StrokeColor;
-
-            if (StrokeColor.Black.includes(baseColor) || StrokeColor.White.includes(baseColor)) {
-              text.fontColor =
-                theme === Theme.Dark
-                  ? (StrokeColor.White.replace('1)', shade + ')') as StrokeColor)
-                  : (StrokeColor.Black.replace('1)', shade + ')') as StrokeColor);
-            }
-          }
-          break;
-        default:
-          break;
-      }
+      ThemeService.changeShapesTheme(shape, theme);
     });
     TextModel.changeHtmlTextTheme(parentDiv, theme);
   }

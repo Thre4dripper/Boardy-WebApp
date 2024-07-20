@@ -276,8 +276,7 @@ class TextModel {
   }
 
   static changeHtmlTextTheme(parentDiv: HTMLElement, theme: Theme) {
-    // TODO change input elements color, style cannot be directly changed
-    // because it catch rgba value to only rgb if it has alpha value 1, so we have do some string manipulation
+    // because it catches rgba value to only rgb if it has alpha value 1, so we have do some string manipulation
     const allChildren = Array.from(parentDiv.children);
 
     const inputElements = allChildren.filter((child) => {

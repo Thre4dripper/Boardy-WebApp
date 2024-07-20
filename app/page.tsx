@@ -356,7 +356,7 @@ export default function Home() {
     animate();
 
     //change theme of existing shapes
-    Store.changeShapesTheme(theme, parentRef.current as HTMLElement);
+    Store.changeTheme(theme, parentRef.current as HTMLElement);
     UndoRedoService.changeTheme(theme);
 
     document.addEventListener('keydown', keyDownHandler);

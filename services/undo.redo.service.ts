@@ -9,8 +9,7 @@ import TextModel from '@/models/text.model';
 import ImageModel from '@/models/image.model';
 import { deepCopy } from '@/utils/Utils';
 import { Theme } from '@/enums/Theme';
-import { StrokeColor } from '@/enums/Colors';
-import BaseModel from '@/models/base.model';
+import ThemeService from '@/services/theme.service';
 
 export enum UndoRedoEventType {
   CREATE = 'CREATE',
@@ -216,55 +215,13 @@ class UndoRedoService {
     function eventCallback() {
       return (event: UndoRedoEvent) => {
         const shapeFrom = event.shape.from;
-        const shapeTo = event.shape.to;
-        switch (shapeFrom?.constructor) {
-          case PenModel:
-          case LineModel:
-          case EllipseModel:
-          case ArrowModel:
-          case PolygonModel:
-            const base = shapeFrom as BaseModel;
-            // for changing the stroke color of the shapes based on the theme,
-            // the stroke color should be either black or white
-            if ([StrokeColor.Black, StrokeColor.White].includes(base.strokeColor)) {
-              base.strokeColor = theme === Theme.Dark ? StrokeColor.White : StrokeColor.Black;
-            }
-            break;
-          case TextModel:
-            const text = shapeFrom as TextModel;
-
-            //changing theme for canvas converted text
-            if ([StrokeColor.Black, StrokeColor.White].includes(text.fontColor)) {
-              text.fontColor = theme === Theme.Dark ? StrokeColor.White : StrokeColor.Black;
-            }
-            break;
-          default:
-            break;
+        if (shapeFrom) {
+          ThemeService.changeShapesTheme(shapeFrom, theme);
         }
 
-        switch (shapeTo?.constructor) {
-          case PenModel:
-          case LineModel:
-          case EllipseModel:
-          case ArrowModel:
-          case PolygonModel:
-            const base = shapeTo as BaseModel;
-            // for changing the stroke color of the shapes based on the theme,
-            // the stroke color should be either black or white
-            if ([StrokeColor.Black, StrokeColor.White].includes(base.strokeColor)) {
-              base.strokeColor = theme === Theme.Dark ? StrokeColor.White : StrokeColor.Black;
-            }
-            break;
-          case TextModel:
-            const text = shapeTo as TextModel;
-
-            //changing theme for canvas converted text
-            if ([StrokeColor.Black, StrokeColor.White].includes(text.fontColor)) {
-              text.fontColor = theme === Theme.Dark ? StrokeColor.White : StrokeColor.Black;
-            }
-            break;
-          default:
-            break;
+        const shapeTo = event.shape.to;
+        if (shapeTo) {
+          ThemeService.changeShapesTheme(shapeTo, theme);
         }
       };
     }
