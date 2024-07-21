@@ -24,7 +24,7 @@ import ImageModel from '@/models/image.model';
 import UndoRedoCard from '@/components/UndoRedoCard';
 import UndoRedoService from '@/services/undo.redo.service';
 import IconCard from '@/components/IconCard';
-import ShareCard from '@/components/ShareCard';
+import ExportCard from '@/components/export/ExportCard';
 import DarkSwitch from '@/components/theme-switch/Switch';
 import { useTheme } from '@/providers/ThemeProvider';
 import { Theme } from '@/enums/Theme';
@@ -215,7 +215,7 @@ export default function Home() {
     const animate = () => {
       animateId = requestAnimationFrame(animate);
 
-      //conversion to html or canvas happen before drawing anything else
+      //conversion to HTML or canvas happen before drawing anything else
       if (selectedTool === Tools.Text) {
         TextModel.convertToHtml(parentRef.current as HTMLElement);
       } else {
@@ -426,6 +426,10 @@ export default function Home() {
     mouseRef.current.cursorState = 'none';
   };
 
+  const getCanvasData = useCallback(() => {
+    return canvasRef.current?.toDataURL();
+  }, []);
+
   return (
     <div className={`${theme} h-full bg-white relative overflow-hidden`} ref={parentRef}>
       {![Tools.Eraser, Tools.Image].includes(selectedTool) &&
@@ -469,7 +473,7 @@ export default function Home() {
       <UndoRedoCard />
       <ToolsCard onToolSelect={setSelectedTool} selectedTool={selectedTool} />
       <IconCard />
-      <ShareCard />
+      <ExportCard getCanvasData={getCanvasData} />
       <DarkSwitch />
 
       <canvas
