@@ -18,14 +18,12 @@ interface IThemeProviderProps {
 
 const ThemeProvider = ({ children }: IThemeProviderProps) => {
   const [theme, setTheme] = useState<Theme>(Theme.Light);
-
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
       setTheme(savedTheme as Theme);
     }
   }, []);
-
   return <themeContext.Provider value={{ theme, setTheme }}>{children}</themeContext.Provider>;
 };
 

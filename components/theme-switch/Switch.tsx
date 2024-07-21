@@ -23,7 +23,7 @@ export default function DarkSwitch() {
         className={'absolute top-5 right-32'}
         size="lg"
         color="secondary"
-        defaultSelected={theme === Theme.Dark}
+        isSelected={theme === Theme.Dark}
         thumbIcon={({ isSelected, className }) =>
           isSelected ? <MoonIcon className={className} /> : <SunIcon className={className} />
         }
