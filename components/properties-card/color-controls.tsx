@@ -116,7 +116,7 @@ export default function ColorControls({
         )}
         {/*For Both*/}
         {allStrokeColors
-          .slice(0, type === 'stroke' || type === 'text' ? 6 : 5)
+          .slice(0, type === 'stroke' || type === 'text' ? 5 : 4)
           .map((color, index) => (
             <div
               key={index}
@@ -179,7 +179,7 @@ export default function ColorControls({
                 Colors
               </div>
               <div className={'grid grid-cols-4 gap-2'}>
-                {allStrokeColors.slice(5).map((color, index) => (
+                {allStrokeColors.slice(4).map((color, index) => (
                   <div
                     key={index}
                     className={'w-8 h-8 rounded-lg cursor-pointer flex justify-center items-center'}

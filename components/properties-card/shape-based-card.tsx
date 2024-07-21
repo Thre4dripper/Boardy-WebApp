@@ -19,6 +19,7 @@ import { StrokeVariant } from '@/enums/StrokeVariant';
 import { ArrowHeads } from '@/enums/ArrowHeads';
 import UndoRedoService, { UndoRedoEventType } from '@/services/undo.redo.service';
 import { deepCopy } from '@/utils/Utils';
+import CopyDeleteControls from '@/components/properties-card/copy-delete-controls';
 
 export default function ShapeBasedCard({
   selectedShapeType,
@@ -314,7 +315,7 @@ export default function ShapeBasedCard({
   };
 
   return (
-    <Card className={'w-72 absolute left-4 transform -translate-y-1/2 top-1/2'}>
+    <Card className={'w-56 absolute left-4 transform -translate-y-1/2 top-1/2'}>
       <CardBody className={'px-4 flex flex-col gap-4'}>
         {selectedShapeType === Tools.Text ? (
           <ColorControls
@@ -423,6 +424,7 @@ export default function ShapeBasedCard({
             }}
           />
         )}
+        <CopyDeleteControls />
       </CardBody>
     </Card>
   );

@@ -67,7 +67,7 @@ export default function ExportButtons({ canvasData, includeBackground }: ExportB
     <div className={'flex flex-row gap-4 justify-between w-full'}>
       <Button
         color={'secondary'}
-        variant={'bordered'}
+        variant={'ghost'}
         size={'md'}
         className={'w-full'}
         endContent={<Download className={'w-5 h-5'} />}
@@ -77,7 +77,7 @@ export default function ExportButtons({ canvasData, includeBackground }: ExportB
       </Button>
       <Button
         color={'secondary'}
-        variant={'bordered'}
+        variant={'ghost'}
         size={'md'}
         className={'w-full'}
         endContent={<Copy className={'w-5 h-5'} />}

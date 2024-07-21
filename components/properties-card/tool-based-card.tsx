@@ -32,7 +32,7 @@ export default function ToolBasedCard({
   setSelectedFontFamily,
 }: ToolBasedCardProps) {
   return (
-    <Card className={'w-72 absolute left-4 transform -translate-y-1/2 top-1/2'}>
+    <Card className={'w-56 absolute left-4 transform -translate-y-1/2 top-1/2'}>
       <CardBody className={'px-4 flex flex-col gap-4'}>
         {selectedTool === Tools.Text ? (
           <ColorControls

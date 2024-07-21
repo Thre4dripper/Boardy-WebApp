@@ -71,7 +71,7 @@ export default function Preview({ canvasData, includeBackground }: PreviewProps)
       <div className={`${theme === Theme.Dark ? 'text-white' : 'text-black'} text-medium`}>
         Preview
       </div>
-      {preview && <NextImage src={preview} alt={''} width={300} height={300} ref={imageRef} />}
+      {preview && <NextImage src={preview} alt={''} width={300} height={300} ref={imageRef} className={'rounded-lg'}/>}
     </div>
   );
 }
