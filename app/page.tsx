@@ -29,6 +29,7 @@ import DarkSwitch from '@/components/theme-switch/Switch';
 import { useTheme } from '@/providers/ThemeProvider';
 import { Theme } from '@/enums/Theme';
 import ActionsService from '@/services/actions.service';
+import GithubCard from '@/components/GithubCard';
 
 export type Mouse = {
   x: number;
@@ -513,6 +514,7 @@ export default function Home() {
       <UndoRedoCard />
       <ToolsCard onToolSelect={setSelectedTool} selectedTool={selectedTool} />
       <IconCard />
+      <GithubCard />
       <ExportCard getCanvasData={getCanvasData} />
       <DarkSwitch />
 
