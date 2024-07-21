@@ -1,6 +1,5 @@
 import { Button } from '@nextui-org/button';
 import { Copy, Trash } from 'lucide-react';
-import ActionsService from '@/services/actions.service';
 
 export default function CopyDeleteControls() {
   const handleCopy = () => {
@@ -10,7 +9,7 @@ export default function CopyDeleteControls() {
       ctrlKey: true,
     });
     document.dispatchEvent(event);
-  }
+  };
 
   const handleDelete = () => {
     //fire keydown event for delete
@@ -18,7 +17,7 @@ export default function CopyDeleteControls() {
       key: 'Delete',
     });
     document.dispatchEvent(event);
-  }
+  };
   return (
     <div className={'flex flex-col gap-2'}>
       <div className={'text-xs'}>Actions</div>

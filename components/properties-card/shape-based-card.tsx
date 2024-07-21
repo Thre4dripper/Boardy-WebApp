@@ -1,5 +1,5 @@
 import { ShapeBasedCardProps } from '@/components/properties-card/interface';
-import Store from '@/store/Store';
+import Store, { Shape } from '@/store/Store';
 import { FillColor, StrokeColor } from '@/enums/Colors';
 import PenModel from '@/models/pen.model';
 import LineModel from '@/models/line.model';
@@ -20,6 +20,7 @@ import { ArrowHeads } from '@/enums/ArrowHeads';
 import UndoRedoService, { UndoRedoEventType } from '@/services/undo.redo.service';
 import { deepCopy } from '@/utils/Utils';
 import CopyDeleteControls from '@/components/properties-card/copy-delete-controls';
+import { useCallback } from 'react';
 
 export default function ShapeBasedCard({
   selectedShapeType,
@@ -69,14 +70,11 @@ export default function ShapeBasedCard({
       selectedShape.fontColor = color;
     }
 
-    UndoRedoService.push({
-      type: UndoRedoEventType.UPDATE,
-      index: Store.allShapes.indexOf(selectedShape),
-      shape: {
-        from: fromShape,
-        to: deepCopy(selectedShape),
-      },
-    });
+    pushToUndoRedoService(
+      Store.allShapes.indexOf(selectedShape),
+      fromShape,
+      deepCopy(selectedShape)
+    );
   };
 
   const setSelectedShapeFillColor = (color: FillColor) => {
@@ -91,14 +89,11 @@ export default function ShapeBasedCard({
       (selectedShape as PolygonModel | EllipseModel).fillColor = color;
     }
 
-    UndoRedoService.push({
-      type: UndoRedoEventType.UPDATE,
-      index: Store.allShapes.indexOf(selectedShape),
-      shape: {
-        from: fromShape,
-        to: deepCopy(selectedShape),
-      },
-    });
+    pushToUndoRedoService(
+      Store.allShapes.indexOf(selectedShape),
+      fromShape,
+      deepCopy(selectedShape)
+    );
   };
 
   const setSelectedShapeStrokeWidth = (width: number) => {
@@ -119,14 +114,11 @@ export default function ShapeBasedCard({
       selectedShape.strokeWidth = width;
     }
 
-    UndoRedoService.push({
-      type: UndoRedoEventType.UPDATE,
-      index: Store.allShapes.indexOf(selectedShape),
-      shape: {
-        from: fromShape,
-        to: deepCopy(selectedShape),
-      },
-    });
+    pushToUndoRedoService(
+      Store.allShapes.indexOf(selectedShape),
+      fromShape,
+      deepCopy(selectedShape)
+    );
   };
 
   const setSelectedShapeStrokeVariant = (variant: StrokeVariant) => {
@@ -147,14 +139,11 @@ export default function ShapeBasedCard({
       selectedShape.strokeVariant = variant;
     }
 
-    UndoRedoService.push({
-      type: UndoRedoEventType.UPDATE,
-      index: Store.allShapes.indexOf(selectedShape),
-      shape: {
-        from: fromShape,
-        to: deepCopy(selectedShape),
-      },
-    });
+    pushToUndoRedoService(
+      Store.allShapes.indexOf(selectedShape),
+      fromShape,
+      deepCopy(selectedShape)
+    );
   };
 
   /* METHODS FOR TEXT SHAPE */
@@ -170,14 +159,11 @@ export default function ShapeBasedCard({
       selectedShape.fontColor = color;
     }
 
-    UndoRedoService.push({
-      type: UndoRedoEventType.UPDATE,
-      index: Store.allShapes.indexOf(selectedShape),
-      shape: {
-        from: fromShape,
-        to: deepCopy(selectedShape),
-      },
-    });
+    pushToUndoRedoService(
+      Store.allShapes.indexOf(selectedShape),
+      fromShape,
+      deepCopy(selectedShape)
+    );
   };
 
   const setSelectedTextFontSize = (size: number) => {
@@ -192,14 +178,11 @@ export default function ShapeBasedCard({
       selectedShape.fontSize = size;
     }
 
-    UndoRedoService.push({
-      type: UndoRedoEventType.UPDATE,
-      index: Store.allShapes.indexOf(selectedShape),
-      shape: {
-        from: fromShape,
-        to: deepCopy(selectedShape),
-      },
-    });
+    pushToUndoRedoService(
+      Store.allShapes.indexOf(selectedShape),
+      fromShape,
+      deepCopy(selectedShape)
+    );
   };
 
   const setSelectedTextFontFamily = (font: string) => {
@@ -214,14 +197,11 @@ export default function ShapeBasedCard({
       selectedShape.fontFamily = font;
     }
 
-    UndoRedoService.push({
-      type: UndoRedoEventType.UPDATE,
-      index: Store.allShapes.indexOf(selectedShape),
-      shape: {
-        from: fromShape,
-        to: deepCopy(selectedShape),
-      },
-    });
+    pushToUndoRedoService(
+      Store.allShapes.indexOf(selectedShape),
+      fromShape,
+      deepCopy(selectedShape)
+    );
   };
 
   /* METHODS FOR POLYGON SHAPE */
@@ -237,14 +217,11 @@ export default function ShapeBasedCard({
       selectedShape.sides = sides;
     }
 
-    UndoRedoService.push({
-      type: UndoRedoEventType.UPDATE,
-      index: Store.allShapes.indexOf(selectedShape),
-      shape: {
-        from: fromShape,
-        to: deepCopy(selectedShape),
-      },
-    });
+    pushToUndoRedoService(
+      Store.allShapes.indexOf(selectedShape),
+      fromShape,
+      deepCopy(selectedShape)
+    );
   };
 
   const setSelectedPolygonRotation = (rotation: number) => {
@@ -259,14 +236,11 @@ export default function ShapeBasedCard({
       selectedShape.rotation = rotation;
     }
 
-    UndoRedoService.push({
-      type: UndoRedoEventType.UPDATE,
-      index: Store.allShapes.indexOf(selectedShape),
-      shape: {
-        from: fromShape,
-        to: deepCopy(selectedShape),
-      },
-    });
+    pushToUndoRedoService(
+      Store.allShapes.indexOf(selectedShape),
+      fromShape,
+      deepCopy(selectedShape)
+    );
   };
 
   /* METHODS FOR ARROW SHAPE */
@@ -282,14 +256,11 @@ export default function ShapeBasedCard({
       selectedShape.leftArrowHead = arrowHead;
     }
 
-    UndoRedoService.push({
-      type: UndoRedoEventType.UPDATE,
-      index: Store.allShapes.indexOf(selectedShape),
-      shape: {
-        from: fromShape,
-        to: deepCopy(selectedShape),
-      },
-    });
+    pushToUndoRedoService(
+      Store.allShapes.indexOf(selectedShape),
+      fromShape,
+      deepCopy(selectedShape)
+    );
   };
 
   const setSelectedArrowRightArrowHead = (arrowHead: ArrowHeads) => {
@@ -304,15 +275,23 @@ export default function ShapeBasedCard({
       selectedShape.rightArrowHead = arrowHead;
     }
 
+    pushToUndoRedoService(
+      Store.allShapes.indexOf(selectedShape),
+      fromShape,
+      deepCopy(selectedShape)
+    );
+  };
+
+  const pushToUndoRedoService = useCallback((index: number, fromShape: Shape, toShape: Shape) => {
     UndoRedoService.push({
-      type: UndoRedoEventType.UPDATE,
-      index: Store.allShapes.indexOf(selectedShape),
+      type: UndoRedoEventType.DELETE,
+      index,
       shape: {
         from: fromShape,
-        to: deepCopy(selectedShape),
+        to: toShape,
       },
     });
-  };
+  }, []);
 
   return (
     <Card className={'w-56 absolute left-4 transform -translate-y-1/2 top-1/2'}>

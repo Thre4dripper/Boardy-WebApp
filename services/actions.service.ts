@@ -7,6 +7,7 @@ import ArrowModel from '@/models/arrow.model';
 import EllipseModel from '@/models/ellipse.model';
 import ImageModel from '@/models/image.model';
 import TextModel from '@/models/text.model';
+import UndoRedoService, { UndoRedoEventType } from '@/services/undo.redo.service';
 
 class ActionsService {
   static offset = 15;
@@ -62,6 +63,15 @@ class ActionsService {
     selectedShape.isSelected = false;
     copiedShape.isSelected = true;
     Store.allShapes.push(copiedShape);
+
+    UndoRedoService.push({
+      type: UndoRedoEventType.CREATE,
+      index: Store.allShapes.length - 1,
+      shape: {
+        from: null,
+        to: copiedShape,
+      },
+    });
   }
 
   static deleteSelectedShape() {
@@ -75,6 +85,15 @@ class ActionsService {
 
     const index = shapes.indexOf(selectedShape);
     shapes.splice(index, 1);
+
+    UndoRedoService.push({
+      type: UndoRedoEventType.DELETE,
+      index,
+      shape: {
+        from: selectedShape,
+        to: null,
+      },
+    });
   }
 }
 
