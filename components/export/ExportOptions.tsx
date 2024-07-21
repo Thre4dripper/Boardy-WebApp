@@ -23,7 +23,7 @@ export default function ExportOptions({
           wrapper: `${theme === Theme.Dark ? 'bg-gray-700' : 'bg-gray-200'}`,
         }}
         color={'secondary'}
-        checked={includeBackground}
+        defaultSelected={includeBackground}
         onValueChange={(value) => setIncludeBackground(value)}
       />
     </div>
