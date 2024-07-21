@@ -28,6 +28,7 @@ import ExportCard from '@/components/export/ExportCard';
 import DarkSwitch from '@/components/theme-switch/Switch';
 import { useTheme } from '@/providers/ThemeProvider';
 import { Theme } from '@/enums/Theme';
+import ActionsService from '@/services/actions.service';
 
 export type Mouse = {
   x: number;
@@ -186,6 +187,16 @@ export default function Home() {
         UndoRedoService.undo(selectedTool);
       } else if (e.key === 'y' && e.ctrlKey) {
         UndoRedoService.redo(selectedTool);
+      }
+
+      //handle copy
+      if (e.key === 'c' && e.ctrlKey) {
+        ActionsService.copySelectedShape();
+      }
+
+      //handle delete
+      if (e.key === 'Delete') {
+        ActionsService.deleteSelectedShape();
       }
     },
     [selectedTool]
