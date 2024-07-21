@@ -437,6 +437,35 @@ export default function Home() {
     mouseRef.current.cursorState = 'none';
   };
 
+  const onTouchMove = throttle(
+    (e: TouchEvent) => {
+      if (!canvasRef.current) return;
+
+      const canvas = canvasRef.current;
+      const rect = canvas.getBoundingClientRect();
+      mouseRef.current = {
+        x: e.touches[0].clientX - rect.left,
+        y: e.touches[0].clientY - rect.top,
+        prevX: mouseRef.current.x,
+        prevY: mouseRef.current.y,
+        down: mouseRef.current.down,
+        cursor: mouseRef.current.cursor,
+        resizeState: mouseRef.current.resizeState,
+        cursorState: mouseRef.current.cursorState,
+      };
+    },
+    selectedTool === Tools.Eraser ? 0 : 5
+  );
+
+  const onTouchStart = () => {
+    mouseRef.current.down = true;
+  };
+
+  const onTouchEnd = () => {
+    mouseRef.current.down = false;
+    mouseRef.current.cursorState = 'none';
+  };
+
   const getCanvasData = useCallback(() => {
     return canvasRef.current?.toDataURL();
   }, []);
@@ -497,6 +526,9 @@ export default function Home() {
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
+        onTouchMove={onTouchMove}
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
       />
     </div>
   );
