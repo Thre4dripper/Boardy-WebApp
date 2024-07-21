@@ -11,7 +11,9 @@ interface StrokeColorProps {
   header: string;
   type: ColorControl;
   selectedColor: string;
-  setSelectedColor: (color: string) => void;
+  // VERY, VERY IMPORTANT: The undoRedoCount parameter is used to determine
+  // whether the action should be added to the undo/redo stack.
+  setSelectedColor: (color: string, undoRedoCount: boolean) => void;
 }
 
 export default function ColorControls({
@@ -29,7 +31,8 @@ export default function ColorControls({
     setSelectedColor(
       theme === Theme.Dark
         ? (StrokeColor.White.replace('1)', shade + ')') as StrokeColor)
-        : (StrokeColor.Black.replace('1)', shade + ')') as StrokeColor)
+        : (StrokeColor.Black.replace('1)', shade + ')') as StrokeColor),
+      false
     );
   }
 
@@ -66,18 +69,18 @@ export default function ColorControls({
   const handleColorChange = (color: string) => {
     if (type === 'stroke' || type === 'text') {
       const opacity = (selectedStrokeShade + 1) * 0.25;
-      setSelectedColor(color.replace(/[^,]+(?=\))/, opacity.toString()));
+      setSelectedColor(color.replace(/[^,]+(?=\))/, opacity.toString()), true);
 
       const index = allStrokeColors.findIndex((c) => c === color);
       setBaseStrokeColorIndex(index);
     } else {
       //in case of transparent color, just set the color, as there is no shade
       if (color === FillColor.Transparent) {
-        setSelectedColor(color);
+        setSelectedColor(color, true);
         return;
       }
       const opacity = (selectedFillShade + 1) * 0.25;
-      setSelectedColor(color.replace(/[^,]+(?=\))/, opacity.toString()));
+      setSelectedColor(color.replace(/[^,]+(?=\))/, opacity.toString()), true);
 
       const index = allFillColors.findIndex((c) => c === color);
       setBaseFillColorIndex(index);
@@ -89,12 +92,12 @@ export default function ColorControls({
       setSelectedStrokeShade(shade);
       const opacity = (shade + 1) * 0.25;
 
-      setSelectedColor(selectedColor.replace(/[^,]+(?=\))/, opacity.toString()));
+      setSelectedColor(selectedColor.replace(/[^,]+(?=\))/, opacity.toString()), true);
     } else {
       setSelectedFillShade(shade);
       const opacity = (shade + 1) * 0.25;
 
-      setSelectedColor(selectedColor.replace(/[^,]+(?=\))/, opacity.toString()));
+      setSelectedColor(selectedColor.replace(/[^,]+(?=\))/, opacity.toString()), true);
     }
   };
 

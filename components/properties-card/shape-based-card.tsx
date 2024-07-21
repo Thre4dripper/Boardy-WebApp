@@ -50,7 +50,7 @@ export default function ShapeBasedCard({
   };
 
   /* METHODS FOR GENERIC SHAPE */
-  const setSelectedShapeStrokeColor = (color: StrokeColor) => {
+  const setSelectedShapeStrokeColor = (color: StrokeColor, undoRedoCount: boolean) => {
     const selectedShape = getSelectedShape();
     if (!selectedShape) {
       return;
@@ -70,6 +70,8 @@ export default function ShapeBasedCard({
       selectedShape.fontColor = color;
     }
 
+    if (!undoRedoCount) return;
+
     pushToUndoRedoService(
       Store.allShapes.indexOf(selectedShape),
       fromShape,
@@ -77,7 +79,7 @@ export default function ShapeBasedCard({
     );
   };
 
-  const setSelectedShapeFillColor = (color: FillColor) => {
+  const setSelectedShapeFillColor = (color: FillColor, undoRedoCount: boolean) => {
     const selectedShape = getSelectedShape();
     if (!selectedShape) {
       return;
@@ -88,6 +90,8 @@ export default function ShapeBasedCard({
     if (selectedShape instanceof PolygonModel || selectedShape instanceof EllipseModel) {
       (selectedShape as PolygonModel | EllipseModel).fillColor = color;
     }
+
+    if (!undoRedoCount) return;
 
     pushToUndoRedoService(
       Store.allShapes.indexOf(selectedShape),
@@ -147,7 +151,7 @@ export default function ShapeBasedCard({
   };
 
   /* METHODS FOR TEXT SHAPE */
-  const setSelectedTextFontColor = (color: StrokeColor) => {
+  const setSelectedTextFontColor = (color: StrokeColor, undoRedoCount: boolean) => {
     const selectedShape = getSelectedShape();
     if (!selectedShape) {
       return;
@@ -158,6 +162,8 @@ export default function ShapeBasedCard({
     if (selectedShape instanceof TextModel) {
       selectedShape.fontColor = color;
     }
+
+    if (!undoRedoCount) return;
 
     pushToUndoRedoService(
       Store.allShapes.indexOf(selectedShape),
@@ -301,9 +307,9 @@ export default function ShapeBasedCard({
             header={'Font Color'}
             type={'text'}
             selectedColor={selectedStrokeColor}
-            setSelectedColor={(color) => {
+            setSelectedColor={(color, undoRedoCount) => {
               setSelectedStrokeColor(color);
-              setSelectedTextFontColor(color as StrokeColor);
+              setSelectedTextFontColor(color as StrokeColor, undoRedoCount);
             }}
           />
         ) : (
@@ -311,9 +317,9 @@ export default function ShapeBasedCard({
             header={'Stroke Color'}
             type={'stroke'}
             selectedColor={selectedStrokeColor}
-            setSelectedColor={(color) => {
+            setSelectedColor={(color, undoRedoCount) => {
               setSelectedStrokeColor(color);
-              setSelectedShapeStrokeColor(color as StrokeColor);
+              setSelectedShapeStrokeColor(color as StrokeColor, undoRedoCount);
             }}
           />
         )}
@@ -323,9 +329,9 @@ export default function ShapeBasedCard({
               header={'Fill Color'}
               type={'fill'}
               selectedColor={selectedFillColor}
-              setSelectedColor={(color) => {
+              setSelectedColor={(color, undoRedoCount) => {
                 setSelectedFillColor(color);
-                setSelectedShapeFillColor(color as FillColor);
+                setSelectedShapeFillColor(color as FillColor, undoRedoCount);
               }}
             />
           </>

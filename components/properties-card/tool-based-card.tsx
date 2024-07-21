@@ -39,14 +39,14 @@ export default function ToolBasedCard({
             header={'Font Color'}
             type={'text'}
             selectedColor={selectedStrokeColor}
-            setSelectedColor={setSelectedStrokeColor}
+            setSelectedColor={(color, _) => setSelectedStrokeColor(color)}
           />
         ) : (
           <ColorControls
             header={'Stroke Color'}
             type={'stroke'}
             selectedColor={selectedStrokeColor}
-            setSelectedColor={setSelectedStrokeColor}
+            setSelectedColor={(color, _) => setSelectedStrokeColor(color)}
           />
         )}
         {(selectedTool === Tools.Polygon || selectedTool === Tools.Ellipse) && (
@@ -55,7 +55,7 @@ export default function ToolBasedCard({
               header={'Fill Color'}
               type={'fill'}
               selectedColor={selectedFillColor}
-              setSelectedColor={setSelectedFillColor}
+              setSelectedColor={(color, _) => setSelectedFillColor(color)}
             />
           </>
         )}
