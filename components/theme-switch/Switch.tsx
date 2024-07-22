@@ -20,7 +20,7 @@ export default function DarkSwitch() {
       closeDelay={0}
     >
       <Switch
-        className={'absolute top-5 right-32'}
+        className={'absolute top-16 right-2 sm:top-5 sm:right-32'}
         size="lg"
         color="secondary"
         isSelected={theme === Theme.Dark}

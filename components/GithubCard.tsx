@@ -19,7 +19,7 @@ export default function GithubCard() {
       delay={0}
       closeDelay={0}
     >
-      <Link href={'https://github.com/Thre4dripper/Boardy-WebApp'} passHref target={'_blank'} className={'absolute right-4 bottom-4'}>
+      <Link href={'https://github.com/Thre4dripper/Boardy-WebApp'} passHref target={'_blank'} className={'absolute left-4 bottom-16 sm:right-4 sm:bottom-4'}>
         <Button isIconOnly variant={'ghost'} color={'secondary'}>
           <Github />
         </Button>
