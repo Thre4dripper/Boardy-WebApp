@@ -439,7 +439,7 @@ export default function Home() {
   };
 
   const onTouchMove = throttle(
-    (e: TouchEvent) => {
+    (e: React.TouchEvent<HTMLCanvasElement>) => {
       if (!canvasRef.current) return;
 
       const canvas = canvasRef.current;
@@ -466,6 +466,39 @@ export default function Home() {
     mouseRef.current.down = false;
     mouseRef.current.cursorState = 'none';
   };
+
+  // THIS IS TO PREVENT SCROLLING ON TOUCH DEVICES (SWIPE DOWN TO REFRESH)
+  useEffect(() => {
+    // Function to prevent default behavior
+    const preventDefault = (e: any) => e.preventDefault();
+
+    // Attach event listeners when the canvas is touched
+    const onTouchStartGlobal = () => {
+      document.addEventListener('touchmove', preventDefault, { passive: false });
+      document.addEventListener('touchend', onTouchEndGlobal, { passive: false });
+    };
+
+    // Remove event listeners when touch interaction ends
+    const onTouchEndGlobal = () => {
+      document.removeEventListener('touchmove', preventDefault);
+      document.removeEventListener('touchend', onTouchEndGlobal);
+    };
+
+    // Attach these handlers to the canvas
+    const canvas = canvasRef.current;
+    if (canvas) {
+      canvas.addEventListener('touchstart', onTouchStartGlobal, { passive: false });
+    }
+
+    // Cleanup function to remove global event listeners
+    return () => {
+      if (canvas) {
+        canvas.removeEventListener('touchstart', onTouchStartGlobal);
+      }
+      document.removeEventListener('touchmove', preventDefault);
+      document.removeEventListener('touchend', onTouchEndGlobal);
+    };
+  }, []);
 
   const getCanvasData = useCallback(() => {
     return canvasRef.current?.toDataURL();
@@ -529,7 +562,9 @@ export default function Home() {
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
         onTouchMove={onTouchMove}
-        onTouchStart={onTouchStart}
+        onTouchStart={()=>{
+          onTouchStart()
+        }}
         onTouchEnd={onTouchEnd}
       />
     </div>
