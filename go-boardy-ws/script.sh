@@ -1,0 +1,1 @@
+docker run -it -v "D:\Projects\Web Projects\Personal Projects\Boardy-WebApp\go-boardy-ws:/go/src/app" -p 8080:8080 --rm golang:1.23-rc /bin/bash
