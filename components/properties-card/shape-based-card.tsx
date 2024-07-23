@@ -300,7 +300,7 @@ export default function ShapeBasedCard({
   }, []);
 
   return (
-    <Card className={'w-56 absolute left-4 transform -translate-y-1/2 top-1/2'}>
+    <Card className={'w-64 absolute left-4 transform -translate-y-1/2 top-1/2'}>
       <CardBody className={'px-4 flex flex-col gap-4'}>
         {selectedShapeType === Tools.Text ? (
           <ColorControls
