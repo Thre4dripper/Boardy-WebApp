@@ -30,6 +30,7 @@ import { useTheme } from '@/providers/ThemeProvider';
 import { Theme } from '@/enums/Theme';
 import ActionsService from '@/services/actions.service';
 import GithubCard from '@/components/GithubCard';
+import { useSocket } from '@/providers/SocketProvider';
 
 export type Mouse = {
   x: number;
@@ -91,6 +92,8 @@ export default function Home() {
   //text controls
   const [selectedFontSize, setSelectedFontSize] = useState<number>(30);
   const [selectedFontFamily, setSelectedFontFamily] = useState<string>(Fonts.Arial);
+
+  const { socket, sendMsg } = useSocket();
 
   const initCanvas = useCallback(() => {
     if (!canvasRef.current) return;
@@ -409,33 +412,91 @@ export default function Home() {
     };
   };
 
+  useEffect(() => {
+    if (socket) {
+      socket.onmessage = (event) => {
+        console.log(event.data);
+        mouseRef.current = {
+          ...mouseRef.current,
+          ...JSON.parse(event.data).payload.mouseRef.current,
+        };
+      };
+    }
+  }, [socket]);
+
   const handleMouseMove = throttle(
     (e: React.MouseEvent<HTMLCanvasElement> | MouseEvent) => {
       if (!canvasRef.current) return;
 
       const canvas = canvasRef.current;
       const rect = canvas.getBoundingClientRect();
-      mouseRef.current = {
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top,
-        prevX: mouseRef.current.x,
-        prevY: mouseRef.current.y,
-        down: mouseRef.current.down,
-        cursor: mouseRef.current.cursor,
-        resizeState: mouseRef.current.resizeState,
-        cursorState: mouseRef.current.cursorState,
-      };
+      // mouseRef.current = {
+      //   x: e.clientX - rect.left,
+      //   y: e.clientY - rect.top,
+      //   prevX: mouseRef.current.x,
+      //   prevY: mouseRef.current.y,
+      //   down: mouseRef.current.down,
+      //   cursor: mouseRef.current.cursor,
+      //   resizeState: mouseRef.current.resizeState,
+      //   cursorState: mouseRef.current.cursorState,
+      // };
+      sendMsg({
+        userId: '123',
+        socketId: '123',
+        userName: 'Ijlal',
+        payload: {
+          mouseRef: {
+            current: {
+              x: e.clientX - rect.left,
+              y: e.clientY - rect.top,
+              prevX: mouseRef.current.x,
+              prevY: mouseRef.current.y,
+              down: mouseRef.current.down,
+              cursor: mouseRef.current.cursor,
+              resizeState: mouseRef.current.resizeState,
+              cursorState: mouseRef.current.cursorState,
+            },
+          },
+        },
+      });
     },
     selectedTool === Tools.Eraser ? 0 : 5
   );
 
   const handleMouseDown = () => {
-    mouseRef.current.down = true;
+    // mouseRef.current.down = true;
+    sendMsg({
+      userId: '123',
+      socketId: '123',
+      userName: 'Ijlal',
+      payload: {
+        mouseRef: {
+          current: {
+            ...mouseRef.current,
+            down: true,
+          },
+        },
+      },
+    });
   };
 
   const handleMouseUp = () => {
-    mouseRef.current.down = false;
-    mouseRef.current.cursorState = 'none';
+    // mouseRef.current.down = false;
+    // mouseRef.current.cursorState = 'none';
+    sendMsg({
+      userId: '123',
+      socketId: '123',
+      userName: 'Ijlal',
+      payload: {
+        mouseRef: {
+          current: {
+            ...mouseRef.current,
+            down: false,
+            cursorState: 'none',
+          },
+        },
+      },
+    });
   };
 
   const onTouchMove = throttle(
@@ -562,8 +623,8 @@ export default function Home() {
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
         onTouchMove={onTouchMove}
-        onTouchStart={()=>{
-          onTouchStart()
+        onTouchStart={() => {
+          onTouchStart();
         }}
         onTouchEnd={onTouchEnd}
       />

@@ -5,6 +5,7 @@ import React from 'react';
 import { NextUIProvider } from '@nextui-org/system';
 import Head from 'next/head';
 import { ThemeProvider } from '@/providers/ThemeProvider';
+import { SocketProvider } from '@/providers/SocketProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -23,11 +24,13 @@ export default function RootLayout({
       <Head>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="icon" href="/favicon.ico"/>
+        <link rel="icon" href="/favicon.ico" />
       </Head>
       <body className={inter.className}>
         <NextUIProvider>
-          <ThemeProvider>{children}</ThemeProvider>
+          <ThemeProvider>
+            <SocketProvider>{children}</SocketProvider>
+          </ThemeProvider>
         </NextUIProvider>
       </body>
     </html>
