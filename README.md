@@ -41,6 +41,10 @@ functionalities to create and manipulate drawings on a canvas.
 
 - 🖼️ **Export as Image**: Export the canvas content as an image file.
 
+## Demo
+
+[demo.webm](https://github.com/user-attachments/assets/6469fed8-2e27-418d-9b41-d0a7821f7ff8)
+
 ## Installation
 
 ### Prerequisites
