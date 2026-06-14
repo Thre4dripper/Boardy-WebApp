@@ -41,6 +41,10 @@ functionalities to create and manipulate drawings on a canvas.
 
 - 🖼️ **Export as Image**: Export the canvas content as an image file.
 
+## Demo [(LinkedIn)](https://www.linkedin.com/posts/ijlal-ahmad-14aa35202_nextjs-webdevelopment-golang-activity-7221580704273293312-GYwo?utm_source=share&utm_medium=member_desktop)
+
+https://github.com/user-attachments/assets/6513c2aa-5d4f-4b6e-bf3c-4ec63b520b49
+
 ## Installation
 
 ### Prerequisites
