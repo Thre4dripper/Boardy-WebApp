@@ -5,7 +5,7 @@ import React from 'react';
 import { NextUIProvider } from '@nextui-org/system';
 import Head from 'next/head';
 import { ThemeProvider } from '@/providers/ThemeProvider';
-import { SocketProvider } from '@/providers/SocketProvider';
+// import { SocketProvider } from '@/providers/SocketProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -29,7 +29,8 @@ export default function RootLayout({
       <body className={inter.className}>
         <NextUIProvider>
           <ThemeProvider>
-            <SocketProvider>{children}</SocketProvider>
+            {/* <SocketProvider>{children}</SocketProvider> */}
+            {children}
           </ThemeProvider>
         </NextUIProvider>
       </body>
