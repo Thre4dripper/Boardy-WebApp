@@ -49,8 +49,8 @@ https://github.com/user-attachments/assets/6513c2aa-5d4f-4b6e-bf3c-4ec63b520b49
 
 ### Prerequisites
 
-- Node.js (v14 or higher)
-- Yarn or npm
+- Node.js (v18.17 or higher)
+- pnpm
 
 ### Steps
 
@@ -62,18 +62,14 @@ https://github.com/user-attachments/assets/6513c2aa-5d4f-4b6e-bf3c-4ec63b520b49
 
 2. Install dependencies:
     ```bash
-    yarn install
-    # or
-    npm install
+    pnpm install
     ```
 
 ## Running the Development Server
 
 1. Start the development server:
     ```bash
-    yarn dev
-    # or
-    npm run dev
+    pnpm dev
     ```
 
 2. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
