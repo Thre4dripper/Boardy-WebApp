@@ -24,7 +24,7 @@
     "@nextui-org/tooltip": "^2.0.33",
     "framer-motion": "^11.1.7",
     "lucide-react": "^0.378.0",
-    "next": "14.2.25",
+    "next": "14.2.35",
     "nextui-cli": "^0.2.1",
     "react": "^18",
     "react-dom": "^18"
@@ -34,7 +34,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",
-    "eslint-config-next": "14.2.3",
+    "eslint-config-next": "14.2.35",
     "postcss": "^8",
     "prettier": "^3.2.5",
     "tailwindcss": "^3.4.1",
