@@ -1,4 +1,4 @@
-import { Button } from '@nextui-org/button';
+import { Button } from '@heroui/react';
 import { Copy, Trash } from 'lucide-react';
 
 export default function CopyDeleteControls() {
@@ -26,9 +26,8 @@ export default function CopyDeleteControls() {
           size={'sm'}
           isIconOnly
           className={'cursor-pointer p-1.5'}
-          variant={'light'}
-          color={'secondary'}
-          onClick={handleCopy}
+          variant={'ghost'}
+          onPress={handleCopy}
         >
           <Copy />
         </Button>
@@ -36,9 +35,8 @@ export default function CopyDeleteControls() {
           size={'sm'}
           isIconOnly
           className={'cursor-pointer p-1.5'}
-          variant={'light'}
-          color={'secondary'}
-          onClick={handleDelete}
+          variant={'ghost'}
+          onPress={handleDelete}
         >
           <Trash />
         </Button>

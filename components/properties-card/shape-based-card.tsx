@@ -7,7 +7,7 @@ import EllipseModel from '@/models/ellipse.model';
 import ArrowModel from '@/models/arrow.model';
 import PolygonModel from '@/models/polygon.model';
 import TextModel from '@/models/text.model';
-import { Card, CardBody } from '@nextui-org/card';
+import { Card } from '@heroui/react';
 import { Tools } from '@/enums/Tools';
 import ColorControls from '@/components/properties-card/color-controls';
 import ShapeControls from '@/components/properties-card/shape-controls';
@@ -300,8 +300,8 @@ export default function ShapeBasedCard({
   }, []);
 
   return (
-    <Card className={'w-64 absolute left-4 transform -translate-y-1/2 top-1/2'}>
-      <CardBody className={'px-4 flex flex-col gap-4'}>
+    <Card className={'w-64 absolute left-4 transform -translate-y-1/2 top-1/2 p-0 rounded-2xl'}>
+      <Card.Content className={'px-4 py-3 flex flex-col gap-4'}>
         {selectedShapeType === Tools.Text ? (
           <ColorControls
             header={'Font Color'}
@@ -355,7 +355,6 @@ export default function ShapeBasedCard({
             header={'Font Size'}
             max={100}
             min={15}
-            size={'sm'}
             showSteps={false}
             selectedSize={selectedFontSize}
             setSelectedSize={(size) => {
@@ -368,7 +367,6 @@ export default function ShapeBasedCard({
             header={'Stroke Width'}
             max={10}
             min={1}
-            size={'md'}
             showSteps={true}
             selectedSize={selectedStrokeWidth}
             setSelectedSize={(width) => {
@@ -410,7 +408,7 @@ export default function ShapeBasedCard({
           />
         )}
         <CopyDeleteControls />
-      </CardBody>
+      </Card.Content>
     </Card>
   );
 }

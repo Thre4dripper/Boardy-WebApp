@@ -49,7 +49,7 @@ https://github.com/user-attachments/assets/6513c2aa-5d4f-4b6e-bf3c-4ec63b520b49
 
 ### Prerequisites
 
-- Node.js (v18.17 or higher)
+- Node.js (v20.9 or higher)
 - pnpm
 
 ### Steps

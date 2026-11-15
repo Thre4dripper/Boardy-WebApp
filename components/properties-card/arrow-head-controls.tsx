@@ -1,6 +1,6 @@
 import { ArrowHeads } from '@/enums/ArrowHeads';
 import { Minus, MoveRight, Play } from 'lucide-react';
-import { Button } from '@nextui-org/button';
+import { Button } from '@heroui/react';
 
 const arrowHeads = [
   {
@@ -44,9 +44,8 @@ export default function ArrowHeadControls({
               style={{
                 transform: 'rotate(180deg)',
               }}
-              variant={selectedLeftArrowHead === arrowHead.name ? 'solid' : 'light'}
-              color={selectedLeftArrowHead === arrowHead.name ? 'secondary' : 'default'}
-              onClick={setSelectedLeftArrowHead.bind(null, arrowHead.name)}
+              variant={selectedLeftArrowHead === arrowHead.name ? 'primary' : 'ghost'}
+              onPress={setSelectedLeftArrowHead.bind(null, arrowHead.name)}
             >
               {arrowHead.icon}
             </Button>
@@ -62,9 +61,8 @@ export default function ArrowHeadControls({
               size={'sm'}
               isIconOnly
               className={'cursor-pointer p-2'}
-              variant={selectedRightArrowHead === arrowHead.name ? 'solid' : 'light'}
-              color={selectedRightArrowHead === arrowHead.name ? 'secondary' : 'default'}
-              onClick={setSelectedRightArrowHead.bind(null, arrowHead.name)}
+              variant={selectedRightArrowHead === arrowHead.name ? 'primary' : 'ghost'}
+              onPress={setSelectedRightArrowHead.bind(null, arrowHead.name)}
             >
               {arrowHead.icon}
             </Button>

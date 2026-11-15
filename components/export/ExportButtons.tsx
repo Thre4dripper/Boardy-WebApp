@@ -1,4 +1,4 @@
-import { Button } from '@nextui-org/button';
+import { Button } from '@heroui/react';
 import React from 'react';
 import { Copy, Download } from 'lucide-react';
 import { CanvasThemeColor, Theme } from '@/enums/Theme';
@@ -65,25 +65,13 @@ export default function ExportButtons({ canvasData, includeBackground }: ExportB
   };
   return (
     <div className={'flex flex-row gap-4 justify-between w-full'}>
-      <Button
-        color={'secondary'}
-        variant={'ghost'}
-        size={'md'}
-        className={'w-full'}
-        endContent={<Download className={'w-5 h-5'} />}
-        onClick={handleDownload}
-      >
+      <Button variant={'outline'} size={'md'} className={'w-full'} onPress={handleDownload}>
         Download
+        <Download className={'w-5 h-5'} />
       </Button>
-      <Button
-        color={'secondary'}
-        variant={'ghost'}
-        size={'md'}
-        className={'w-full'}
-        endContent={<Copy className={'w-5 h-5'} />}
-        onClick={handleCopy}
-      >
+      <Button variant={'outline'} size={'md'} className={'w-full'} onPress={handleCopy}>
         Copy
+        <Copy className={'w-5 h-5'} />
       </Button>
     </div>
   );

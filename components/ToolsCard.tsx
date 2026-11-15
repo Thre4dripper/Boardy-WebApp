@@ -1,4 +1,4 @@
-import { Card, CardBody } from '@nextui-org/card';
+import { Badge, Button, Card, Tooltip } from '@heroui/react';
 import {
   Baseline,
   Circle,
@@ -10,10 +10,7 @@ import {
   PenTool,
   Shapes,
 } from 'lucide-react';
-import { Button } from '@nextui-org/button';
 import { Tools } from '@/enums/Tools';
-import { Badge } from '@nextui-org/badge';
-import { Tooltip } from '@nextui-org/tooltip';
 
 const ToolsArray = [
   {
@@ -61,39 +58,39 @@ interface ToolsProps {
 
 export default function ToolsCard({ onToolSelect, selectedTool }: ToolsProps) {
   return (
-    <Card className={'absolute bottom-4 right-4 sm:right-auto sm:transform sm:-translate-x-1/2 sm:left-1/2'}>
-      <CardBody className={'px-4 pb-4 grid grid-cols-3 md:grid-cols-9 gap-x-6'}>
+    <Card
+      className={
+        'absolute bottom-4 right-4 sm:right-auto sm:transform sm:-translate-x-1/2 sm:left-1/2 p-0 rounded-2xl'
+      }
+    >
+      <Card.Content className={'px-4 pt-3 pb-4 grid grid-cols-3 md:grid-cols-9 gap-x-6'}>
         {ToolsArray.map((tool, index) => (
-          <Badge
-            key={index}
-            color="secondary"
-            content={index + 1}
-            size={'sm'}
-            isOneChar
-            placement={'bottom-right'}
-            variant={'faded'}
-          >
-            <Tooltip
-              content={tool.name}
-              placement={'top'}
-              color={'secondary'}
-              delay={0}
-              closeDelay={0}
-            >
+          <Badge.Anchor key={index}>
+            <Tooltip delay={0} closeDelay={0}>
               <Button
                 isIconOnly
                 size="sm"
                 className={'cursor-pointer p-2'}
-                variant={selectedTool === tool.name ? 'solid' : 'light'}
-                color={selectedTool === tool.name ? 'secondary' : 'default'}
-                onClick={() => onToolSelect(tool.name)}
+                variant={selectedTool === tool.name ? 'primary' : 'ghost'}
+                aria-label={tool.name}
+                onPress={() => onToolSelect(tool.name)}
               >
                 {tool.icon}
               </Button>
+              <Tooltip.Content placement={'top'}>{tool.name}</Tooltip.Content>
             </Tooltip>
-          </Badge>
+            <Badge
+              color={'accent'}
+              size={'sm'}
+              placement={'bottom-right'}
+              variant={'secondary'}
+              className={'[transform:translate(45%,45%)]'}
+            >
+              {index + 1}
+            </Badge>
+          </Badge.Anchor>
         ))}
-      </CardBody>
+      </Card.Content>
     </Card>
   );
 }

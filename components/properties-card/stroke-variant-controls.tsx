@@ -1,4 +1,4 @@
-import { Button } from '@nextui-org/button';
+import { Button } from '@heroui/react';
 import { BoxSelect, Maximize, Square } from 'lucide-react';
 import { StrokeVariant } from '@/enums/StrokeVariant';
 
@@ -34,9 +34,8 @@ export default function StrokeVariantControls({
             key={index}
             size={'sm'}
             isIconOnly
-            variant={selectedStrokeVariant === variant.name ? 'solid' : 'light'}
-            color={selectedStrokeVariant === variant.name ? 'secondary' : 'default'}
-            onClick={setSelectedStrokeVariant.bind(null, variant.name as StrokeVariant)}
+            variant={selectedStrokeVariant === variant.name ? 'primary' : 'ghost'}
+            onPress={setSelectedStrokeVariant.bind(null, variant.name as StrokeVariant)}
           >
             {variant.icon}
           </Button>

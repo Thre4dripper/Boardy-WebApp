@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import React from 'react';
-import { NextUIProvider } from '@nextui-org/system';
 import Head from 'next/head';
 import { ThemeProvider } from '@/providers/ThemeProvider';
 // import { SocketProvider } from '@/providers/SocketProvider';
@@ -27,12 +26,10 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <body className={inter.className}>
-        <NextUIProvider>
-          <ThemeProvider>
-            {/* <SocketProvider>{children}</SocketProvider> */}
-            {children}
-          </ThemeProvider>
-        </NextUIProvider>
+        <ThemeProvider>
+          {/* <SocketProvider>{children}</SocketProvider> */}
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

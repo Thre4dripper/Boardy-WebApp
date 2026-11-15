@@ -1,4 +1,4 @@
-import { Button } from '@nextui-org/button';
+import { Button } from '@heroui/react';
 import React from 'react';
 import { Fonts } from '@/enums/Fonts';
 
@@ -20,9 +20,8 @@ export function FontFamilyControls({
             key={font}
             size={'sm'}
             style={{ fontFamily: font }}
-            variant={selectedFontFamily === font ? 'solid' : 'bordered'}
-            color={selectedFontFamily === font ? 'secondary' : 'default'}
-            onClick={() => setSelectedFontFamily(font)}
+            variant={selectedFontFamily === font ? 'primary' : 'outline'}
+            onPress={() => setSelectedFontFamily(font)}
           >
             {font}
           </Button>

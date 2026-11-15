@@ -1,6 +1,5 @@
 import { Hexagon, Octagon, Pentagon, Square, Triangle } from 'lucide-react';
-import { Button } from '@nextui-org/button';
-import { Slider } from '@nextui-org/slider';
+import { Button, Slider } from '@heroui/react';
 
 const shapesArray = [
   {
@@ -49,9 +48,8 @@ export default function ShapeControls({
             key={index}
             size="md"
             className={'cursor-pointer p-2'}
-            variant={selectedShapeSides === shape.sides ? 'solid' : 'light'}
-            color={selectedShapeSides === shape.sides ? 'secondary' : 'default'}
-            onClick={() => {
+            variant={selectedShapeSides === shape.sides ? 'primary' : 'ghost'}
+            onPress={() => {
               setSelectedShapeSides(shape.sides);
               setSelectedShapeRotation(
                 selectedShapeRotation - baseAngle + ((shape.sides - 2) * 180) / shape.sides / 2
@@ -71,18 +69,20 @@ export default function ShapeControls({
       <div className={'text-xs'}>Rotation</div>
 
       <Slider
-        size="sm"
-        color="foreground"
+        aria-label={'Rotation'}
         step={3}
         maxValue={360}
         minValue={0}
         defaultValue={selectedShapeRotation - baseAngle}
         onChange={(e) => setSelectedShapeRotation((e as number) + baseAngle)}
         className="max-w-md"
-        endContent={
-          <div className={'text-xs font-semibold'}>{selectedShapeRotation - baseAngle}</div>
-        }
-      />
+      >
+        <Slider.Output className={'text-xs font-semibold'} />
+        <Slider.Track>
+          <Slider.Fill className={'bg-foreground'} />
+          <Slider.Thumb />
+        </Slider.Track>
+      </Slider>
     </div>
   );
 }
